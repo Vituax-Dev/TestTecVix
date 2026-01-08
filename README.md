@@ -27,6 +27,7 @@
   - [Configuração de Perfil e Notificações](#configuração-de-perfil-e-notificações)
   - [Tarefas Opcionais/Diferenciais](#tarefas-opcionaisdiferenciais)
 - [Referências Visuais](#referências-visuais)
+- [Lembrete Final](#-lembrete-final)
 
 ---
 

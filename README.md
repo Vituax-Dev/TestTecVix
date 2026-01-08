@@ -441,16 +441,18 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 🔐 Autenticação e Autorização
 
-- [ ] Implementar as rotas de CRUD para usuários (backend)
-- [ ] Implementar rota de login do usuário (backend)
-- [ ] Implementar tela de login (frontend)
-- [ ] Implementar autenticação com token JWT (backend + frontend)
+- [ ] Implementar as rotas de CRUD para usuários
+- [ ] Implementar rota de login do usuário
+- [ ] Implementar tela de login `/login`
+- [ ] Implementar rota de register do usuário
+- [ ] Implementar tela de register `/register`
+- [ ] Implementar autenticação com token JWT
 - [ ] Proteger as rotas da aplicação (exceto login e register) para que somente usuários logados possam acessar
 - [ ] Adicionar credenciais de usuários de teste no README e/ou `.env.example`
 
 ---
 
-### 🗄️ Melhorias no Banco de Dados
+### 🗄️ Updates no Banco de Dados
 
 - [ ] Adicionar coluna `pass` na tabela `VM` (senha da VM, respeitando regras de segurança)
 - [ ] Adicionar coluna `location` do tipo `ETaskLocation` na tabela `VM`
@@ -513,7 +515,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 - [ ] Implementar componente para **cadastro de MSP em 2 etapas**
 - [ ] Possibilitar **criar um novo MSP**
-- [ ] Possibilitar **cadastrar um MSP já existente**
+- [ ] Possibilitar **editar um MSP já existente**
 - [ ] Adicionar campos de **endereço** (ou puxar pelo CEP e/ou CNPJ)
 - [ ] Implementar filtros de **search**
 - [ ] Implementar flag de **"Mostrar somente os que estão em POC"**

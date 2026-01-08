@@ -1,0 +1,16 @@
+{
+  "total": "Total",
+  "title": "Dashboard comercial",
+  "cardOneTitle": "Total de VMs en producción",
+  "cardTwoTitle": "Clientes con VMs activas",
+  "cardThreeTitle": "Total de contratos",
+  "cardFourTitle": "POCs abiertas",
+  "cardFiveTitle": "Facturación del mes",
+  "lastMonth": "Mes anterior",
+  "expandButton": "Ver más",
+  "graphOneTitle": "VMs por cliente",
+  "graphOneSubtitle": "Número de VMs por cliente",
+  "graphTwoTitle": "Facturación por cliente",
+  "graphThreeTitle": "Facturación total",
+  "others": "Otros"
+}

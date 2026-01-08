@@ -1,0 +1,13 @@
+{
+  "consumption": "Consumption",
+  "used": "Used",
+  "available": "Available",
+  "updatePlan": "Update your plan",
+  "upgradePlan": "Upgrade your plan to",
+  "details": "Details",
+  "accesses": "Accesses",
+  "lastUpdate": "Last update",
+  "create": "Create server",
+  "delete": "Delete server",
+  "access": "Access server"
+}

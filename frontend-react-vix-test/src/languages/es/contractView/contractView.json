@@ -1,0 +1,14 @@
+{
+  "title": "Contrato y Facturación",
+  "subTitle": "Consulta los detalles de tu contrato de facturación.",
+  "btnText": "Ver contrato",
+  "tooltipText": "Contrato no disponible",
+  "uploadFail": "Archivo de contrato no cargado",
+  "uploadSuccess": "Archivo de contrato cargado con éxito",
+  "loading": "Cargando...",
+  "clickHere": "Haz clic aquí para subir el contrato",
+  "maxSize": "Tamaño: 50mb",
+  "acceptedFormats": "Formato: .pdf",
+  "saveChanges": "Guardar cambios",
+  "onlyPdf": "Por favor, sube solo archivos PDF."
+}

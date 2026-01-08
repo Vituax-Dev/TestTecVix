@@ -1,0 +1,19 @@
+{
+  "lang": "es",
+  "title": "Recuperar contraseña",
+  "message": "Hemos enviado un enlace para recuperar tu contraseña.",
+  "emailError": "Correo electrónico inválido",
+  "sendButton": "Enviar recuperación",
+  "restorePassword": {
+    "newPassword": "Nueva contraseña",
+    "passwordReset": "Contraseña restablecida",
+    "accessWithNewPassword": "Accede a tu cuenta con tu nueva contraseña.",
+    "login": "Iniciar sesión",
+    "sendRecovery": "Enviar recuperación",
+    "password": "Contraseña",
+    "passwordCond1": "* La contraseña debe tener al menos 8 caracteres",
+    "passwordCond2": "* La contraseña debe incluir al menos 1 carácter especial o 1 letra mayúscula o 2 números",
+    "passwordConfirm": "Confirmar contraseña",
+    "passwordNotMatch": "Las contraseñas no coinciden."
+  }
+}

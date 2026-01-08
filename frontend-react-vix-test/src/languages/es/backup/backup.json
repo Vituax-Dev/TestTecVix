@@ -1,0 +1,17 @@
+{
+  "services": "Servicios",
+  "backup": "Copia de seguridad",
+  "subtitle": "Las instantáneas diarias se crean automáticamente y se conservan hasta por 7 días. También puede crear copias de seguridad manuales en cualquier momento.",
+  "inputFilterPlaceholder": "Buscar VM",
+  "tooltipInfo": "Esta copia de seguridad se restauró con éxito",
+  "restoreBtn": "Restaurar",
+  "createNewBtn": "Crear nueva copia",
+  "modalTitle": "¿Está seguro de que desea crear una nueva copia de seguridad?",
+  "modalSubtitle": "Se creará una nueva copia de seguridad utilizando los datos actuales del sistema.",
+  "modalCancelBtn": "Cancelar",
+  "modalCreateBtn": "Crear copia",
+  "doYouWantToRestore": "¿Desea restaurar esta copia de seguridad?",
+  "theVersionSaved": "La versión guardada en esta copia de seguridad se cargara.",
+  "enableBackup": "Habilitar copia de seguridad",
+  "waiting": "Esperando"
+}

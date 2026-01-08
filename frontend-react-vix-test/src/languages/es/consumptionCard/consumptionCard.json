@@ -1,0 +1,13 @@
+{
+  "consumption": "Consumo",
+  "used": "Usados",
+  "available": "Disponibles",
+  "updatePlan": "Actualiza tu plan",
+  "upgradePlan": "Mejora tu plan a",
+  "details": "Detalles",
+  "accesses": "Accesos",
+  "lastUpdate": "Última actualización",
+  "create": "Crear servidor",
+  "delete": "Eliminar servidor",
+  "access": "Acceder al servidor"
+}

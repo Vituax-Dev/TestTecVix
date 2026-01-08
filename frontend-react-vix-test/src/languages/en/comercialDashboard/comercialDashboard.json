@@ -1,0 +1,16 @@
+{
+  "total": "Total",
+  "title": "Commercial Dashboard",
+  "cardOneTitle": "Total VMs in production",
+  "cardTwoTitle": "Clients with VMs up",
+  "cardThreeTitle": "Total contracts",
+  "cardFourTitle": "Opened POCs",
+  "cardFiveTitle": "This month's revenue",
+  "lastMonth": "Previous month",
+  "expandButton": "View more",
+  "graphOneTitle": "VMs per client",
+  "graphOneSubtitle": "Number of VMs per client",
+  "graphTwoTitle": "Revenue per client",
+  "graphThreeTitle": "Total revenue",
+  "others": "Others"
+}

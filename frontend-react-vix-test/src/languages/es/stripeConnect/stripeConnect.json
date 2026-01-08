@@ -1,0 +1,20 @@
+{
+  "integrationStatus": "Estado de la integración",
+  "active": "Activado",
+  "inactive": "No activado",
+  "activeStripe": "Activar Stripe",
+  "disableStripe": "Desactivar Stripe",
+  "accessStripe": "Acceder a mi panel de Stripe",
+  "activePlans": "Planes activos",
+  "areYouSure": "¿Está seguro de que desea desactivar Stripe?",
+  "areYouSureMessage": "Esto impedirá nuevas facturaciones desde la plataforma, pero su cuenta de Stripe seguirá activa",
+  "cancel": "Cancelar",
+  "confirm": "Confirmar",
+  "soon": "Próximamente",
+  "vms": "VMs",
+  "stripeActivated": "¡Stripe activada con éxito!",
+  "stripeNotActivatedYet": "Aún no ha activado Stripe. Habilite la integración para facturar automáticamente a sus clientes.",
+  "loginLinkInactive": "Active su cuenta de Stripe para acceder a su panel",
+  "completeRegister": "Complete su registro en Stripe para acceder a su panel",
+  "country": "US"
+}

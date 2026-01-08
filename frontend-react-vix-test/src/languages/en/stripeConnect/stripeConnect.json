@@ -1,0 +1,20 @@
+{
+  "integrationStatus": "Integration Status",
+  "active": "Activated",
+  "inactive": "Not Activated",
+  "activeStripe": "Activate Stripe",
+  "disableStripe": "Disable Stripe",
+  "accessStripe": "Access my Stripe dashboard",
+  "activePlans": "Active Plans",
+  "areYouSure": "Are you sure you want to disable Stripe?",
+  "areYouSureMessage": "This will prevent new billing through the platform, but your Stripe account will remain active",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "soon": "Coming soon",
+  "vms": "VMs",
+  "stripeActivated": "Stripe successfully activated!",
+  "stripeNotActivatedYet": "You haven't activated Stripe yet. Enable the integration to automatically bill your clients.",
+  "loginLinkInactive": "Activate your Stripe account to access your dashboard",
+  "completeRegister": "Complete your Stripe registration to access your dashboard",
+  "country": "US"
+}

@@ -1,0 +1,21 @@
+{
+  "reports": "Informes",
+  "invoices": "Facturas",
+  "checkDetails": "Consulta el detalle de tus facturas y servicios",
+  "msp": "MSP",
+  "msps": "MSPs",
+  "allVMs": "Todas las máquinas virtuales",
+  "vm": "Máquina virtual",
+  "comapany": "Empresa",
+  "vmCreation": "Creación de máquina virtual",
+  "vmDeletion": "Eliminación de máquina virtual",
+  "settings": "Configuración",
+  "value": "Valor",
+  "daysUsed": "Días de uso",
+  "dayUsed": "Días de uso",
+  "disk": "GB Disco",
+  "onlyMyVms": "Solo mis máquinas virtuales",
+  "createNfeBtn": "Crear factura",
+  "nfeGenerated": "Factura generada",
+  "nfeError": "Error al generar la factura"
+}

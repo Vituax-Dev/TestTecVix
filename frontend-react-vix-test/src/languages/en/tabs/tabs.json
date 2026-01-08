@@ -1,0 +1,10 @@
+{
+  "whiteLabel": "White label",
+  "profileNotifications": "Profile and notifications",
+  "billingsPlans": "Contract & billing",
+  "security": "Security",
+  "logsHistory": "Logs history",
+  "support": "Support",
+  "stripeConnect": "Stripe Connect",
+  "tasks": "Tasks"
+}

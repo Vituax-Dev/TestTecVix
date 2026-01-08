@@ -1,0 +1,14 @@
+{
+  "title": "Contract & billing",
+  "subTitle": "Check the details of your billing agreement",
+  "btnText": "View contract",
+  "tooltipText": "Contract not available",
+  "uploadFail": "Contract file not uploaded",
+  "uploadSuccess": "Contract file uploaded successfully",
+  "loading": "Loading...",
+  "clickHere": "Click here to upload the contract",
+  "maxSize": "Size: 50mb",
+  "acceptedFormats": "Format: .pdf",
+  "saveChanges": "Save changes",
+  "onlyPdf": "Please upload PDF files only."
+}

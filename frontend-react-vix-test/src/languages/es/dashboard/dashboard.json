@@ -1,0 +1,9 @@
+{
+  "title": "Dashboard",
+  "downloadBtn": "Descargar gráficos",
+  "initialDate": "Fecha y Hora de Inicio",
+  "endDate": "Fecha y Hora de Finalización",
+  "selectVm": "Seleccione su VM",
+  "mspName": "Nombre del MSP",
+  "companyName": "Nombre de la empresa"
+}

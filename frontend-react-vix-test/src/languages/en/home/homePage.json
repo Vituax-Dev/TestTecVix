@@ -1,0 +1,57 @@
+{
+  "hi": "Hello",
+  "title": "Cloud",
+  "count": "count is <1>{{count}}</1>",
+  "search": "Search",
+  "status": "Status: {{status}}",
+  "cpu": "vCPU:",
+  "ram": "RAM:",
+  "disk": "Disk:",
+  "stop": "Stop",
+  "start": "Start",
+  "restart": "Restart",
+  "pause": "Pause",
+  "resume": "Resume",
+  "vmRecents": "VMs recents",
+  "newVM": "Create VM",
+  "running": "Active",
+  "stopped": "Inactive",
+  "paused": "Paused",
+  "so": "SO:",
+  "waiting": "Waiting",
+  "cardOne": {
+    "title": "Welcome to",
+    "info": "You don’t have any VMs created yet",
+    "linkOne": "Start setting up your virtual machine",
+    "linkTwoBold": "Questions?",
+    "linkTwo": " Access the Vituax manual"
+  },
+  "cardTwo": {
+    "chartCard": {
+      "boldTitle": "Cloud computing:",
+      "title": " a rising market in recent years",
+      "valueOne": "US$415 BI",
+      "valueTwo": "US$526 BI",
+      "valueThree": "US$706 BI",
+      "valueFour": "US$1,3 TRI"
+    },
+    "scaleCard": {
+      "title": "Scale with ",
+      "boldTitle": "cloud"
+    },
+    "dashboardCard": {
+      "titleStart": "Dashboards with ",
+      "boldTitle": "CPU, RAM and disk",
+      "titleEnd": " status",
+      "vcpu": "vCPU",
+      "memory": "Memory",
+      "disk": "Disk (GB)"
+    }
+  },
+  "dueModal": {
+    "title": "Invoice due soon",
+    "desc": "Your invoice due date is approaching. Keep your services active by completing the payment by the 5th.",
+    "seeInvoice": "View invoice",
+    "close": "Close"
+  }
+}

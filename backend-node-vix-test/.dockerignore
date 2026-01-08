@@ -1,0 +1,12 @@
+npm-debug.log
+Dockerfile
+.dockerignore
+.git
+.gitignore
+__tests__
+coverage
+postman_collection*
+jest*
+uploads/*
+node_modules/
+temp/*

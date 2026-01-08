@@ -1,0 +1,57 @@
+{
+  "hi": "Olá",
+  "title": "Nuvem",
+  "count": "count é <1>{{count}}</1>",
+  "search": "Pesquisar",
+  "status": "Estado: {{status}}",
+  "cpu": "vCPU:",
+  "ram": "RAM:",
+  "disk": "Disco:",
+  "stop": "Parar",
+  "start": "Executar",
+  "restart": "Reiniciar",
+  "pause": "Pausar",
+  "resume": "Retornar",
+  "vmRecents": "VMs recentes",
+  "newVM": "Criar VM",
+  "running": "Ativo",
+  "stopped": "Inativo",
+  "paused": "Pausado",
+  "so": "OS:",
+  "waiting": "Aguardando",
+  "cardOne": {
+    "title": "Bem vindo(a) à",
+    "info": "Você ainda não tem nenhuma VM criada",
+    "linkOne": "Comece a configurar sua máquina virtual",
+    "linkTwoBold": "Dúvidas?",
+    "linkTwo": " Acesse o manual da Vituax"
+  },
+  "cardTwo": {
+    "chartCard": {
+      "boldTitle": "Computação em nuvem:",
+      "title": " a ascensão nos últimos anos",
+      "valueOne": "R$415 BI",
+      "valueTwo": "R$526 BI",
+      "valueThree": "R$706 BI",
+      "valueFour": "R$1,3 TRI"
+    },
+    "scaleCard": {
+      "title": "Expanda com a ",
+      "boldTitle": "nuvem"
+    },
+    "dashboardCard": {
+      "titleStart": "Dashboards com status de ",
+      "boldTitle": "CPU, RAM e disco",
+      "titleEnd": "",
+      "vcpu": "vCPU",
+      "memory": "Memória",
+      "disk": "Disco (GB)"
+    }
+  },
+  "dueModal": {
+    "title": "Fatura prestes a vencer",
+    "desc": "A data de vencimento da sua fatura está se aproximando. Mantenha seus serviços ativos realizando o pagamento até o próximo dia 5.",
+    "seeInvoice": "Ver fatura",
+    "close": "Fechar"
+  }
+}

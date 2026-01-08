@@ -1,0 +1,17 @@
+{
+  "services": "Serviços",
+  "backup": "Backup",
+  "subtitle": "Snapshots diários são criados automaticamente e mantidos por até 7 dias. Você também pode criar backups manuais a qualquer momento.",
+  "inputFilterPlaceholder": "Buscar VM",
+  "tooltipInfo": "Este backup foi restaurado com sucesso",
+  "restoreBtn": "Restaurar",
+  "createNewBtn": "Criar novo backup",
+  "modalTitle": "Tem certeza que deseja criar um novo backup?",
+  "modalSubtitle": "Um novo backup será criado usando os dados atuais do sistema.",
+  "modalCancelBtn": "Cancelar",
+  "modalCreateBtn": "Criar backup",
+  "doYouWantToRestore": "Deseja restaurar este backup?",
+  "theVersionSaved": "A versão salva neste backup será carregada.",
+  "enableBackup": "Habilitar backup",
+  "waiting": "Aguardando"
+}

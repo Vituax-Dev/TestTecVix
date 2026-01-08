@@ -1,0 +1,19 @@
+{
+  "lang": "en",
+  "title": "Reset Password",
+  "message": "We’ve sent a link to reset your password.",
+  "emailError": "Invalid email",
+  "sendButton": "Send reset link",
+  "restorePassword": {
+    "newPassword": "New password",
+    "passwordReset": "Password reset",
+    "accessWithNewPassword": "Access your account with your new password.",
+    "login": "Login",
+    "sendRecovery": "Send recovery",
+    "password": "Password",
+    "passwordCond1": "* Password must be at least 8 characters long",
+    "passwordCond2": "* Password must include at least 1 special character or 1 uppercase letter or 2 numeric characters",
+    "passwordConfirm": "Confirm password",
+    "passwordNotMatch": "Passwords do not match."
+  }
+}

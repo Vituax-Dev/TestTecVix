@@ -1,0 +1,19 @@
+{
+  "lang": "pt",
+  "title": "Recuperar senha",
+  "message": "Enviamos um link para recuperação de senha.",
+  "emailError": "Email inválido",
+  "sendButton": "Enviar recuperação",
+  "restorePassword": {
+    "newPassword": "Nova senha",
+    "passwordReset": "Senha redefinida",
+    "accessWithNewPassword": "Acesse sua conta com sua nova senha.",
+    "login": "Fazer login",
+    "sendRecovery": "Enviar recuperação",
+    "password": "Senha",
+    "passwordCond1": "* A senha deve ter no mínimo 8 caracteres",
+    "passwordCond2": "* A senha deve ter pelo menos 1 caractere especial ou 1 caractere maiúsculo ou 2 caracteres numéricos",
+    "passwordConfirm": "Confirmação de senha",
+    "passwordNotMatch": "As senhas não coincidem."
+  }
+}

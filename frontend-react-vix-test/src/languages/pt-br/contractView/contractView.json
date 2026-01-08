@@ -1,0 +1,14 @@
+{
+  "title": "Contrato e faturamento",
+  "subTitle": "Confira os detalhes do seu contrato de faturamento.",
+  "btnText": "Visualizar contrato",
+  "tooltipText": "Contrato não disponível",
+  "uploadFail": "Arquivo de contrato não foi enviado",
+  "uploadSuccess": "Arquivo de contrato enviado com sucesso",
+  "loading": "Carregando...",
+  "clickHere": "Clique aqui para fazer upload do contrato",
+  "maxSize": "Tamanho: 50mb",
+  "acceptedFormats": "Formato: .pdf",
+  "saveChanges": "Salvar alterações",
+  "onlyPdf": "Por favor, envie apenas arquivos PDF."
+}

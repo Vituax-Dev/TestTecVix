@@ -1,0 +1,16 @@
+openapi: 3.0.3
+info:
+  title: API CLOUD
+  version: 1.0.0
+  contact: {}
+servers:
+  - url: "{{url}}"
+paths:
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: brandMaster
+  - name: VM

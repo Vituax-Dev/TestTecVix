@@ -1,0 +1,10 @@
+{
+  "whiteLabel": "Etiqueta blanca",
+  "profileNotifications": "Perfil y notificaciones",
+  "billingsPlans": "Contrato y Facturación",
+  "security": "Seguridad",
+  "logsHistory": "Historial de registros",
+  "support": "Soporte",
+  "stripeConnect": "Stripe Connect",
+  "tasks": "Tareas"
+}

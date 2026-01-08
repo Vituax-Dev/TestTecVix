@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TextRob32Font1L Component > renders correctly and matches snapshot 1`] = `
+.emotion-0 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 2%;
+}
+
+<p
+  class="MuiTypography-root MuiTypography-body1 emotion-0"
+>
+  Testando componente com snapshot
+</p>
+`;
+
+exports[`TextRob32Font1L Component > renders with custom styles passed via sx prop 1`] = `
+.emotion-0 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  color: blue;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 20px;
+  letter-spacing: 2%;
+}
+
+<p
+  class="MuiTypography-root MuiTypography-body1 emotion-0"
+>
+  Testando componente com sx customizado
+</p>
+`;

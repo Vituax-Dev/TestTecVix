@@ -1,0 +1,19 @@
+{
+  "noOptions": "Nenhuma opção disponível",
+  "allVMs": "Todas as VMs",
+  "company": "Empresa",
+  "actives": "Ativas",
+  "inactives": "Inativas",
+  "waiting": "Aguardando",
+  "paused": "Pausadas",
+  "vmName": "Nome da VM",
+  "status": "Status",
+  "vCPU": "CPU",
+  "ram": "RAM",
+  "disk": "Disco",
+  "so": "SOP",
+  "active": "Ativa",
+  "inactive": "Inativa",
+  "onlyMyVms": "Apenas minhas VMs",
+  "onlyMSPVms": "Apenas VMs do MSP"
+}

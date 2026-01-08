@@ -1,0 +1,21 @@
+{
+  "reports": "Reports",
+  "invoices": "Invoices",
+  "checkDetails": "Check the details of your invoices and services.",
+  "msp": "MSP",
+  "msps": "MSPs",
+  "allVMs": "All VMs",
+  "vm": "VM",
+  "comapany": "Company",
+  "vmCreation": "VM Creation",
+  "vmDeletion": "VM Deletion",
+  "settings": "Settings",
+  "value": "Value",
+  "daysUsed": "Days Used",
+  "dayUsed": "Day Used",
+  "disk": "GB Disk",
+  "onlyMyVms": "Only my VMs",
+  "createNfeBtn": "Create invoice",
+  "nfeGenerated": "Invoice generated",
+  "nfeError": "Error generating invoice"
+}

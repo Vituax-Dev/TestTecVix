@@ -1,0 +1,15 @@
+{
+  "diskUsage": "Uso de Disco (%)",
+  "cpuUsage": "Uso de CPU (%)",
+  "memoryUsage": "Uso de Memória (%)",
+  "time": "Tempo",
+  "currentUse": "uso atual",
+  "showGraph": "Gráficos",
+  "errorGraph": "Não foi possível visualizar os gráficos no momento. Para mais informações, converse com nosso ",
+  "suport": "Suporte",
+  "networkUsage": "Uso de Rede (Mbps)",
+  "networkReceived": "Rede Recebida",
+  "networkTransmitted": "Rede Transmitida",
+  "diskReading": "Leitura de Disco (MB/s)",
+  "diskWriting": "Gravação de Disco (MB/s)"
+}

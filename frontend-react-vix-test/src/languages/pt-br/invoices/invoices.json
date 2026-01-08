@@ -1,0 +1,21 @@
+{
+  "reports": "Relatórios",
+  "invoices": "Faturas",
+  "checkDetails": "Confira o detalhamento das suas faturas e serviços.",
+  "msp": "MSP",
+  "msps": "MSPs",
+  "allVMs": "Todas as VMs",
+  "vm": "VM",
+  "comapany": "Empresa",
+  "vmCreation": "Criação de VM",
+  "vmDeletion": "Exclusão de VM",
+  "settings": "Configurações",
+  "value": "Valor",
+  "daysUsed": "Dias usados",
+  "dayUsed": "Dia usado",
+  "disk": "GB Disco",
+  "onlyMyVms": "Apenas minhas VMs",
+  "createNfeBtn": "Criar nota fiscal",
+  "nfeGenerated": "Nota Fiscal gerada",
+  "nfeError": "Erro ao gerar nota fiscal"
+}

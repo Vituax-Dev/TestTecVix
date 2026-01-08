@@ -1,0 +1,133 @@
+default:
+  cache:
+    paths:
+      - node_modules/
+
+stages:
+  - build
+  - test
+  - deploy
+
+# Pipeline para branches de feature
+build_feature:
+  stage: build
+  tags:
+    - docker
+  image: node:16 # Usando uma imagem Node específica
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - dist/ # Ajuste o diretório para onde o build é salvo
+  only:
+    - /^feature\/.*$/
+
+test_feature:
+  stage: test
+  tags:
+    - docker
+  image: node:16 # Adicionando a imagem node:16 para o job de teste
+  script:
+    - npm install # Instala todas as dependências antes de rodar os testes
+    - npm run test:coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)%/'
+  only:
+    - /^feature\/.*$/
+
+# Pipeline para branches de sprint
+build_sprint:
+  stage: build
+  tags:
+    - docker
+  image: node:16
+  script:
+    - npm install
+    - npm run build
+  only:
+    - /^sprint-ref\/.*$/
+
+test_sprint:
+  stage: test
+  tags:
+    - docker
+  image: node:16 # Adicionando a imagem node:16 aqui também
+  script:
+    - npm install # Instala todas as dependências antes de rodar os testes
+    - npm run test:coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)%/'
+  only:
+    - /^sprint-ref\/.*$/
+
+deploy_staging:
+  stage: deploy
+  tags:
+    - docker
+  script:
+    - echo "Deploying to staging environment"
+  environment:
+    name: staging
+    url: https://staging.example.com
+  only:
+    - /^sprint-ref\/.*$/
+
+# Pipeline para branches de hotfix
+build_hotfix:
+  stage: build
+  tags:
+    - docker
+  image: node:16
+  script:
+    - npm install
+    - npm run build
+  only:
+    - /^hotfix\/.*$/
+
+test_hotfix:
+  stage: test
+  tags:
+    - docker
+  image: node:16 # Adicionando a imagem para o job de teste
+  script:
+    - npm install # Instala todas as dependências antes de rodar os testes
+    - npm run test:coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)%/'
+  only:
+    - /^hotfix\/.*$/
+
+# Pipeline para branches de projeto corrigidas (ex: project-ref/XX.yy.01b)
+build_project_hotfix:
+  stage: build
+  tags:
+    - docker
+  image: node:16
+  script:
+    - npm install
+    - npm run build
+  only:
+    - /^project-ref\/.*b$/
+
+test_project_hotfix:
+  stage: test
+  tags:
+    - docker
+  image: node:16 # Também adicionando aqui
+  script:
+    - npm install # Instala todas as dependências antes de rodar os testes
+    - npm run test:coverage
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)%/'
+  only:
+    - /^project-ref\/.*b$/
+
+# Deploy final na main após o hotfix
+deploy_main_after_hotfix:
+  stage: deploy
+  tags:
+    - docker
+  script:
+    - echo "Deploying to production after hotfix"
+  environment:
+    name: production
+    url: https://production.example.com
+  only:
+    - main

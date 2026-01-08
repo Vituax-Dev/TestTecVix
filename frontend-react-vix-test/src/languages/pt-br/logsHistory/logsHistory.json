@@ -1,0 +1,8 @@
+{
+  "user": "Usuário",
+  "dateAndHour": "Data e hora (timestamp)",
+  "action": "Ação",
+  "CREATE": "Criou",
+  "UPDATE": "Atualizou",
+  "DELETE": "Excluiu"
+}

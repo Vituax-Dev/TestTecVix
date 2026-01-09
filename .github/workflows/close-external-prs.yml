@@ -1,0 +1,52 @@
+name: Close external pull requests
+
+on:
+  pull_request_target:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  close_if_external:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close PR if author is not collaborator/member/owner
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const assoc = pr.author_association; 
+            // Possible values: OWNER, MEMBER, COLLABORATOR, CONTRIBUTOR, FIRST_TIMER, NONE, etc.
+            const allowed = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
+
+            if (allowed.has(assoc)) {
+              core.info(`Allowed association: ${assoc}. Keeping PR open.`);
+              return;
+            }
+
+            // Close PR
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              state: "closed",
+            });
+
+            // Comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: [
+                "Olá! 👋",
+                "",
+                "Este repositório não aceita Pull Requests externos.",
+                "Você pode **fazer fork** e manter suas alterações no seu repositório.",
+                "",
+                "Obrigado!"
+              ].join("\n"),
+            });
+
+            core.info(`Closed PR #${pr.number} (author_association=${assoc}).`);

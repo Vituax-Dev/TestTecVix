@@ -66,6 +66,23 @@ Você pode criar, instalar e utilizar outras bibliotecas, porém o **foco princi
 3. Trabalhe no **seu repositório** seguindo o fluxo de desenvolvimento descrito neste README
 4. Faça commits e pushes para o **seu repositório**
 
+### ⚠️ ATENÇÃO: Pull Requests
+
+> **🚨 IMPORTANTE**: Os Pull Requests devem ser feitos **APENAS NO SEU REPOSITÓRIO**, não no repositório da Vituax!
+
+- ✅ **CORRETO**: Criar PRs de `feature/*` → `release` e `release` → `main` **no seu fork**
+- ❌ **INCORRETO**: Criar PRs para o repositório original da Vituax
+
+**Pull Requests externos para o repositório da Vituax serão automaticamente fechados pelo GitHub Actions.**
+
+### 🔓 Repositório Público
+
+> **📢 IMPORTANTE**: Seu repositório fork **DEVE SER PÚBLICO** para que a equipe da Vituax possa avaliar seu trabalho.
+
+Certifique-se de que:
+- [ ] Seu repositório está configurado como **público** (não privado)
+- [ ] A equipe da Vituax consegue acessar o link sem necessidade de permissões especiais
+
 ### 📤 Entrega do Teste
 
 Ao finalizar o teste, você deve:
@@ -82,9 +99,10 @@ Ao finalizar o teste, você deve:
 Antes de enviar, certifique-se de que:
 
 - [ ] O código está no **seu repositório pessoal** do GitHub
+- [ ] O repositório está configurado como **público** (não privado)
 - [ ] A branch `main` contém o projeto original
 - [ ] A branch `release` contém todas as suas modificações
-- [ ] Existe um Pull Request da `release` para a `main`
+- [ ] Existe um Pull Request da `release` para a `main` **no seu repositório**
 - [ ] O README está atualizado com suas modificações
 - [ ] O projeto está funcionando corretamente
 - [ ] As credenciais de teste estão documentadas

@@ -8,7 +8,6 @@ const BASE_PATH = API_VERSION.V1 + ROOT_PATH.USER;
 
 const usersRoutes = Router();
 
-console.log("User BASE_PATH:", BASE_PATH);
 
 
 export const makeUserController = () => {

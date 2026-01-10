@@ -9,4 +9,5 @@ export const ROOT_PATH = {
   VM: "/vm",
   UPLOADS: "/uploads",
   USER: "/users",
+  AUTH: "/auth",
 };

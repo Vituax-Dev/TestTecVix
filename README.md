@@ -459,7 +459,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 🔐 Autenticação e Autorização
 
-- [ ] Implementar as rotas de CRUD para usuários
+- [x] Implementar as rotas de CRUD para usuários
 - [ ] Implementar rota de login do usuário
 - [ ] Implementar tela de login `/login`
 - [ ] Implementar rota de register do usuário

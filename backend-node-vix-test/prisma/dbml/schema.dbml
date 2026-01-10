@@ -59,9 +59,14 @@ Table user {
   password String [not null]
   email String [not null]
   profileImgUrl String
+  userPhoneNumber String
   role ERole [not null, default: 'member']
   idBrandMaster Int
   isActive Boolean [default: true]
+  field String
+  department String
+  fullName String
+  contractDate DateTime
   lastLoginDate DateTime
   createdAt DateTime [default: `now()`]
   updatedAt DateTime [default: `now()`]

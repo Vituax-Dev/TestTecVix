@@ -80,8 +80,8 @@ Você pode criar, instalar e utilizar outras bibliotecas, porém o **foco princi
 > **📢 IMPORTANTE**: Seu repositório fork **DEVE SER PÚBLICO** para que a equipe da Vituax possa avaliar seu trabalho.
 
 Certifique-se de que:
-- [ ] Seu repositório está configurado como **público** (não privado)
-- [ ] A equipe da Vituax consegue acessar o link sem necessidade de permissões especiais
+- [x] Seu repositório está configurado como **público** (não privado)
+- [x] A equipe da Vituax consegue acessar o link sem necessidade de permissões especiais
 
 ### 📤 Entrega do Teste
 
@@ -452,8 +452,8 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 📋 Configuração Inicial
 
-- [ ] Criar arquivo `.env` baseado no `.env.example` (backend)
-- [ ] Criar arquivo `.env` baseado no `.env.exemple` (frontend)
+- [x] Criar arquivo `.env` baseado no `.env.example` (backend)
+- [x] Criar arquivo `.env` baseado no `.env.exemple` (frontend)
 
 ---
 

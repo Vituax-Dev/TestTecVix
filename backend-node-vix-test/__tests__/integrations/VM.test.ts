@@ -1,3 +1,5 @@
+import "@types/jest";
+
 import request from "supertest";
 import { app } from "../../src/app";
 import { API_VERSION, ROOT_PATH } from "../../src/constants/basePathRoutes";

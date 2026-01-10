@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import fs from "fs/promises";
+import bcryptjs from "bcryptjs";
 
 const prisma = new PrismaClient();
 const SEEDS_FOLDER_NAME = ""; // "seeds" folder inside temp folder: ex: "temp/SEEDS_FOLDER_NAME"
@@ -113,6 +114,41 @@ async function main() {
       await seedAll();
     }
   }
+
+  // Create test users
+  console.log("------ Creating test users ----------------");
+  const hashedAdminPass = await bcryptjs.hash("Admin@123", 10);
+  const hashedManagerPass = await bcryptjs.hash("Manager@123", 10);
+  const hashedMemberPass = await bcryptjs.hash("Member@123", 10);
+
+  await prisma.user.create({
+    data: {
+      username: "Admin",
+      email: "admin@vituax.com",
+      password: hashedAdminPass,
+      role: "admin",
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      username: "Manager",
+      email: "manager@vituax.com",
+      password: hashedManagerPass,
+      role: "manager",
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      username: "Member",
+      email: "member@vituax.com",
+      password: hashedMemberPass,
+      role: "member",
+    },
+  });
+
+  console.log("Test users created successfully.");
 
   console.log(
     "The end",

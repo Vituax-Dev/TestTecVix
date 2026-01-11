@@ -43,6 +43,8 @@ Table vM {
   vCPU Int [not null]
   ram Int [not null]
   disk Int [not null]
+  pass String
+  location ETaskLocation [not null, default: 'bre_barueri']
   hasBackup Boolean [default: false]
   idBrandMaster Int
   status EVMStatus
@@ -79,6 +81,11 @@ Enum ERole {
   admin
   manager
   member
+}
+
+Enum ETaskLocation {
+  bre_barueri
+  usa_miami
 }
 
 Ref: vM.idBrandMaster > brandMaster.idBrandMaster

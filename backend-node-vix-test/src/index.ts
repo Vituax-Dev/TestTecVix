@@ -8,9 +8,6 @@ events.EventEmitter.defaultMaxListeners = 20;
 const port = process.env.PORT || 3001;
 const host = "localhost";
 
-console.log("JWT_SECRET carregado:", process.env.JWT_SECRET);
-console.log("JWT_EXPIRES_IN carregado:", process.env.JWT_EXPIRES_IN);
-
 
 if (process.env.NODE_ENV !== "test") {
   (async () => {

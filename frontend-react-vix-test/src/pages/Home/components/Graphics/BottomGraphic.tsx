@@ -17,9 +17,11 @@ import { useTranslation } from "react-i18next";
 
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 import { IFormatData } from "../../../../types/socketType";
+import { EmptyFeedBack } from "./EmptyFeedBack";
+import { generateMockData } from "../../../../utils/generateMockData";
 
 export const BottomGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
+  const [chartData] = useState<IFormatData[]>(generateMockData());
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
 
@@ -29,7 +31,7 @@ export const BottomGraphic = () => {
   const valueColor = lastMemoryData < 80 ? theme[mode].ok : theme[mode].danger;
   const { currentVMName: vmName } = useZGlobalVar();
 
-  // if (!chartData.length) return <EmptyFeedBack />;
+  if (!chartData.length) return <EmptyFeedBack />;
 
   return (
     <Stack

@@ -77,6 +77,7 @@ export const VmCard = ({
   const {
     updateNameVm,
     updateDiskSizeVm,
+    updateVMStatus,
     getVMById: getVMByIdResource,
     isLoading,
     getOS,
@@ -117,12 +118,15 @@ export const VmCard = ({
 
   const handlePaused = () => {
     setStatusState("PAUSED");
+    updateVMStatus({ idVM: vmId, status: "PAUSED" });
     if (checkStatus(statusState, taskState?.action).isRunning)
       setShowConfirmation(true);
   };
 
   const handleStart = () => {
     setStatusState("RUNNING");
+    updateVMStatus({ idVM: vmId, status: "RUNNING" });
+
     if (!checkStatus(statusState, taskState?.action).isRunning)
       setShowConfirmation(true);
   };

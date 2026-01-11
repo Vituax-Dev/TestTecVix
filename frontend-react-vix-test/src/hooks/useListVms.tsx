@@ -33,17 +33,19 @@ export const useListVms = () => {
     } = {},
   ) => {
     const auth = await getAuth();
+
     setIsLoading(true);
+
     const response = await api.get<IListAll<IVMCreatedResponse>>({
       url: "/vm",
       auth,
       params: {
         ...params,
-        //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined
       },
     });
 
     setIsLoading(false);
+
     if (response.error) {
       if (!response.message.includes("expired")) toast.error(response.message);
       setVmList([]);

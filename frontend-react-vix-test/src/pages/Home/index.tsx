@@ -19,10 +19,11 @@ import { useListVms } from "../../hooks/useListVms";
 export const HomePage = () => {
   const { theme, mode } = useZTheme();
   useCloseMenuTimed();
-  const { totalCountVMs } = useZGlobalVar();
+  const { totalCountVMs, currentIdVM } = useZGlobalVar();
   const [selectedChart, setSelectedChart] = useState<
     "main" | "top" | "bottom" | null
   >(null);
+
   const { vmList, isLoading } = useListVms();
 
   return (
@@ -79,7 +80,7 @@ export const HomePage = () => {
                 <>
                   <VmsCardsList />
                   {/* Maps container */}
-                  {Boolean(totalCountVMs) && (
+                  {Boolean(totalCountVMs) && Boolean(currentIdVM) && (
                     <Stack
                       sx={{
                         height: "100%",

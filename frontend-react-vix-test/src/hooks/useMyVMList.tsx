@@ -26,7 +26,7 @@ export const useMyVMList = () => {
       auth,
       params: {
         ...params,
-        //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined
+        //status: params.status,
       },
     });
 

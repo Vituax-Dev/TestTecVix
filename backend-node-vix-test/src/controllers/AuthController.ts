@@ -4,7 +4,8 @@ import { STATUS_CODE } from "../constants/statusCode";
 import { prisma } from "../database/client";
 import { userCreatedSchema } from "../types/validations/User/createUser";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { genToken } from "../utils/jwt"; 
+import { AppError } from "../errors/AppError";
 
 export class AuthController {
   constructor() {}
@@ -55,11 +56,12 @@ export class AuthController {
         return res.status(STATUS_CODE.UNAUTHORIZED).json({ message: "Credenciais inválidas" });
       }
 
-      const token = jwt.sign(
-        { idUser: user.idUser, role: user.role },
-        process.env.JWT_SECRET || "secret",
-        { expiresIn: "1h" }
-      );
+      const token = genToken({
+        idUser: user.idUser,
+        email: user.email,
+        role: user.role,
+      });
+
 
       return res.status(STATUS_CODE.OK).json({
         token,

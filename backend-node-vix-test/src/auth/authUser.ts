@@ -25,7 +25,7 @@ export const authUser = async (
   }
 
   const user = await prisma.user.findUnique({
-    where: { id: idUser },
+    where: { idUser },
   });
 
   if (!user) {

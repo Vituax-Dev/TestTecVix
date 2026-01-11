@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { UserController } from "../controllers/UserController";
 import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
-// import { isManagerOrIsAdmin } from "../auth/isManagerOrIsAdmin";
-// import { isAdmin } from "../auth/isAdmin";
-// import { authUser } from "../auth/authUser";
+import { isManagerOrIsAdmin } from "../auth/isManagerOrIsAdmin";
+import { isAdmin } from "../auth/isAdmin";
+import { authUser } from "../auth/authUser";
+import { isSelfOrIsManagerOrIsAdm } from "../auth/isSelfOrIsManagerOrIsAdm";
 
 const BASE_PATH = API_VERSION.V1 + ROOT_PATH.USER; // /api/v1/user
 
@@ -15,13 +16,19 @@ export const makeUserController = () => {
 
 const userController = makeUserController();
 
-userRoutes.get(`${BASE_PATH}/self`, async (req, res) => {
-  await userController.getSelf(req, res);
-});
+userRoutes.get(
+  `${BASE_PATH}/self`,
+  authUser,
+  isSelfOrIsManagerOrIsAdm,
+  async (req, res) => {
+    await userController.getSelf(req, res);
+  },
+);
 
 userRoutes.get(
   `${BASE_PATH}/:idUser`,
-  // authUser
+  authUser,
+  isManagerOrIsAdmin,
   async (req, res) => {
     await userController.getById(req, res);
   },
@@ -29,7 +36,8 @@ userRoutes.get(
 
 userRoutes.get(
   `${BASE_PATH}`,
-  // authUser
+  authUser,
+  isManagerOrIsAdmin,
   async (req, res) => {
     await userController.listAll(req, res);
   },
@@ -37,8 +45,8 @@ userRoutes.get(
 
 userRoutes.post(
   `${BASE_PATH}`,
-  // authUser,
-  // isManagerOrIsAdmin,
+  authUser,
+  isManagerOrIsAdmin,
   async (req, res) => {
     await userController.createNewUser(req, res);
   },
@@ -46,8 +54,8 @@ userRoutes.post(
 
 userRoutes.put(
   `${BASE_PATH}/:idUser`,
-  // authUser,
-  // isManagerOrIsAdmin,
+  authUser,
+  isManagerOrIsAdmin,
   async (req, res) => {
     await userController.updateUser(req, res);
   },
@@ -55,8 +63,8 @@ userRoutes.put(
 
 userRoutes.delete(
   `${BASE_PATH}/:idUser`,
-  // authUser,
-  // isAdmin,
+  authUser,
+  isAdmin,
   async (req, res) => {
     await userController.deleteUser(req, res);
   },

@@ -8,6 +8,12 @@ import {
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
+import {
+  TUserUpdated,
+  userUpdatedSchema,
+} from "../types/validations/User/updateUser";
+
+import bcryptjs from "bcryptjs";
 
 export class UserService {
   constructor() {}
@@ -24,7 +30,13 @@ export class UserService {
 
   async createNewUser(data: TUserCreated) {
     const validData = userCreatedSchema.parse(data);
-    const newUser = await this.userModel.createNewUser(validData);
+
+    const hashedPassword = await bcryptjs.hash(validData.password, 10);
+
+    const newUser = await this.userModel.createNewUser({
+      ...validData,
+      password: hashedPassword,
+    });
     return newUser;
   }
 
@@ -33,7 +45,7 @@ export class UserService {
     idUser,
   }: {
     user: user;
-    validData: TUserCreated;
+    validData: TUserUpdated;
     idUser: string;
     oldUser: user;
   }) {
@@ -41,8 +53,9 @@ export class UserService {
   }
 
   async updateUser(idUser: string, data: unknown, user: user) {
-    const validData = userCreatedSchema.parse(data);
+    const validData = userUpdatedSchema.parse(data);
     const oldUser = await this.userModel.getById(idUser);
+
     if (!oldUser) {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }

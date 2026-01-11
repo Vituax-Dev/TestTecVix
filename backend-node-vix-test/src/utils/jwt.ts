@@ -1,5 +1,8 @@
-import jwt, { TokenExpiredError } from "jsonwebtoken";
-// import { AppError } from "../errors/AppError";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import { AppError } from "../errors/AppError";
+import { ERROR_MESSAGE } from "../constants/erroMessages";
+import { STATUS_CODE } from "../constants/statusCode";
 
 const secret = process.env.JWT_SECRET || "default_secret";
 
@@ -17,7 +20,14 @@ export const verifyToken = (token: string) => {
   try {
     return jwt.verify(token, secret) as IPayload;
   } catch (error) {
-    // throws new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
-    throw error;
+    if (error instanceof TokenExpiredError) {
+      throw new AppError(ERROR_MESSAGE.TOKEN_EXPIRED, STATUS_CODE.UNAUTHORIZED);
+    }
+
+    if (error instanceof JsonWebTokenError) {
+      throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
+    }
+
+    throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
   }
 };

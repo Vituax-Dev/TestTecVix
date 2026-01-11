@@ -19,10 +19,14 @@ export const authUser = async (
   }
   const token = authorization.split(" ")[1];
 
-  const idUser = verifyToken(token);
+  const { idUser } = verifyToken(token);
+
+  if (!idUser) {
+    throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
+  }
 
   const user = await prisma.user.findUnique({
-    where: { idUser: idUser.idUser },
+    where: { idUser },
   });
 
   if (!user) {

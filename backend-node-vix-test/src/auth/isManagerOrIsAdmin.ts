@@ -11,8 +11,10 @@ export const isManagerOrIsAdmin = (
   next: NextFunction,
 ) => {
   const user = req.user as user;
+
   if (user.role !== "admin" && user.role !== "manager") {
     throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
   }
+
   return next();
 };

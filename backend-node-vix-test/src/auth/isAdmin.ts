@@ -11,8 +11,10 @@ export const isAdmin = (
   next: NextFunction,
 ) => {
   const user = req.user as user;
+
   if (user.role !== "admin") {
     throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
   }
+
   return next();
 };

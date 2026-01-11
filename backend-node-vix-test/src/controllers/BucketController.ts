@@ -12,12 +12,22 @@ export class BucketController {
     res: Response,
   ) {
     const { objectName } = req.params;
+    if (!objectName || typeof objectName !== "string") {
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ message: "Invalid object name" });
+    }
     const filePath = path.join(__dirname, "..", "..", "uploads", objectName);
     return res.sendFile(filePath);
   }
 
   async getFileByObjectName(req: CustomRequest<unknown>, res: Response) {
     const { objectName } = req.params;
+    if (!objectName || typeof objectName !== "string") {
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ message: "Invalid object name" });
+    }
     const response = await this.bucketService.renewPresignedUrl(objectName);
     return res.status(STATUS_CODE.OK).json({ url: response });
   }

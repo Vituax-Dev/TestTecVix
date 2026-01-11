@@ -6,6 +6,7 @@ import { STATUS_CODE } from "../constants/statusCode";
 
 export class UserController {
   constructor() {}
+
   private userService = new UserService();
 
   async getSelf(req: CustomRequest<unknown>, res: Response) {

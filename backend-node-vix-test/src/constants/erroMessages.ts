@@ -1,6 +1,7 @@
 export const ERROR_MESSAGE = {
   INVALID_CREDENTIALS: "Invalid credentials",
   INVALID_TOKEN: "Invalid token",
+  TOKEN_EXPIRED: "Token Expired",
   INVALID_EMAIL_OR_PASSWORD: "Invalid email or password",
   INVALID_OPERATION: "Invalid operation",
   SERVER_ERROR: "Internal server error",

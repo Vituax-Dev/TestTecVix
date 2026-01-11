@@ -24,6 +24,7 @@ export class BucketController {
 
   async uploadFile(req: CustomRequest<unknown>, res: Response) {
     const file = req.file;
+
     if (!file)
       return res
         .status(STATUS_CODE.BAD_REQUEST)

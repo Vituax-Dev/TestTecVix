@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
-import { API_VERSION } from "../constants/basePathRoutes";
+import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
 
-const BASE_PATH = API_VERSION.V1 + "/auth";
+const BASE_PATH = API_VERSION.V1 + ROOT_PATH.AUTH;
 
 const authRoutes = Router();
 

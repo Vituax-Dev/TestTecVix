@@ -15,9 +15,11 @@ import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 import { IFormatData } from "../../../../types/socketType";
+import { EmptyFeedBack } from "./EmptyFeedBack";
+import { generateMockData } from "../../../../utils/generateMockData";
 
 export const MainGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
+  const [chartData] = useState<IFormatData[]>(generateMockData());
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
 
@@ -32,7 +34,7 @@ export const MainGraphic = () => {
 
   const { currentVMName: vmName } = useZGlobalVar();
 
-  // if (!chartData.length) return <EmptyFeedBack />;
+  if (!chartData.length) return <EmptyFeedBack />;
 
   return (
     <Stack
@@ -106,7 +108,7 @@ export const MainGraphic = () => {
             dot={false}
             isAnimationActive={false}
             legendType="none" // retira legenda
-            // name="CPU Usage (%)" // renomeia a legenda
+            name="CPU Usage (%)" // renomeia a legenda
           />
         </AreaChart>
       </ResponsiveContainer>

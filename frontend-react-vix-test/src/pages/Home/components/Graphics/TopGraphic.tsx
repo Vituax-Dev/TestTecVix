@@ -5,6 +5,7 @@ import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { IFormatData } from "../../../../types/socketType";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
+import { EmptyFeedBack } from "./EmptyFeedBack";
 
 export const TopGraphic = () => {
   const [isLoading] = useState(false);
@@ -64,7 +65,7 @@ export const TopGraphic = () => {
 
   const { currentVMName: vmName } = useZGlobalVar();
 
-  // if (!chartData.length) return <EmptyFeedBack />;
+  if (!chartData.length) return <EmptyFeedBack />;
 
   return (
     <Stack

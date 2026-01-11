@@ -1,4 +1,4 @@
-## Usuários de Teste:
+## Usuários para Teste:
 
 Admin:
   Email: admin@vituax.com

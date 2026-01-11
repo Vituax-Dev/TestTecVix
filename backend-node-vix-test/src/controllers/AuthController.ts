@@ -16,4 +16,14 @@ export class AuthController {
     const result = await this.authService.register(req.body);
     return res.status(STATUS_CODE.CREATED).json(result);
   }
+
+  async getNewToken(req: CustomRequest<unknown>, res: Response) {
+    const { idUser } = req.params;
+
+    const result = await this.authService.getNewToken(idUser);
+
+    console.log("Result: ", result);
+
+    return res.status(STATUS_CODE.OK).json(result);
+  }
 }

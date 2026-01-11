@@ -99,4 +99,24 @@ export class AuthService {
       token,
     };
   }
+
+  async getNewToken(idUser: string) {
+    const user = await this.userModel.getById(idUser);
+
+    console.log("user ", user);
+
+    if (!user) {
+      throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
+    const token = genToken({
+      idUser: user.idUser,
+      email: user.email,
+      role: user.role,
+    });
+
+    console.log("Token: ", token);
+
+    return { token };
+  }
 }

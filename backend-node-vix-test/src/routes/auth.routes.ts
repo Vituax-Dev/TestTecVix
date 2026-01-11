@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
@@ -18,6 +19,11 @@ authRoutes.post(`${BASE_PATH}/login`, async (req, res) => {
 
 authRoutes.post(`${BASE_PATH}/register`, async (req, res) => {
   await authController.register(req, res);
+});
+
+authRoutes.get(`${BASE_PATH}/token/:idUser`, async (req, res) => {
+  const result = await authController.getNewToken(req, res);
+  console.log("Auth Route: ", result);
 });
 
 export { authRoutes };

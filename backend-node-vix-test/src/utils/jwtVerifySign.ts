@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
+import { IPayload } from "./jwt";
 
 const secret = process.env.SIGN_HASH;
-
-interface IPayload {}
 
 export const jwtVerifySign = (token: string): IPayload | null => {
   try {

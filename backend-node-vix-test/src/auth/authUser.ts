@@ -13,6 +13,7 @@ export const authUser = async (
   next: NextFunction,
 ) => {
   const { authorization } = req.headers;
+
   if (!authorization) {
     throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
   }

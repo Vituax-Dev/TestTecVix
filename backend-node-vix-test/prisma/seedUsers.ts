@@ -4,14 +4,10 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding users...");
-
-  // Hash das senhas
   const hashPassword = async (password: string) => {
     return await bcrypt.hash(password, 10);
   };
 
-  // Criar ou atualizar usuários
   const users = [
     {
       email: "admin@vituax.com",
@@ -48,21 +44,21 @@ async function main() {
           isActive: true,
         },
       });
-      console.log(`✅ Usuário ${userData.email} atualizado!`);
+      console.log(`User ${userData.email} updated!`);
     } else {
       await prisma.user.create({
         data: userData,
       });
-      console.log(`✅ Usuário ${userData.email} criado!`);
+      console.log(`User ${userData.email} created!`);
     }
   }
 
-  console.log("🎉 Seed concluído com sucesso!");
+  console.log("Seed completed successfully!");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Erro ao fazer seed:", e);
+    console.error("Error during seed:", e);
     process.exit(1);
   })
   .finally(async () => {

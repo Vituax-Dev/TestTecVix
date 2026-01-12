@@ -2,7 +2,7 @@ import { prisma } from "../database/client";
 import { TVMCreate } from "../types/validations/VM/createVM";
 import { TVMUpdate } from "../types/validations/VM/updateVM";
 import { IListAllVM } from "../types/IListAll";
-import moment from "moment";
+import { Prisma } from "@prisma/client";
 
 export class VMModel {
   async getById(idVM: number) {
@@ -28,27 +28,39 @@ export class VMModel {
     });
   }
 
-  async listAll({ query, idBrandMaster }: IListAllVM) {
+  async listAll({ query, idBrandMaster, user }: IListAllVM) {
     const limit = query.limit || 0;
     const skip = query.page ? query.page * limit : query.offset || 0;
-    const { status, idBrandMaster: idBrandMasterParams } = query;
+
+    const { status, onlyMyVMs } = query;
+
     const orderBy =
       query.orderBy?.map(({ field, direction }) => ({
         [field]: direction,
       })) || [];
 
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
+    const where: Prisma.vMWhereInput = {
+      deletedAt: null,
+    };
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (query.search) {
+      where.vmName = {
+        contains: query.search,
+      };
+    }
+
+    if (onlyMyVMs) {
+      where.idBrandMaster = user.idBrandMaster;
+    } else if (idBrandMaster && idBrandMaster !== null) {
+      where.idBrandMaster = Number(idBrandMaster);
+    }
 
     const vms = await prisma.vM.findMany({
-      where: {
-        deletedAt: null,
-        idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
-        status,
-        vmName: {
-          contains: query.search,
-        },
-      },
+      where,
       skip,
       take: limit || undefined,
       orderBy: orderBy.length
@@ -69,7 +81,9 @@ export class VMModel {
     const totalCount = await this.totalCount({
       query,
       idBrandMaster,
+      user,
     });
+
     return { totalCount, result: vms };
   }
 

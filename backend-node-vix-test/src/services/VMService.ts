@@ -18,8 +18,15 @@ export class VMService {
 
   async listAll(query: unknown, user: user) {
     const validQuery = vmListAllSchema.parse(query);
+
+    const idBrandMaster = validQuery.onlyMyVMs
+      ? user.idBrandMaster
+      : validQuery.idBrandMaster;
+
     return this.vMModel.listAll({
       query: validQuery,
+      user,
+      idBrandMaster: Number(idBrandMaster),
     });
   }
 

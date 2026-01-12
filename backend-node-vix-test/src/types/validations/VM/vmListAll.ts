@@ -34,6 +34,10 @@ export const vmListAllSchema = querySchema.merge(
             : parseInt(val.toString())
           : val,
       ),
+    onlyMyVMs: z
+      .union([z.boolean(), z.string()])
+      .optional()
+      .transform((val) => (val === "true" || val === true ? true : false)),
   }),
 );
 

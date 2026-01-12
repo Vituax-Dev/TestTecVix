@@ -32,6 +32,7 @@ export const Header = () => {
 
   const fetchMSPs = async () => {
     const auth = await getAuth();
+
     const response = await api.get<
       IListAll<{
         idBrandMaster: number;
@@ -200,10 +201,10 @@ export const Header = () => {
           value={
             selectedMSP
               ? {
-                id: selectedMSP.idBrandMaster,
-                label: selectedMSP.brandName,
-                value: selectedMSP,
-              }
+                  id: selectedMSP.idBrandMaster,
+                  label: selectedMSP.brandName,
+                  value: selectedMSP,
+                }
               : null
           }
           sxContainer={{

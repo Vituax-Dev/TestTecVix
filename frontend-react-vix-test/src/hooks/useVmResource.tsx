@@ -127,6 +127,7 @@ export const useVmResource = () => {
     setIsLoadingCreateVM(true);
 
     const auth = await getAuth();
+
     const response = await api.post<IVMCreatedResponse>({
       url: "/vm",
       data: {

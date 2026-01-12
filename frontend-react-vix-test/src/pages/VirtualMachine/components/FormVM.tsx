@@ -18,8 +18,9 @@ import { PasswordValidations } from "./PasswordValidations";
 import { useZVMSugestion } from "../../../stores/useZVMSugestion";
 import { ENetworkType } from "../../../types/VMTypes";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
-import { BTNISOsSection } from "./BTNISOsSection";
+//import { BTNISOsSection } from "./BTNISOsSection";
 import { useZVM } from "../../../stores/useZVM";
+import { osOptions } from "../../../utils/osOptions";
 
 export const FormVM = () => {
   const { t } = useTranslation(); // createVm
@@ -121,11 +122,12 @@ export const FormVM = () => {
     !vmNetwork;
 
   useEffect(() => {
-    if (sugestionOS)
-      setVmSO({
-        label: sugestionOS,
-        value: sugestionOS,
-      });
+    if (sugestionOS) {
+      const osOption = osOptions.find((opt) => opt.value === sugestionOS);
+      if (osOption) {
+        setVmSO(osOption);
+      }
+    }
     if (sugestionVCPU) setVmvCpu(sugestionVCPU);
     if (sugestionRAM) setVmMemory(sugestionRAM);
     if (sugestionDisk) setVmDisk(sugestionDisk);
@@ -225,7 +227,12 @@ export const FormVM = () => {
             value={vmLocalization}
             onChange={setVmLocalization}
           />
-          <BTNISOsSection vmNameLabel={vmSO?.label} />
+          <DropDowText
+            label={t("createVm.operationalSystem")}
+            data={osOptions}
+            value={vmSO}
+            onChange={setVmSO}
+          />
         </Stack>
         {/* Sliders */}
         <Stack

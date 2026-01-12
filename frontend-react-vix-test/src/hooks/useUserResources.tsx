@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 export interface IUserDB {
-  idUser: number;
+  idUser: string;
   idBrandMaster: number | null;
   username: string;
   email: string;

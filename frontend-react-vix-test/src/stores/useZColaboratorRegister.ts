@@ -4,7 +4,7 @@ import {
 } from "../types/BrandMasterTypes";
 
 export type Colaborator = {
-  idUser: number;
+  idUser: string;
   name: string;
   username?: string;
   email: string;
@@ -20,7 +20,7 @@ export type Colaborator = {
 };
 
 export interface ColaboratorRegisterInputs {
-  idUser?: number | null;
+  idUser?: string | null;
   colaboratorName: string;
   email: string;
   phone: string;

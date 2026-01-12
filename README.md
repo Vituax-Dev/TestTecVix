@@ -463,7 +463,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 - [x] Implementar rota de login do usuário
 - [x] Implementar tela de login `/login`
 - [x] Implementar rota de register do usuário
-- [ ] Implementar tela de register `/register`
+- [x] Implementar tela de register `/register`
 - [x] Implementar autenticação com token JWT
 - [x] Proteger as rotas da aplicação (exceto login e register) para que somente usuários logados possam acessar
 - [ ] Adicionar credenciais de usuários de teste no README e/ou `.env.example`

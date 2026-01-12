@@ -16,7 +16,7 @@ export const makeVMController = () => {
 const vMController = makeVMController();
 
 // ========= GETs =========
-vMRoutes.get(BASE_PATH, authUser, isManagerOrIsAdmin, async (req, res) => {
+vMRoutes.get(BASE_PATH, authUser, async (req, res) => {
   await vMController.listAll(req, res);
 });
 

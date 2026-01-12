@@ -15,18 +15,19 @@ export const useMyVMList = () => {
       page?: number;
       limit?: number;
       search?: string;
-      orderBy?: string; // field_name:asc or field_name:desc
+      orderBy?: string;
       idBrandMaster?: number | "null";
+      onlyMyVMs?: boolean;
     } = {},
   ) => {
     const auth = await getAuth();
     setIsLoading(true);
+
     const response = await api.get<IListAll<IVMCreatedResponse>>({
       url: "/vm",
       auth,
       params: {
         ...params,
-        //status: params.status,
       },
     });
 
@@ -36,8 +37,8 @@ export const useMyVMList = () => {
       return { totalCount: 0, vmList: [] };
     }
 
-    const vmList = response.data?.result;
-    const totalCount = parseInt(response.data?.totalCount?.toString());
+    const vmList = response.data?.result || [];
+    const totalCount = parseInt(response.data?.totalCount?.toString() || "0");
     return { totalCount, vmList };
   };
 

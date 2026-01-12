@@ -35,21 +35,28 @@ export const MyVMsPage = () => {
     selectedMSP,
   } = useZMyVMsList();
   const { fetchMyVmsList, isLoading } = useMyVMList();
-  const { idBrand } = useZUserProfile();
   const { isOpenSideBar } = useZGlobalVar();
   const { width } = useWindowSize();
   const { updateThisVm, setUpdateThisVm } = useZGlobalVar();
   const { socketRef } = useZGlobalVar();
 
   const handlerFetchVMList = async (page: number = 0) => {
-    const { totalCount, vmList } = await fetchMyVmsList({
+    const idBrandMasterToSend = onlyMyVMs
+      ? undefined
+      : selectedMSP?.idBrandMaster || undefined;
+
+    const params = {
       search,
       page: page || currentPage - 1 || 0,
       orderBy: orderBy ? `${orderBy}:${order}` : undefined,
       limit,
-      idBrandMaster: idBrand,
+      idBrandMaster: idBrandMasterToSend,
       status,
-    });
+      onlyMyVMs,
+    };
+
+    const { totalCount, vmList } = await fetchMyVmsList(params);
+
     setVMList(vmList);
     setTotalCount(totalCount);
     if (isFirstLoading) setIsFirstLoading(false);

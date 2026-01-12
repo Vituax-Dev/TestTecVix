@@ -11,7 +11,7 @@ export const mainRoutes = [
   DefaultRouter,
   HomeRouter,
   LoginRouter,
-  // RegisterRouter, // Descomentar para renderizar o register
+  RegisterRouter,
   VirtualMachineRouter,
   MyVMsRouter,
   MSPRegisterRouter,

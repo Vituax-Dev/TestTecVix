@@ -30,6 +30,7 @@ export class AuthController {
         username: user.username,
         email: user.email,
         role: user.role,
+        isActive: user.isActive,
         createdAt: user.createdAt,
       });
     } catch (err: any) {
@@ -70,6 +71,7 @@ export class AuthController {
           username: user.username,
           email: user.email,
           role: user.role,
+          isActive: user.isActive,
         },
       });
     } catch (err) {

@@ -389,16 +389,16 @@ Exemplo:
 
 ```
 Admin:
-  Email: admin@vituax.com
-  Senha: Admin@123
+  Email: admin@example.com
+  Senha: SenhaAdmin123
 
 Manager:
-  Email: manager@vituax.com
-  Senha: Manager@123
+  Email: manager@example.com
+  Senha: SenhaManager123
 
 Member:
-  Email: member@vituax.com
-  Senha: Member@123
+  Email: member@example.com
+  Senha: SenhaMember123
 ```
 
 ---
@@ -466,7 +466,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 - [x] Implementar tela de register `/register`
 - [x] Implementar autenticação com token JWT
 - [x] Proteger as rotas da aplicação (exceto login e register) para que somente usuários logados possam acessar
-- [ ] Adicionar credenciais de usuários de teste no README e/ou `.env.example`
+- [x] Adicionar credenciais de usuários de teste no README e/ou `.env.example`
 
 ---
 

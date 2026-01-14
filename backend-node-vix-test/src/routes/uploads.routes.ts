@@ -2,6 +2,7 @@ import { Router } from "express";
 import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
 import { BucketController } from "../controllers/BucketController";
 import { BucketLocalService } from "../services/BucketLocalService";
+import multer from "multer";
 
 const BASE_PATH = API_VERSION.V1 + ROOT_PATH.UPLOADS; // /api/v1/uploads
 
@@ -13,6 +14,15 @@ export const makeBucketController = () => {
 };
 
 const uploadsController = makeBucketController();
+const upload = multer();
+
+uploadsRoutes.post(
+  `${BASE_PATH}/file`,
+  upload.single("file"),
+  async (req, res) => {
+    await uploadsController.uploadFile(req, res);
+  },
+);
 
 uploadsRoutes.get(`${BASE_PATH}/:objectName`, async (req, res) => {
   await uploadsController.getFileInBucketByObjectName(req, res);

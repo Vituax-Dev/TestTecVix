@@ -22,8 +22,6 @@ export class AuthController {
 
     const result = await this.authService.getNewToken(idUser);
 
-    console.log("Result: ", result);
-
     return res.status(STATUS_CODE.OK).json(result);
   }
 }

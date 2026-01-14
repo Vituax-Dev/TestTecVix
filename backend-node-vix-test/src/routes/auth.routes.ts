@@ -22,8 +22,7 @@ authRoutes.post(`${BASE_PATH}/register`, async (req, res) => {
 });
 
 authRoutes.get(`${BASE_PATH}/token/:idUser`, async (req, res) => {
-  const result = await authController.getNewToken(req, res);
-  console.log("Auth Route: ", result);
+  await authController.getNewToken(req, res);
 });
 
 export { authRoutes };

@@ -46,7 +46,7 @@ export const useStatusInfo = () => {
 
       case statusObj.isPaused:
         return {
-          text: t("myVMs.paused"),
+          text: t("myVMs.pausedSingular"), // 🔧 Alterado para usar o singular
           color: theme[mode].dark,
           background: theme[mode].tertiary,
           isWaiting: false,
@@ -82,8 +82,9 @@ export const useStatusInfo = () => {
   const statusHashMap = {
     null: t("myVMs.waiting"),
     RUNNING: t("myVMs.active"),
-    PAUSED: t("home.pause"),
+    PAUSED: t("myVMs.pausedSingular"), // 🔧 Alterado para usar o singular
     STOPPED: t("home.stop"),
   };
+
   return { getStatus, statusHashMap };
 };

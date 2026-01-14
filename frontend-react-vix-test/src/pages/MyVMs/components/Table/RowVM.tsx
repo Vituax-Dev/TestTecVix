@@ -22,6 +22,7 @@ import { PlayCircleIcon } from "../../../../icons/PlayCircleIcon";
 import { StopCircleIcon } from "../../../../icons/StopCircleIcon";
 import { ModalStartVM } from "../ModalStartVM";
 import { ModalStopVM } from "../ModalStopVM";
+import { checkStatus } from "../../../../utils/checkStatus";
 import { useStatusInfo } from "../../../../hooks/useStatusInfo";
 
 interface IProps {
@@ -35,8 +36,13 @@ export const RowVM = ({ vm, index }: IProps) => {
   const [vmIDToStop, setVmIDToStop] = React.useState<number>(0);
   const [vmIDToStart, setVmIDToStart] = React.useState<number>(0);
   const { currentVM, setCurrentVM } = useZMyVMsList();
+  const {
+    getOS,
+    getVMById,
+    isLoading: isLoadingVm,
+    updateVMStatus,
+  } = useVmResource();
   const { getStatus } = useStatusInfo();
-  const { getOS, getVMById, isLoading: isLoadingVm } = useVmResource();
 
   const idVM: number = Number(row.idVM);
   const labelId = `enhanced-table-checkbox-${index}`;
@@ -48,11 +54,32 @@ export const RowVM = ({ vm, index }: IProps) => {
     setCurrentVM(newVMCurrent);
   };
 
+  const handleStop = async () => {
+    setVmIDToStop(row.idVM);
+  };
+
+  const handleStart = async () => {
+    setVmIDToStart(row.idVM);
+  };
+
   const handleConfirVMStatusChange = async () => {
-    const updatedVM = await getVMById(vmIDToStop || vmIDToStart);
+    const idVM = vmIDToStop || vmIDToStart;
+    const newStatus = vmIDToStop ? "STOPPED" : "RUNNING";
+
+    const updatedVM = await updateVMStatus({
+      idVM,
+      status: newStatus,
+    });
+
     if (updatedVM) {
       setRow(updatedVM);
+    } else {
+      const currentVM = await getVMById(idVM);
+      if (currentVM) {
+        setRow(currentVM);
+      }
     }
+
     setVmIDToStop(0);
     setVmIDToStart(0);
   };
@@ -61,10 +88,12 @@ export const RowVM = ({ vm, index }: IProps) => {
     setRow(vm);
   }, [vm]);
 
+  const vmStatus = checkStatus(row.status);
+  const statusInfo = getStatus(row);
+
   return (
     <React.Fragment key={`row-fragment-${idVM}`}>
       <TableRow
-        // hover
         tabIndex={-1}
         key={row.idVM}
         sx={{
@@ -96,7 +125,6 @@ export const RowVM = ({ vm, index }: IProps) => {
               maxWidth: "200px",
             }}
           >
-            {/* Logo */}
             <Stack
               sx={{
                 width: "24px",
@@ -131,6 +159,7 @@ export const RowVM = ({ vm, index }: IProps) => {
             </Typography>
           </Stack>
         </TableCell>
+
         {/* Status - monitor - terminal */}
         <TableCell
           key={row.idVM + "status"}
@@ -166,9 +195,9 @@ export const RowVM = ({ vm, index }: IProps) => {
               {row.vmIpsRegions?.region.includes("usa") && <ImgFlagOfEUA />}
               <Stack
                 sx={{
-                  backgroundColor: getStatus(row).background,
+                  backgroundColor: statusInfo.background,
                   width: "fit-content",
-                  color: getStatus(row).color,
+                  color: statusInfo.color,
                   px: "8px",
                   borderRadius: "12px",
                   "@media (max-width: 700px)": {
@@ -176,13 +205,14 @@ export const RowVM = ({ vm, index }: IProps) => {
                     height: "12px",
                     padding: 0,
                     overflow: "hidden",
-                    color: getStatus(row).background,
+                    color: statusInfo.background,
                   },
                 }}
               >
-                {getStatus(row).text}
+                {statusInfo.text}
               </Stack>
             </Stack>
+
             {/* Terminal & Monitor */}
             <Stack
               sx={{
@@ -197,7 +227,7 @@ export const RowVM = ({ vm, index }: IProps) => {
             >
               {getOS({ osValue: row.os }).hasTerminal && (
                 <Btn
-                  disabled={isLoading || !getStatus(row).isRunning}
+                  disabled={isLoading || !statusInfo.isRunning}
                   onClick={() => {}}
                   sx={{
                     width: "40px",
@@ -224,10 +254,9 @@ export const RowVM = ({ vm, index }: IProps) => {
                   />
                 </Btn>
               )}
-              {/* Monitor */}
               {getOS({ osValue: row.os }).hasMonitor && (
                 <Btn
-                  disabled={isLoading || !getStatus(row).isRunning}
+                  disabled={isLoading || !statusInfo.isRunning}
                   onClick={() => {}}
                   sx={{
                     width: "40px",
@@ -257,6 +286,7 @@ export const RowVM = ({ vm, index }: IProps) => {
             </Stack>
           </Stack>
         </TableCell>
+
         {/* vCPU */}
         <TableCell
           key={row.idVM + "vcpu"}
@@ -272,6 +302,7 @@ export const RowVM = ({ vm, index }: IProps) => {
         >
           {`${row.vCPU}`}
         </TableCell>
+
         {/* RAM */}
         <TableCell
           key={row.idVM + "ram"}
@@ -285,6 +316,7 @@ export const RowVM = ({ vm, index }: IProps) => {
         >
           {`${row.ram} GB`}
         </TableCell>
+
         {/* Disk */}
         <TableCell
           key={row.idVM + "disk"}
@@ -298,6 +330,7 @@ export const RowVM = ({ vm, index }: IProps) => {
         >
           {`${row.disk} GB`}
         </TableCell>
+
         {/* OS */}
         <TableCell
           key={row.idVM + "os"}
@@ -330,6 +363,7 @@ export const RowVM = ({ vm, index }: IProps) => {
             </Typography>
           </Stack>
         </TableCell>
+
         {/* Owner */}
         <TableCell
           key={row.idVM + "owner"}
@@ -355,6 +389,7 @@ export const RowVM = ({ vm, index }: IProps) => {
             {`${getVMOwnership(row).name}`}
           </TextRob16FontL>
         </TableCell>
+
         {/* Stop / Start / Edit */}
         <TableCell
           key={row.idVM + "edit"}
@@ -380,10 +415,11 @@ export const RowVM = ({ vm, index }: IProps) => {
               },
             }}
           >
-            {getStatus(row).isRunning && (
+            {/* Botão Stop - aparece apenas quando RUNNING */}
+            {vmStatus.isRunning && (
               <IconButton
-                disabled={row.status === "STOPPED" || row.status === null}
-                onClick={() => setVmIDToStop(row.idVM)}
+                disabled={isLoading || vmStatus.isWaiting}
+                onClick={handleStop}
                 sx={{
                   gap: "8px",
                   ":hover": { opacity: 0.8 },
@@ -393,10 +429,12 @@ export const RowVM = ({ vm, index }: IProps) => {
                 <StopCircleIcon fill={theme[mode].lightRed} />
               </IconButton>
             )}
-            {getStatus(row).isStopped && (
+
+            {/* Botão Start - aparece quando STOPPED ou PAUSED */}
+            {(vmStatus.isStopped || vmStatus.isPaused) && (
               <IconButton
-                disabled={row.status === "RUNNING" || row.status === null}
-                onClick={() => setVmIDToStart(row.idVM)}
+                disabled={isLoading || vmStatus.isWaiting}
+                onClick={handleStart}
                 sx={{
                   gap: "8px",
                   ":hover": { opacity: 0.8 },
@@ -406,6 +444,8 @@ export const RowVM = ({ vm, index }: IProps) => {
                 <PlayCircleIcon fill={theme[mode].greenLight} />
               </IconButton>
             )}
+
+            {/* Botão Editar */}
             <Btn
               onClick={() => handleClick(row)}
               sx={{
@@ -418,6 +458,7 @@ export const RowVM = ({ vm, index }: IProps) => {
         </TableCell>
       </TableRow>
 
+      {/* Modais */}
       {Boolean(vmIDToStart) && (
         <ModalStartVM
           vmName={row.vmName}

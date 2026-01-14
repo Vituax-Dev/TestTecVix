@@ -3,7 +3,7 @@ import { TextRob18Font2M } from "../../../components/Text2M";
 import { useZTheme } from "../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { LabelInputVM } from "../../VirtualMachine/components/LabelInputVM";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useVmResource } from "../../../hooks/useVmResource";
 import { TOptions } from "../../../types/FormType";
 import { DropDowText } from "../../VirtualMachine/components/DropDowText";
@@ -14,8 +14,8 @@ import { TextRob16Font1S } from "../../../components/Text1S";
 import { ModalConfirmCreate } from "../../VirtualMachine/components/ModalConfirmCreate";
 import { CloseXIcon } from "../../../icons/CloseXIcon";
 import { useZMyVMsList } from "../../../stores/useZMyVMsList";
+import { useZUserProfile } from "../../../stores/useZUserProfile";
 import { PlayCircleIcon } from "../../../icons/PlayCircleIcon";
-// import { PauseCircleIcon } from "../../../icons/PauseCircleIcon";
 import { StopCircleIcon } from "../../../icons/StopCircleIcon";
 import { TextRob16FontL } from "../../../components/TextL";
 import { useStatusInfo } from "../../../hooks/useStatusInfo";
@@ -24,10 +24,12 @@ import { ModalDeleteVM } from "./ModalDeleteVM";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
 import { ModalStartVM } from "./ModalStartVM";
 import { ModalStopVM } from "./ModalStopVM";
+import { osOptions } from "../../../utils/osOptions";
 
 interface IProps {
   onClose: (edit?: boolean) => void;
 }
+
 export const FormEditVM = ({ onClose }: IProps) => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
@@ -44,107 +46,157 @@ export const FormEditVM = ({ onClose }: IProps) => {
 
   const { statusHashMap } = useStatusInfo();
   const { currentVM, setCurrentVM } = useZMyVMsList();
-  const [vmPassword, setVmPassword] = useState(currentVM.pass);
-  const [vmName, setVmName] = useState(currentVM.vmName);
+  const { role } = useZUserProfile();
+
+  // Estados inicializados com os valores da VM atual
+  const [vmPassword, setVmPassword] = useState(currentVM?.pass || "");
+  const [vmName, setVmName] = useState(currentVM?.vmName || "");
   const [vmSO, setVmSO] = useState<TOptions>({
-    label: currentVM.os,
-    value: currentVM.os,
+    label: currentVM?.os || "",
+    value: currentVM?.os || "",
   });
-  const [vmvCpu, setVmvCpu] = useState(currentVM.vCPU);
-  const [vmMemory, setVmMemory] = useState(currentVM.ram);
-  const [vmDisk, setVmDisk] = useState(currentVM.disk);
+  const [vmvCpu, setVmvCpu] = useState(currentVM?.vCPU || 1);
+  const [vmMemory, setVmMemory] = useState(currentVM?.ram || 1);
+  const [vmDisk, setVmDisk] = useState(currentVM?.disk || 50);
   const [vmStorageType] = useState<TOptions>({
     value: "ssd",
     label: "SSD",
   });
   const [vmLocalization] = useState<TOptions>({
-    label: localizationOptions[0]?.label,
-    value: localizationOptions[0]?.value,
+    label: localizationOptions[0]?.label || "",
+    value: localizationOptions[0]?.value || "",
   });
-  const [hasBackup, setHasBackup] = useState(currentVM.hasBackup);
+  const [hasBackup, setHasBackup] = useState(currentVM?.hasBackup || false);
 
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [status, setStatus] = useState<string | null>(currentVM.status);
+  const [status, setStatus] = useState<string | null>(
+    currentVM?.status || null,
+  );
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [vmIDToStart, setVmIDToStart] = useState<number>(0);
   const [vmIDToStop, setVmIDToStop] = useState<number>(0);
 
+  useEffect(() => {
+    if (currentVM) {
+      setVmPassword(currentVM.pass || "");
+      setVmName(currentVM.vmName || "");
+      setVmSO({
+        label: currentVM.os || "",
+        value: currentVM.os || "",
+      });
+      setVmvCpu(currentVM.vCPU || 1);
+      setVmMemory(currentVM.ram || 1);
+      setVmDisk(currentVM.disk || 50);
+      setHasBackup(currentVM.hasBackup || false);
+      setStatus(currentVM.status || null);
+    }
+  }, [currentVM]);
+
   const handleCancel = () => {
-    setVmPassword(currentVM.pass);
-    setVmName(currentVM.vmName);
-    setVmSO({
-      label: currentVM.os,
-      value: currentVM.os,
-    });
-    setVmvCpu(currentVM.vCPU);
-    setVmMemory(currentVM.ram);
-    setVmDisk(currentVM.disk);
-    // setVmStorageType(null);
-    // setVmLocalization(null);
-    setHasBackup(currentVM.hasBackup);
-    setStatus(currentVM.status);
+    if (currentVM) {
+      setVmPassword(currentVM.pass);
+      setVmName(currentVM.vmName);
+      setVmSO({
+        label: currentVM.os,
+        value: currentVM.os,
+      });
+      setVmvCpu(currentVM.vCPU);
+      setVmMemory(currentVM.ram);
+      setVmDisk(currentVM.disk);
+      setHasBackup(currentVM.hasBackup);
+      setStatus(currentVM.status);
+    }
     onClose();
   };
 
   const handleEditVm = async () => {
-    const vm = {
-      hasBackup,
-      vmPassword,
-      vmName,
-      vmSO,
-      vmvCpu,
-      vmMemory,
-      vmDisk,
-      vmStorageType,
-      vmLocalization,
-      status,
-      oldVM: currentVM,
+    if (!currentVM) return;
+
+    // Verifica se a senha foi alterada e não está vazia
+    const passwordChanged = vmPassword && vmPassword !== currentVM.pass;
+
+    // Valida a senha apenas se ela foi alterada
+    if (passwordChanged) {
+      const isValidPass = validPassword(vmPassword);
+      if (!isValidPass) {
+        setOpenConfirm(false);
+        return;
+      }
+    }
+
+    const vmData = {
+      vmName: vmName,
+      vCPU: vmvCpu,
+      ram: vmMemory,
+      disk: vmDisk,
+      hasBackup: hasBackup,
+      os: String(vmSO?.value) || "",
+      // Só envia a senha se ela foi alterada e é válida
+      ...(passwordChanged && { pass: vmPassword }),
     };
+
     setOpenConfirm(false);
-    const isValidPass = validPassword(vmPassword);
-    if (!isValidPass) return;
-    await updateVM(
-      {
-        ...vm,
-        vmName: vmName,
-        vCPU: vmvCpu,
-        ram: vmMemory,
-        disk: vmDisk,
-        hasBackup: hasBackup,
-        os: String(vmSO?.value) || "",
-        pass: vmPassword,
-      },
-      currentVM.idVM,
-    );
-    onClose(true);
+
+    const success = await updateVM(vmData, currentVM.idVM);
+
+    if (success) {
+      onClose(true);
+    }
   };
 
   const handleConfirmDeleteVM = async () => {
+    if (!currentVM) return;
+
     setOpenDeleteModal(false);
     const response = await deleteVM(currentVM.idVM);
-    if (!response) return;
-    setCurrentVM(null);
-    onClose(true);
+
+    if (response) {
+      setCurrentVM(null);
+      onClose(true);
+    }
   };
 
   const handleStopVM = async () => {
+    // Atualiza apenas o status local, não fecha o modal
     setStatus("STOPPED");
-    onClose(true);
+    setVmIDToStop(0);
+    // Não chama onClose aqui para manter o modal aberto
   };
 
   const handleStartVM = async () => {
+    // Atualiza apenas o status local, não fecha o modal
     setStatus("RUNNING");
-    onClose(true);
+    setVmIDToStart(0);
+    // Não chama onClose aqui para manter o modal aberto
   };
 
+  // Validação do botão - verifica se todos os campos obrigatórios estão preenchidos
+  // A senha não é obrigatória na edição (pode manter a atual)
   const disabledBtn =
     !vmName ||
-    !vmSO ||
+    !vmSO?.value ||
     !vmvCpu ||
     !vmMemory ||
     !vmDisk ||
-    !vmPassword ||
-    !vmLocalization;
+    !vmLocalization?.value;
+
+  // Verifica se há mudanças em relação aos valores originais
+  // Removida a verificação de senha da condição de hasChanges
+  const hasChanges =
+    currentVM &&
+    (vmName !== currentVM.vmName ||
+      vmSO?.value !== currentVM.os ||
+      vmvCpu !== currentVM.vCPU ||
+      vmMemory !== currentVM.ram ||
+      vmDisk !== currentVM.disk ||
+      hasBackup !== currentVM.hasBackup);
+
+  // Verifica se o usuário é admin
+  const isAdmin = role === "admin";
+
+  if (!currentVM) {
+    return null;
+  }
 
   return (
     <>
@@ -179,7 +231,6 @@ export const FormEditVM = ({ onClose }: IProps) => {
             <CloseXIcon fill={theme[mode].gray} />
           </IconButton>
         </Stack>
-        {/* Inputs */}
 
         {/* User and password */}
         <Stack
@@ -203,21 +254,25 @@ export const FormEditVM = ({ onClose }: IProps) => {
             }}
           >
             <LabelInputVM
-              onChange={() => {}}
+              onChange={setVmPassword}
               value={vmPassword}
               label={t("createVm.password")}
               placeholder={t("createVm.userPassword")}
               type="password"
-              disabled
             />
-            <PasswordValidations vmPassword={vmPassword} />
+            {vmPassword && vmPassword !== currentVM.pass && (
+              <PasswordValidations vmPassword={vmPassword} />
+            )}
           </Stack>
         </Stack>
+
         <Divider
           sx={{
             borderColor: theme[mode].grayLight,
           }}
         />
+
+        {/* VM Name */}
         <LabelInputVM
           onChange={setVmName}
           value={vmName}
@@ -229,6 +284,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
             },
           }}
         />
+
         {/* Location and System */}
         <Stack
           sx={{
@@ -247,12 +303,12 @@ export const FormEditVM = ({ onClose }: IProps) => {
           />
           <DropDowText
             label={t("createVm.operationalSystem")}
-            data={[]}
+            data={osOptions}
             value={vmSO}
-            onChange={() => {}}
-            disabled
+            onChange={setVmSO}
           />
         </Stack>
+
         {/* Sliders */}
         <Stack
           sx={{
@@ -285,6 +341,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
             step={16}
           />
         </Stack>
+
         {/* Advanced options */}
         <Stack
           sx={{
@@ -329,7 +386,8 @@ export const FormEditVM = ({ onClose }: IProps) => {
               }}
             />
           </Stack>
-          {/* Play Pause and Stop */}
+
+          {/* Status and Action buttons */}
           <TextRob18Font2M
             sx={{
               color: theme[mode].black,
@@ -340,7 +398,8 @@ export const FormEditVM = ({ onClose }: IProps) => {
           >
             {t("home.status", { status: statusHashMap[status] })}
           </TextRob18Font2M>
-          {/* Actions buttons & Ips */}
+
+          {/* Actions buttons */}
           <Stack
             flexDirection={"column"}
             gap={"16px"}
@@ -350,7 +409,6 @@ export const FormEditVM = ({ onClose }: IProps) => {
               },
             }}
           >
-            {/* Actions buttons */}
             <Stack
               sx={{
                 backgroundColor: theme[mode].grayLight,
@@ -365,9 +423,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
               }}
             >
               <IconButton
-                disabled={
-                  currentVM.status === "RUNNING" || currentVM.status === null
-                }
+                disabled={status === "RUNNING" || status === null}
                 onClick={() => setVmIDToStart(currentVM.idVM)}
                 sx={{
                   gap: "8px",
@@ -387,9 +443,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
                 </TextRob16FontL>
               </IconButton>
               <IconButton
-                disabled={
-                  currentVM.status === "STOPPED" || currentVM.status === null
-                }
+                disabled={status === "STOPPED" || status === null}
                 onClick={() => setVmIDToStop(currentVM.idVM)}
                 sx={{
                   gap: "8px",
@@ -410,6 +464,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
               </IconButton>
             </Stack>
           </Stack>
+
           {/* Backup */}
           <CheckboxLabel
             value={hasBackup}
@@ -417,7 +472,8 @@ export const FormEditVM = ({ onClose }: IProps) => {
             label={t("createVm.autoBackup")}
           />
         </Stack>
-        {/* Action button */}
+
+        {/* Action buttons */}
         <Stack
           sx={{
             gap: "24px",
@@ -451,7 +507,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
             </TextRob16Font1S>
           </Btn>
           <Btn
-            disabled={disabledBtn}
+            disabled={disabledBtn || !hasChanges}
             onClick={() => setOpenConfirm(true)}
             sx={{
               padding: "9px 24px",
@@ -474,7 +530,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
             </TextRob16Font1S>
           </Btn>
           <Btn
-            disabled={disabledBtn}
+            disabled={!isAdmin}
             onClick={() => setOpenDeleteModal(true)}
             sx={{
               padding: "9px 24px",
@@ -483,6 +539,8 @@ export const FormEditVM = ({ onClose }: IProps) => {
               borderRadius: "12px",
               maxWidth: "150px",
               marginLeft: "auto",
+              opacity: !isAdmin ? 0.5 : 1,
+              cursor: !isAdmin ? "not-allowed" : "pointer",
               "@media (min-width: 660px)": {},
             }}
           >
@@ -499,6 +557,8 @@ export const FormEditVM = ({ onClose }: IProps) => {
           </Btn>
         </Stack>
       </Stack>
+
+      {/* Modals */}
       {openConfirm && (
         <ModalConfirmCreate
           isEditing

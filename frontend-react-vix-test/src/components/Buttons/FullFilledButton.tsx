@@ -9,6 +9,7 @@ interface IProps {
   label?: string;
   sxLabel?: SxProps;
   sxButton?: SxProps;
+  disabled?: boolean;
 }
 
 export const FullFilledButton = ({
@@ -18,11 +19,13 @@ export const FullFilledButton = ({
   label,
   sxLabel,
   sxButton,
+  disabled,
 }: IProps) => {
   const { theme, mode } = useZTheme();
 
   return (
     <Button
+      disabled={disabled}
       sx={{
         background: theme[mode].blue,
         border: `1px solid ${theme[mode].blue}`,

@@ -17,38 +17,40 @@ datasource db {
 }
 
 model brandMaster {
-  idBrandMaster Int       @id @default(autoincrement())
-  brandName     String?
-  isActive      Boolean?  @default(true)
-  createdAt     DateTime? @default(now()) @db.DateTime(0)
-  updatedAt     DateTime? @default(now()) @db.DateTime(0)
-  deletedAt     DateTime? @db.DateTime(0)
-  brandLogo     String?
-  domain        String?
-  city          String?
-  emailContact  String?
-  fieldName     String?
-  location      String?
-  setorName     String?
-  smsContact    String?
-  timezone      String?
-  placeNumber   String?
-  state         String?
-  street        String?
-  cnpj          String?
-  cep           String?
-  cityCode      Int?
-  district      String?
-  stripeUserId  String?
-  isPoc         Boolean?  @default(false)
-  contract      String?
-  contractAt    DateTime? @db.DateTime(0)
-  pocOpenedAt   DateTime? @db.DateTime(0)
-  manual        String?
-  termsOfUse    String?
-  privacyPolicy String?
-  vM            vM[]
-  users         user[]
+  idBrandMaster     Int       @id @default(autoincrement())
+  brandName         String?
+  isActive          Boolean?  @default(true)
+  createdAt         DateTime? @default(now()) @db.DateTime(0)
+  updatedAt         DateTime? @default(now()) @db.DateTime(0)
+  deletedAt         DateTime? @db.DateTime(0)
+  brandLogo         String?
+  domain            String?
+  city              String?
+  emailContact      String?
+  fieldName         String?
+  location          String?
+  setorName         String?
+  smsContact        String?
+  timezone          String?
+  placeNumber       String?
+  state             String?
+  street            String?
+  cnpj              String?
+  cep               String?
+  cityCode          Int?
+  district          String?
+  stripeUserId      String?
+  isPoc             Boolean?  @default(false)
+  contract          String?
+  contractAt        DateTime? @db.DateTime(0)
+  pocOpenedAt       DateTime? @db.DateTime(0)
+  manual            String?
+  termsOfUse        String?
+  privacyPolicy     String?
+  discountRate      Float?
+  minConsumption    Float?
+  vM                vM[]
+  users             user[]
 }
 
 model vM {

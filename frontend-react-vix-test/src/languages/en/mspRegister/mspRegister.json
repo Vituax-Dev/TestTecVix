@@ -67,5 +67,6 @@
   "vmsFromThisMSP": "VMS from this MSP",
   "mspDeleted": "MSP {{ brandName }} deleted successfully!",
   "doYouWantToDeleteThisVMs": "Do you really want to delete these VMs?",
-  "deletedVMs": "VMs deleted successfully!"
+  "deletedVMs": "VMs deleted successfully!",
+  "newMsp": "Register new MSP"
 }

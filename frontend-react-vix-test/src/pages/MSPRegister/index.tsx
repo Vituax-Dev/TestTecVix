@@ -16,6 +16,7 @@ import { ModalDeleteVMsFromMSP } from "./ModalDeleteVMsFromMSP";
 import { useBrandMasterResources } from "../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { useVmResource } from "../../hooks/useVmResource";
+import { MSPForm } from "./MSPForm";
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
@@ -40,7 +41,7 @@ export const MSPRegisterPage = () => {
 
   const resetAllStepStates = () => {
     setIsEditing([]);
-    setActiveStep(0);
+    setActiveStep(2);
     resetAll();
   };
 
@@ -59,8 +60,11 @@ export const MSPRegisterPage = () => {
   };
 
   useEffect(() => {
+    setActiveStep(2);
+    setIsEditing([]);
     return () => {
-      resetAllStepStates();
+      setActiveStep(2);
+      setIsEditing([]);
     };
   }, []);
 
@@ -88,20 +92,22 @@ export const MSPRegisterPage = () => {
         paddingBottom: "40px",
       }}
       subtitle={
-        <Box
-          sx={{
-            maxWidth: "646px",
-            "@media (max-width: 660px)": { maxWidth: "136px" },
-          }}
-        >
-          <SampleStepper
-            activeStep={activeStep}
-            stepsNames={[
-              t("mspRegister.stepOneTitle"),
-              t("mspRegister.stepTwoTitle"),
-            ]}
-          />
-        </Box>
+        activeStep !== 2 ? (
+          <Box
+            sx={{
+              maxWidth: "646px",
+              "@media (max-width: 660px)": { maxWidth: "136px" },
+            }}
+          >
+            <SampleStepper
+              activeStep={activeStep}
+              stepsNames={[
+                t("mspRegister.stepOneTitle"),
+                t("mspRegister.stepTwoTitle"),
+              ]}
+            />
+          </Box>
+        ) : undefined
       }
       //  sx= estilização do componente pai
       // children= elementos do componente
@@ -122,7 +128,9 @@ export const MSPRegisterPage = () => {
           boxSizing: "border-box",
         }}
       >
-        {
+        {activeStep === 0 || activeStep === 1 ? (
+          <MSPForm />
+        ) : (
           <Stack
             sx={{
               background: theme[mode].mainBackground,
@@ -161,7 +169,7 @@ export const MSPRegisterPage = () => {
               <MspTable />
             </Stack>
           </Stack>
-        }
+        )}
       </Stack>
       {modalOpen !== null && (
         <Modal

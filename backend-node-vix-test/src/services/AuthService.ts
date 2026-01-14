@@ -103,8 +103,6 @@ export class AuthService {
   async getNewToken(idUser: string) {
     const user = await this.userModel.getById(idUser);
 
-    console.log("user ", user);
-
     if (!user) {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
@@ -114,8 +112,6 @@ export class AuthService {
       email: user.email,
       role: user.role,
     });
-
-    console.log("Token: ", token);
 
     return { token };
   }

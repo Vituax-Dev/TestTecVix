@@ -14,6 +14,7 @@
   "so": "SOP",
   "active": "Ativa",
   "inactive": "Inativa",
+  "pausedSingular": "Pausada",
   "onlyMyVms": "Apenas minhas VMs",
   "onlyMSPVms": "Apenas VMs do MSP"
 }

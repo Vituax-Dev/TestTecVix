@@ -15,7 +15,7 @@ export const useUploadFile = () => {
 
     setIsUploading(true);
     const response = await api.post<{ objectName: string; url: string }>({
-      url: "/upload/file",
+      url: "/uploads/file",
       data: formData,
       timeout: 120000,
       auth: { ...auth, "Content-Type": "multipart/form-data" },
@@ -46,18 +46,10 @@ export const useUploadFile = () => {
       objectName.includes("/assets")
     )
       return { url: objectName };
-    setIsLoading(true);
+    
     const url = objectName[0] === "/" ? objectName.slice(1) : objectName;
-    const response = await api.get<{ url: string }>({
-      url: `/upload/file/${url}`,
-      auth: {},
-    });
-    setIsLoading(false);
-    if (response.error) {
-      toast.error(response.message);
-      return { url: "" };
-    }
-    return { url: response.data?.url || "" };
+    const fullUrl = `http://localhost:3001/api/v1/uploads/${url}`;
+    return { url: fullUrl };
   };
 
   return { handleUpload, isUploading, getFileByObjectName, isLoading };

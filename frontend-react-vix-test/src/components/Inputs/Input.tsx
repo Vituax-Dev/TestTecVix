@@ -12,6 +12,7 @@ export interface IPropsLabelInput {
   hasFocusEffect?: boolean;
   onChange?: (value: string) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const InputLabel = ({
@@ -24,6 +25,7 @@ export const InputLabel = ({
   containerSx = {},
   sx = {},
   className = "",
+  disabled = false,
 }: IPropsLabelInput) => {
   const { inputRef } = useRefFocusEffectDelayed();
 
@@ -41,6 +43,7 @@ export const InputLabel = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         type={type}
+        disabled={disabled}
         sx={{
           width: "100%",
           backgroundColor: "#FAFAFA",

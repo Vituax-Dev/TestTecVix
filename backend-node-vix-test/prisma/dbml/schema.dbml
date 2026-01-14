@@ -33,6 +33,8 @@ Table brandMaster {
   manual String
   termsOfUse String
   privacyPolicy String
+  discountRate Float
+  minConsumption Float
   vM vM [not null]
   users user [not null]
 }

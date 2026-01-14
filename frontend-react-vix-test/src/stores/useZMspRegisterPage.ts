@@ -4,7 +4,7 @@ import { IBrandMasterBasicInfo } from "../types/BrandMasterTypes";
 import { IVMCreatedResponse } from "../types/VMTypes";
 
 interface IMspRegisterPage {
-  activeStep: 0 | 1;
+  activeStep: 0 | 1 | 2;
   companyName: string;
   cnpj: string;
   phone: string;
@@ -50,7 +50,7 @@ interface IMspRegisterPage {
 }
 
 const INIT_STATE: IMspRegisterPage = {
-  activeStep: 0,
+  activeStep: 2,
   companyName: "",
   cnpj: "",
   phone: "",
@@ -65,7 +65,7 @@ const INIT_STATE: IMspRegisterPage = {
   admName: "",
   admEmail: "",
   admPhone: "",
-  position: "admin",
+  position: "",
   admPassword: "",
   showError: false,
   mspDomain: "",
@@ -98,15 +98,11 @@ const INIT_STATE: IMspRegisterPage = {
 const {
   activeStep: _activeStep,
   mspList: _mspList,
-  isEditing: _isEditing,
   ...resetState
 } = INIT_STATE;
-void _activeStep;
-void _mspList;
-void _isEditing;
 
 interface IMspRegisterPageState extends IMspRegisterPage {
-  setActiveStep: (activeStep: 0 | 1) => void;
+  setActiveStep: (activeStep: 0 | 1 | 2) => void;
   setCompanyName: (companyName: string) => void;
   setCnpj: (cnpj: string) => void;
   setPhone: (phone: string) => void;
@@ -165,7 +161,7 @@ interface IMspRegisterPageState extends IMspRegisterPage {
 
 export const useZMspRegisterPage = create<IMspRegisterPageState>((set) => ({
   ...INIT_STATE,
-  setActiveStep: (activeStep: 0 | 1) =>
+  setActiveStep: (activeStep: 0 | 1 | 2) =>
     set((state) => ({ ...state, activeStep })),
   setCompanyName: (companyName: string) =>
     set((state) => ({ ...state, companyName })),

@@ -76,7 +76,10 @@ export class BrandMasterModel {
   }
 
   async createNewBrandMaster(data: TBrandMaster) {
-    return prisma.brandMaster.create({ data });
+    const cleanData = Object.fromEntries(
+      Object.entries(data).filter(([_, v]) => v !== undefined && v !== null)
+    ) as TBrandMaster;
+    return prisma.brandMaster.create({ data: cleanData });
   }
 
   async updateBrandMaster(idBrandMaster: number, data: TBrandMaster) {

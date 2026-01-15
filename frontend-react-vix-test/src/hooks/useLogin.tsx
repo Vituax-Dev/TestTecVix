@@ -13,7 +13,7 @@ interface IUserLoginResponse {
     deletedAt: string | Date | null;
     email: string;
     idBrandMaster: number | null;
-    idUser: number;
+    idUser: string;
     isActive: boolean;
     profileImgUrl: null | string;
     role: "admin" | "manager" | "member";

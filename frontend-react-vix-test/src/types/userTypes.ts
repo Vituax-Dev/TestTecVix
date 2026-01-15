@@ -1,5 +1,5 @@
 export interface IUserResponse {
-  idUser: number;
+  idUser: string;
   idBrandMaster: 1;
   createdAt: string | Date;
   deletedAt: string | Date | null;
@@ -11,6 +11,9 @@ export interface IUserResponse {
   socketId: null | string;
   updatedAt: string | Date;
   username: string;
+  brandMaster?: {
+    brandName: string;
+  } | null;
 }
 
 export interface IPincodeInfos {
@@ -24,6 +27,6 @@ export interface IUserBasicInfo {
   fullName?: string | null;
   name?: string | null;
   username?: string | null;
-  idUser?: number | null;
+  idUser?: string | null;
   idBrandMaster?: number | null;
 }

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 export interface IUserDB {
-  idUser: number;
+  idUser: string;
   idBrandMaster: number | null;
   username: string;
   email: string;
@@ -67,7 +67,8 @@ export const useUserResources = () => {
 
   const createUserByManager = async (data: ICreateNewUser) => {
     if (role !== "admin" && role !== "manager") return null;
-    const idBrandMaster = idBrand;
+    const idBrandMaster = data.idBrandMaster || idBrand;
+
     if (!idBrandMaster) {
       toast.error(t("generic.errorToSaveData"));
       return null;
@@ -76,7 +77,7 @@ export const useUserResources = () => {
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.post({
-      url: `/user/new-user`,
+      url: `/user`,
       auth,
       data: {
         ...data,

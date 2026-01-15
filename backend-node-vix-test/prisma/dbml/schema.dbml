@@ -70,6 +70,11 @@ Table user {
   createdAt DateTime [default: `now()`]
   updatedAt DateTime [default: `now()`]
   deletedAt DateTime
+  fullName String
+  userPhoneNumber String
+  field String
+  department String
+  hiringDate DateTime
   brandMaster brandMaster
 }
 

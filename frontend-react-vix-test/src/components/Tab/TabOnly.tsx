@@ -52,6 +52,7 @@ export const TabOnly = ({
     >
       {item.map((item, index) => (
         <Tab
+          disabled={item.disabled}
           sx={{
             ...item.sxTab,
           }}

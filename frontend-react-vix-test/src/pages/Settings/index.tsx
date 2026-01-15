@@ -10,6 +10,7 @@ import { TabPanel } from "../../components/Tab/TabPanel";
 import { ProfileAndNotifications } from "./components/ProfileAndNotifications";
 import { UnderConstruction } from "../../components/UnderConstruction";
 import { useEffect } from "react";
+import { useZUserProfile } from "../../stores/useZUserProfile";
 
 export interface IWhiteLabelChildProps {
   theme: {
@@ -22,6 +23,7 @@ export const SettingsPage = () => {
   const { mode, theme } = useZTheme();
   const { currentTabIndex, setSettings } = useZSettingsVar();
   const { t } = useTranslation();
+  const { role } = useZUserProfile();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -37,6 +39,7 @@ export const SettingsPage = () => {
       label: t("tabs.whiteLabel"),
       component: <WhiteLabel />,
       title: t("whiteLabel.title"),
+      disabled: role === "member" || role === "manager",
     },
     {
       label: t("tabs.profileNotifications"),
@@ -47,6 +50,7 @@ export const SettingsPage = () => {
       label: t("tabs.billingsPlans"),
       component: <UnderConstruction />,
       title: t("tabs.billingsPlans"),
+      disabled: role === "member",
     },
     {
       label: t("tabs.logsHistory"),

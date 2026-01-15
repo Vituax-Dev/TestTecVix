@@ -39,7 +39,7 @@ export const PrivatePage = ({
         setIsChecking(false);
         break;
     }
-  }, []);
+  }, [idUser, role, onlyAdmin, onlyManagerOrAdmin]);
 
   if (!idUser) return <FullPage />;
 

@@ -6,4 +6,5 @@ export interface ITabItem {
   sxActive?: SxProps;
   component?: React.ReactNode;
   sxTab?: SxProps;
+  disabled?: boolean;
 }

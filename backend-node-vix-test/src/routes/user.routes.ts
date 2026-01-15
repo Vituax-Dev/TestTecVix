@@ -34,14 +34,9 @@ userRoutes.get(
   },
 );
 
-userRoutes.get(
-  `${BASE_PATH}`,
-  authUser,
-  isManagerOrIsAdmin,
-  async (req, res) => {
-    await userController.listAll(req, res);
-  },
-);
+userRoutes.get(`${BASE_PATH}`, authUser, async (req, res) => {
+  await userController.listAll(req, res);
+});
 
 userRoutes.post(
   `${BASE_PATH}`,

@@ -29,7 +29,7 @@ export class UserModel {
 
   async listAll(query: TQuery, isIncludeDeleted?: boolean) {
     const limit = query.limit || 0;
-    const skip = query.page ? query.page * limit : query.offset || 0;
+    const skip = query.page ? (query.page - 1) * limit : query.offset || 0;
     const orderBy =
       query.orderBy?.map(({ field, direction }) => ({
         [field]: direction,
@@ -40,6 +40,13 @@ export class UserModel {
         ...(!isIncludeDeleted && { deletedAt: null }),
         username: {
           contains: query.search,
+        },
+      },
+      include: {
+        brandMaster: {
+          select: {
+            brandName: true,
+          },
         },
       },
       take: limit || undefined,

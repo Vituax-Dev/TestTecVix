@@ -371,6 +371,37 @@
           ],
           "format": "date-time"
         },
+        "fullName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "userPhoneNumber": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "department": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hiringDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
         "brandMaster": {
           "anyOf": [
             {

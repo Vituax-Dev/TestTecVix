@@ -1,10 +1,8 @@
 import { create } from "zustand";
-import {
-  IBrandMasterBasicInfo,
-} from "../types/BrandMasterTypes";
+import { IBrandMasterBasicInfo } from "../types/BrandMasterTypes";
 
 export type Colaborator = {
-  idUser: number;
+  idUser: string;
   name: string;
   username?: string;
   email: string;
@@ -17,10 +15,11 @@ export type Colaborator = {
   lastActivity: string | Date | null;
   profileImgUrl?: string | null;
   idBrandMaster?: number;
+  companyName?: string;
 };
 
 export interface ColaboratorRegisterInputs {
-  idUser?: number | null;
+  idUser?: string | null;
   colaboratorName: string;
   email: string;
   phone: string;
@@ -65,6 +64,7 @@ interface IColaboratorRegister extends ColaboratorRegisterInputs {
   editInfos: editingInfos[];
   colaboratorNameFilter: string;
   companyNameFilter: string;
+  statusFilter: string;
   currentTabIndex: number;
   search: string;
   page: number;
@@ -80,6 +80,7 @@ const INITIAL_STATE: IColaboratorRegister = {
   editInfos: [],
   colaboratorNameFilter: "",
   companyNameFilter: "",
+  statusFilter: "",
   currentTabIndex: 0,
   search: "",
   page: 1,
@@ -90,7 +91,7 @@ const INITIAL_STATE: IColaboratorRegister = {
 
 interface IColaboratorRegisterState extends IColaboratorRegister {
   resetInputs: () => void;
-  setIdUser: (id: number) => void;
+  setIdUser: (id: string) => void;
   setColaboratorName: (colaboratorName: string) => void;
   setEmail: (email: string) => void;
   setPhone: (phone: string) => void;
@@ -104,6 +105,7 @@ interface IColaboratorRegisterState extends IColaboratorRegister {
   setEditInfos: (editingInfos: editingInfos[]) => void;
   setColaboratorNameFilter: (colaboratorNameFilter: string) => void;
   setCompanyNameFilter: (companyNameFilter: string) => void;
+  setStatusFilter: (statusFilter: string) => void;
   setErrorMessage: (errorMessage: boolean) => void;
   setIdBrandMaster: (idBrandMaster: number) => void;
   setUsername: (username: string) => void;
@@ -142,7 +144,9 @@ export const useZColaboratorRegister = create<IColaboratorRegisterState>(
       set((state) => ({ ...state, colaboratorNameFilter })),
     setCompanyNameFilter: (companyNameFilter: string) =>
       set((state) => ({ ...state, companyNameFilter })),
-    setIdUser: (id: number) => set((state) => ({ ...state, idUser: id })),
+    setStatusFilter: (statusFilter: string) =>
+      set((state) => ({ ...state, statusFilter })),
+    setIdUser: (id: string) => set((state) => ({ ...state, idUser: id })),
     setErrorMessage: (errorMessage: boolean) =>
       set((state) => ({ ...state, errorMessage })),
     setIdBrandMaster: (idBrandMaster: number) =>

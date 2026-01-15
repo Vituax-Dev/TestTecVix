@@ -11,7 +11,7 @@ export const userCreatedSchema = z.object({
   isActive: z.boolean().optional().default(false),
   field: z.string().nullable().optional(),
   department: z.string().nullable().optional(),
-  contractDate: z.string().nullable().optional(),
+  hiringDate: z.string().nullable().optional(),
   fullName: z.string().nullable().optional(),
 });
 

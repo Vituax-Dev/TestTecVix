@@ -1,12 +1,20 @@
+import { useState } from "react";
 import { useZBrandInfo } from "../stores/useZBrandStore";
 import { useZTheme } from "../stores/useZTheme";
 import { IBrandMasterResponse } from "../types/BrandMasterTypes";
 import { useUploadFile } from "./useUploadFile";
+import { useAuth } from "./useAuth";
+import { api } from "../services/api";
+import { IListAll } from "../types/ListAllTypes";
+import { IBrandMasterBasicInfo } from "../types/BrandMasterTypes";
 
 export const useBrandMasterInfos = () => {
   const { getFileByObjectName } = useUploadFile();
   const { setBrandInfo } = useZBrandInfo();
   const { setTheme, themeName, version } = useZTheme();
+  const { getAuth } = useAuth();
+  const [brandMasterList, setBrandMasterList] = useState<IBrandMasterBasicInfo[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const setBrandInfos = async (data: IBrandMasterResponse) => {
     const url = data.brandLogo
@@ -51,5 +59,19 @@ export const useBrandMasterInfos = () => {
     });
   };
 
-  return { setBrandInfos };
+  const fetchBrandMasterList = async () => {
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.get<IListAll<IBrandMasterBasicInfo>>({
+      url: "/brand-master",
+      auth,
+    });
+    setIsLoading(false);
+
+    if (!response.error && response.data) {
+      setBrandMasterList(response.data.result);
+    }
+  };
+
+  return { setBrandInfos, fetchBrandMasterList, brandMasterList, isLoading };
 };

@@ -14,7 +14,7 @@ export const useListUsers = () => {
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.get<IListAll<IUserResponse>>({
-      url: "/user/access",
+      url: "/user",
       auth,
       params: {
         orderBy: "lastLoginDate:desc",

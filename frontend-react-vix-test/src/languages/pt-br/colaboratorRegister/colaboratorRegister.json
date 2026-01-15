@@ -31,6 +31,8 @@
   "noActivity": "Sem atividades recentes",
   "companyFilterPlaceholder": "Todas as empresas",
   "UserFilterPlaceholder": "Todos os usuários",
+  "statusFilterPlaceholder": "Todos os status",
+  "allStatus": "Todos os status",
   "alertMessage": "Por favor, preencha todos os campos",
   "emailAlertMessage": "Por favor, insira um email valido",
   "cnpjAlertMessage": "Por favor, insira um CNPJ valido",

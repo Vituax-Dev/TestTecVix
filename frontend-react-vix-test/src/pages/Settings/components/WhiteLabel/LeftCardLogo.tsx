@@ -23,11 +23,11 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
   const { t } = useTranslation();
   const { handleUpload, isUploading } = useUploadFile();
-  const { setBrandInfo, brandLogoTemp } = useZBrandInfo();
+  const { setBrandInfo, brandLogoTemp, brandLogo } = useZBrandInfo();
   const { role } = useZUserProfile();
   const isAdmin = role === "admin";
   const [uploadedFile, setUploadedFile] = useState<string | null>(
-    brandLogoTemp,
+    brandLogoTemp || brandLogo,
   );
 
   const onDrop = async (acceptedFiles: File[]) => {
@@ -57,10 +57,16 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   });
 
   useEffect(() => {
-    if (!brandLogoTemp) {
+    console.log('brandLogoTemp:', brandLogoTemp);
+    console.log('brandLogo:', brandLogo);
+    if (brandLogoTemp) {
+      setUploadedFile(brandLogoTemp);
+    } else if (brandLogo) {
+      setUploadedFile(brandLogo);
+    } else {
       setUploadedFile(null);
     }
-  }, [brandLogoTemp]);
+  }, [brandLogoTemp, brandLogo]);
 
   return (
     <>

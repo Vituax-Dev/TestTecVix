@@ -7,6 +7,8 @@ import { TextRob14Font1Xs } from "../../../../components/Text1Xs";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
 import { useBrandMasterResources } from "../../../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../../../components/AbsoluteBackDrop";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -23,10 +25,15 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
     brandObjectName,
     setBrandInfo,
     domain: domainName,
+    brandLogo,
   } = useZBrandInfo();
-  // const [domain, setDomain] = useState<string>(domainName);
-  // const { updateDomain } = useBrandMasterResources();
   const { updateBrandMaster, isLoading } = useBrandMasterResources();
+
+  useEffect(() => {
+    setBrandInfo({ brandLogoTemp: "", brandObjectName: "" });
+  }, []);
+
+  const hasNewLogo = brandLogoTemp && brandObjectName && brandLogoTemp !== brandLogo;
 
   // const handleSave = async () => {
   //   const response = await updateBrandMaster({
@@ -47,15 +54,21 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   // };
 
   const handleSave = async () => {
+    if (!brandObjectName || !brandLogoTemp) {
+      return;
+    }
     const response = await updateBrandMaster({
-      brandLogo: brandObjectName || undefined,
+      brandLogo: brandObjectName,
     });
-    if (!response) return;
-    setBrandInfo({
-      ...(brandLogoTemp
-        ? { brandLogo: brandLogoTemp, brandLogoTemp: "", brandObjectName: "" }
-        : {}),
-    });
+    if (response) {
+      const logoUrl = brandLogoTemp;
+      setBrandInfo({
+        brandLogo: logoUrl,
+        brandLogoTemp: "",
+        brandObjectName: "",
+      });
+      toast.success(t("generic.dataSavesuccess"));
+    }
   };
 
   return (
@@ -96,6 +109,7 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
         }}
       />
       <Button
+        disabled={isLoading || !hasNewLogo}
         sx={{
           background: theme[mode].blue,
           width: "100%",
@@ -106,7 +120,7 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
           height: "48px",
           borderRadius: "12px",
         }}
-        onClick={() => handleSave()}
+        onClick={handleSave}
       >
         {t("whiteLabel.saveChanges")}
       </Button>

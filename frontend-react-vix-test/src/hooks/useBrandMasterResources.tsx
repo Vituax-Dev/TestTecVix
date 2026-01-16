@@ -153,24 +153,27 @@ export const useBrandMasterResources = () => {
     domain,
   }: IUpdateBrandMaster) => {
     if (!role || (role !== "admin" && role !== "manager")) return;
+    const brandId = idBrand || idBrandInfo;
+    if (!brandId) return;
     const auth = await getAuth();
     setIsLoading(true);
+    
+    const payload: any = {};
+    if (brandName !== undefined) payload.brandName = brandName;
+    if (idBrandTheme !== undefined) payload.idBrandTheme = idBrandTheme;
+    if (brandLogo !== undefined) payload.brandLogo = brandLogo;
+    if (domain !== undefined) payload.domain = domain;
+    
     const response = await api.put({
-      url: `/brand-master/${idBrand}`,
+      url: `/brand-master/${brandId}`,
       auth,
-      data: {
-        brandName,
-        idBrandTheme,
-        brandLogo,
-        domain,
-      },
+      data: payload,
     });
     setIsLoading(false);
     if (response.error) {
       toast.error(response.message);
-      return;
+      return null;
     }
-    toast.success(t("whiteLabel.dnsSaved"));
     return response.data;
   };
 

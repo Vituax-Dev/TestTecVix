@@ -11,15 +11,18 @@ import {
 } from "../../../../../stores/useZFormProfileNotifications";
 import { useEffect } from "react";
 import { PerfilPhotoUpload } from "./PerfilPhotoUpload";
+import { useUserResources } from "../../../../../hooks/useUserResources";
 
 export const PersonalInformation = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
-  const { username, userEmail, userPhoneNumber } = useZUserProfile();
+  const { idUser, username, userEmail, userPhoneNumber, profileImgUrl, setUser } = useZUserProfile();
+  const { getUserById } = useUserResources();
   const {
     userEmail: userEmailForm,
     userName,
     userPhone,
+    currentPassword,
     password,
     confirmPassword,
     fullNameForm,
@@ -102,7 +105,17 @@ export const PersonalInformation = () => {
   };
 
   const validPassword = () => {
-    if (password.value && password.value !== confirmPassword.value) {
+    if (password?.value && !currentPassword?.value) {
+      setFormProfileNotifications({
+        currentPassword: {
+          ...currentPassword,
+          errorMessage: t("profileAndNotifications.requiredField"),
+        },
+      });
+      return;
+    }
+
+    if (password?.value && password.value !== confirmPassword?.value) {
       setFormProfileNotifications({
         password: {
           ...password,
@@ -113,6 +126,10 @@ export const PersonalInformation = () => {
     }
 
     setFormProfileNotifications({
+      currentPassword: {
+        ...currentPassword,
+        errorMessage: "",
+      },
       password: {
         ...password,
         errorMessage: "",
@@ -197,29 +214,40 @@ export const PersonalInformation = () => {
   };
 
   useEffect(() => {
-    setFormProfileNotifications({
-      fullNameForm: {
-        ...fullNameForm,
-        value: "",
-        errorMessage: "",
-      },
-      userName: {
-        ...userName,
-        value: username || "",
-        errorMessage: "",
-      },
-      userEmail: {
-        ...userEmailForm,
-        value: userEmail || "",
-        errorMessage: "",
-      },
-      userPhone: {
-        ...userPhone,
-        value: userPhoneNumber || "",
-        errorMessage: "",
-      },
-    });
-  }, []);
+    const loadUserData = async () => {
+      if (idUser) {
+        const userData = await getUserById(idUser);
+        if (userData) {
+          setUser({
+            username: userData.username,
+            userEmail: userData.email,
+            userPhoneNumber: userData.userPhoneNumber,
+            profileImgUrl: userData.profileImgUrl,
+          });
+          setFormProfileNotifications({
+            fullNameForm: { value: userData.fullName || "", errorMessage: "" },
+            userName: { value: userData.username, errorMessage: "" },
+            userEmail: { value: userData.email, errorMessage: "" },
+            userPhone: { value: userData.userPhoneNumber || "", errorMessage: "" },
+            currentPassword: { value: "", errorMessage: "" },
+            password: { value: "", errorMessage: "" },
+            confirmPassword: { value: "", errorMessage: "" },
+          });
+          return;
+        }
+      }
+      setFormProfileNotifications({
+        fullNameForm: { value: "", errorMessage: "" },
+        userName: { value: username || "", errorMessage: "" },
+        userEmail: { value: userEmail || "", errorMessage: "" },
+        userPhone: { value: userPhoneNumber || "", errorMessage: "" },
+        currentPassword: { value: "", errorMessage: "" },
+        password: { value: "", errorMessage: "" },
+        confirmPassword: { value: "", errorMessage: "" },
+      });
+    };
+    loadUserData();
+  }, [idUser]);
 
   return (
     <Stack
@@ -347,10 +375,23 @@ export const PersonalInformation = () => {
       >
         <InputLabelAndFeedback
           type="password"
+          label={t("profileAndNotifications.currentPassword")}
+          value={currentPassword?.value || ""}
+          onChange={(val) => handleChange("currentPassword", val)}
+          errorMessage={currentPassword?.errorMessage || ""}
+          onBlur={validPassword}
+          sx={inputSx}
+          sxContainer={sxContainer}
+          sxLabel={sxLabel}
+          sxSidelabel={sxSideLabel}
+        />
+        <InputLabelAndFeedback
+          type="password"
           label={t("colaboratorRegister.password")}
-          value={password.value}
+          value={password?.value || ""}
           onChange={(val) => handleChange("password", val)}
-          errorMessage={password.errorMessage}
+          errorMessage={password?.errorMessage || ""}
+          onBlur={validPassword}
           sx={inputSx}
           sxContainer={sxContainer}
           sxLabel={sxLabel}
@@ -359,9 +400,9 @@ export const PersonalInformation = () => {
         <InputLabelAndFeedback
           type="password"
           label={t("colaboratorRegister.confirmPassword")}
-          value={confirmPassword.value}
+          value={confirmPassword?.value || ""}
           onChange={(val) => handleChange("confirmPassword", val)}
-          errorMessage={confirmPassword.errorMessage}
+          errorMessage={confirmPassword?.errorMessage || ""}
           onBlur={validPassword}
           sx={inputSx}
           sxContainer={sxContainer}

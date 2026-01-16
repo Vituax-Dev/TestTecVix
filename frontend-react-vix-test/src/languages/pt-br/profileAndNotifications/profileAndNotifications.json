@@ -27,5 +27,6 @@
   "changeImage": "Alterar imagem",
   "manualLabel": "URL do manual",
   "termsLabel": "URL dos termos de uso",
-  "privacyLabel": "URL da política de privacidade"
+  "privacyLabel": "URL da política de privacidade",
+  "currentPassword": "Senha atual"
 }

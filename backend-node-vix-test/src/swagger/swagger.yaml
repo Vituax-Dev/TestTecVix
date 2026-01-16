@@ -1,16 +1,586 @@
 openapi: 3.0.3
 info:
-  title: API CLOUD
+  title: API CLOUD - VituaX
   version: 1.0.0
-  contact: {}
+  description: API para gerenciamento de VMs, Marcas e Usuários
 servers:
-  - url: "{{url}}"
+  - url: http://localhost:3001
+    description: Servidor Local
+
 paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login de usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: admin@vituax.com
+                password:
+                  type: string
+                  example: Admin@123
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/user'
+        '401':
+          description: Credenciais inválidas
+
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Registro de novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                fullName:
+                  type: string
+                userPhoneNumber:
+                  type: string
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+        '400':
+          description: Dados inválidos
+
+  /api/v1/auth/token/{idUser}:
+    get:
+      tags:
+        - Auth
+      summary: Obter novo token
+      parameters:
+        - name: idUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token gerado com sucesso
+
+  /api/v1/user:
+    get:
+      tags:
+        - User
+      summary: Listar todos os usuários
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/user'
+                  pagination:
+                    type: object
+    post:
+      tags:
+        - User
+      summary: Criar novo usuário (Manager/Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        '201':
+          description: Usuário criado
+        '403':
+          description: Sem permissão
+
+  /api/v1/user/self:
+    get:
+      tags:
+        - User
+      summary: Obter dados do próprio usuário
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dados do usuário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+  /api/v1/user/{idUser}:
+    get:
+      tags:
+        - User
+      summary: Obter usuário por ID (Manager/Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Dados do usuário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+    put:
+      tags:
+        - User
+      summary: Atualizar usuário (Manager/Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idUser
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        '200':
+          description: Usuário atualizado
+    delete:
+      tags:
+        - User
+      summary: Deletar usuário (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idUser
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Usuário deletado
+
+  /api/v1/brand-master:
+    get:
+      tags:
+        - BrandMaster
+      summary: Listar todas as marcas
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de marcas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/brandMaster'
+    post:
+      tags:
+        - BrandMaster
+      summary: Criar nova marca (Manager/Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/brandMaster'
+      responses:
+        '201':
+          description: Marca criada
+
+  /api/v1/brand-master/self:
+    get:
+      tags:
+        - BrandMaster
+      summary: Obter marca do usuário logado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dados da marca
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brandMaster'
+
+  /api/v1/brand-master/{idBrandMaster}:
+    get:
+      tags:
+        - BrandMaster
+      summary: Obter marca por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idBrandMaster
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da marca
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brandMaster'
+    put:
+      tags:
+        - BrandMaster
+      summary: Atualizar marca (Manager/Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idBrandMaster
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/brandMaster'
+      responses:
+        '200':
+          description: Marca atualizada
+    delete:
+      tags:
+        - BrandMaster
+      summary: Deletar marca (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idBrandMaster
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Marca deletada
+
+  /api/v1/vm:
+    get:
+      tags:
+        - VM
+      summary: Listar todas as VMs
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de VMs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/vM'
+    post:
+      tags:
+        - VM
+      summary: Criar nova VM (Manager/Admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/vM'
+      responses:
+        '201':
+          description: VM criada
+
+  /api/v1/vm/{idVM}:
+    get:
+      tags:
+        - VM
+      summary: Obter VM por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idVM
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da VM
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/vM'
+    put:
+      tags:
+        - VM
+      summary: Atualizar VM (Manager/Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idVM
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/vM'
+      responses:
+        '200':
+          description: VM atualizada
+    delete:
+      tags:
+        - VM
+      summary: Deletar VM (Admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idVM
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: VM deletada
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT obtido através do endpoint de login
+
+  schemas:
+    user:
+      type: object
+      properties:
+        idUser:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        fullName:
+          type: string
+        userPhoneNumber:
+          type: string
+        role:
+          type: string
+          enum: [admin, manager, member]
+        idBrandMaster:
+          type: integer
+        isActive:
+          type: boolean
+        field:
+          type: string
+        department:
+          type: string
+        hiringDate:
+          type: string
+          format: date-time
+        profileImgUrl:
+          type: string
+        lastLoginDate:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    brandMaster:
+      type: object
+      properties:
+        idBrandMaster:
+          type: integer
+        brandName:
+          type: string
+        brandLogo:
+          type: string
+        domain:
+          type: string
+        cnpj:
+          type: string
+        emailContact:
+          type: string
+        smsContact:
+          type: string
+        street:
+          type: string
+        placeNumber:
+          type: string
+        district:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        cep:
+          type: string
+        location:
+          type: string
+        timezone:
+          type: string
+        isActive:
+          type: boolean
+        isPoc:
+          type: boolean
+        discountRate:
+          type: number
+          format: float
+        minConsumption:
+          type: number
+          format: float
+        contract:
+          type: string
+        contractAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    vM:
+      type: object
+      properties:
+        idVM:
+          type: integer
+        vmName:
+          type: string
+        vCPU:
+          type: integer
+        ram:
+          type: integer
+        disk:
+          type: integer
+        os:
+          type: string
+        pass:
+          type: string
+        location:
+          type: string
+          enum: [bre_barueri, usa_miami]
+        hasBackup:
+          type: boolean
+        status:
+          type: string
+          enum: [RUNNING, STOPPED, PAUSED]
+        idBrandMaster:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
 tags:
-  - name: brandMaster
+  - name: Auth
+    description: Endpoints de autenticação
+  - name: User
+    description: Gerenciamento de usuários
+  - name: BrandMaster
+    description: Gerenciamento de marcas
   - name: VM
+    description: Gerenciamento de máquinas virtuais

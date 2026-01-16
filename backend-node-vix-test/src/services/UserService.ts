@@ -50,25 +50,25 @@ export class UserService {
     idUser: string;
     oldUser: user;
   }) {
-    const dataToUpdate: any = { ...validData };
+    const dataToUpdate: Partial<TUserUpdated> = { ...validData };
 
     if (validData.password) {
       if (!validData.currentPassword) {
         throw new AppError(
           "Current password is required to change password",
-          STATUS_CODE.BAD_REQUEST
+          STATUS_CODE.BAD_REQUEST,
         );
       }
 
       const isPasswordValid = await bcryptjs.compare(
         validData.currentPassword,
-        oldUser.password
+        oldUser.password,
       );
 
       if (!isPasswordValid) {
         throw new AppError(
           "Current password is incorrect",
-          STATUS_CODE.UNAUTHORIZED
+          STATUS_CODE.UNAUTHORIZED,
         );
       }
 

@@ -43,13 +43,41 @@ export class UserService {
   private async update({
     validData,
     idUser,
+    oldUser,
   }: {
     user: user;
     validData: TUserUpdated;
     idUser: string;
     oldUser: user;
   }) {
-    return await this.userModel.updateUser(idUser, validData);
+    const dataToUpdate: any = { ...validData };
+
+    if (validData.password) {
+      if (!validData.currentPassword) {
+        throw new AppError(
+          "Current password is required to change password",
+          STATUS_CODE.BAD_REQUEST
+        );
+      }
+
+      const isPasswordValid = await bcryptjs.compare(
+        validData.currentPassword,
+        oldUser.password
+      );
+
+      if (!isPasswordValid) {
+        throw new AppError(
+          "Current password is incorrect",
+          STATUS_CODE.UNAUTHORIZED
+        );
+      }
+
+      dataToUpdate.password = await bcryptjs.hash(validData.password, 10);
+    }
+
+    delete dataToUpdate.currentPassword;
+
+    return await this.userModel.updateUser(idUser, dataToUpdate);
   }
 
   async updateUser(idUser: string, data: unknown, user: user) {

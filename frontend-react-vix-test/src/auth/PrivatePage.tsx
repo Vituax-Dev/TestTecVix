@@ -23,23 +23,24 @@ export const PrivatePage = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    switch (true) {
-      case !idUser:
-        resetAllStates();
-        navigate("/login");
-        break;
-      case onlyAdmin && role !== "admin":
-        navigate(-1);
-        break;
-      case onlyManagerOrAdmin && role !== "admin" && role !== "manager":
-        navigate(-1);
-        break;
-
-      default:
-        setIsChecking(false);
-        break;
+    if (!idUser) {
+      resetAllStates();
+      navigate("/login");
+      return;
     }
-  }, [idUser, role, onlyAdmin, onlyManagerOrAdmin]);
+
+    if (onlyAdmin && role !== "admin") {
+      navigate(-1);
+      return;
+    }
+
+    if (onlyManagerOrAdmin && role !== "admin" && role !== "manager") {
+      navigate(-1);
+      return;
+    }
+
+    setIsChecking(false);
+  }, [idUser, role, onlyAdmin, onlyManagerOrAdmin, navigate, resetAllStates]);
 
   if (!idUser) return <FullPage />;
 

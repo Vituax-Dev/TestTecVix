@@ -3,6 +3,10 @@ import { useZTheme } from "../../../../stores/useZTheme";
 import { availableThemes, ThemeNames } from "../../themes";
 import { Stack } from "@mui/material";
 import { LeftCard } from "./LeftCard";
+import { useBrandMasterInfos } from "../../../../hooks/useBrandMasterInfos";
+import { useAuth } from "../../../../hooks/useAuth";
+import { api } from "../../../../services/api";
+import { IBrandMasterResponse } from "../../../../types/BrandMasterTypes";
 
 export const WhiteLabel = () => {
   const { themeName, setTheme, version, themeNameDefault } = useZTheme();
@@ -11,6 +15,22 @@ export const WhiteLabel = () => {
     ? themeName
     : "default";
   const [colorSelected] = useState<ThemeNames>(initialColor as ThemeNames);
+  const { setBrandInfos } = useBrandMasterInfos();
+  const { getAuth } = useAuth();
+
+  useEffect(() => {
+    const loadBrandData = async () => {
+      const auth = await getAuth();
+      const response = await api.get<IBrandMasterResponse>({
+        url: "/brand-master/self",
+        auth,
+      });
+      if (response.data && !response.error) {
+        await setBrandInfos(response.data);
+      }
+    };
+    loadBrandData();
+  }, []);
 
   useEffect(() => {
     if (colorSelected !== themeName) {

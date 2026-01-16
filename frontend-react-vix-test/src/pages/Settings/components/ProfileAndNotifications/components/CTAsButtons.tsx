@@ -3,17 +3,68 @@ import { useTranslation } from "react-i18next";
 import { useZTheme } from "../../../../../stores/useZTheme";
 import { TextRob16FontL } from "../../../../../components/TextL";
 import { toast } from "react-toastify";
+import { useZFormProfileNotifications } from "../../../../../stores/useZFormProfileNotifications";
+import { useUserResources } from "../../../../../hooks/useUserResources";
+import { useZUserProfile } from "../../../../../stores/useZUserProfile";
 
 export const CTAsButtons = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
+  const { updateUser, isLoading } = useUserResources();
+  const { imageUrl, objectName } = useZUserProfile();
+  const {
+    fullNameForm,
+    userName,
+    userEmail,
+    userPhone,
+    currentPassword,
+    password,
+    confirmPassword,
+    resetAll,
+    setFormProfileNotifications,
+  } = useZFormProfileNotifications();
 
   const handleSave = async () => {
-    const allValid = true;
-    if (!allValid) return toast.error(t("profileAndNotifications.errorForm"));
-    const r = true;
-    if (r) return toast.success(t("generic.dataSavesuccess"));
-    return;
+    if (
+      fullNameForm.errorMessage ||
+      userName.errorMessage ||
+      userEmail.errorMessage ||
+      userPhone.errorMessage ||
+      currentPassword.errorMessage ||
+      password.errorMessage
+    ) {
+      return toast.error(t("profileAndNotifications.errorForm"));
+    }
+
+    if (password.value && !currentPassword.value) {
+      return toast.error(t("profileAndNotifications.requiredField"));
+    }
+
+    const data: any = {
+      fullName: fullNameForm.value,
+      username: userName.value,
+      email: userEmail.value,
+      userPhoneNumber: userPhone.value,
+    };
+
+    if (password.value && currentPassword.value) {
+      data.currentPassword = currentPassword.value;
+      data.password = password.value;
+    }
+
+    if (imageUrl && objectName) {
+      data.profileImgUrl = imageUrl;
+    }
+
+    const result = await updateUser(data);
+    if (result) {
+      setFormProfileNotifications({
+        currentPassword: { value: "", errorMessage: "" },
+        password: { value: "", errorMessage: "" },
+        confirmPassword: { value: "", errorMessage: "" },
+      });
+      toast.success(t("generic.dataSavesuccess"));
+    }
   };
 
   return (
@@ -42,6 +93,7 @@ export const CTAsButtons = () => {
           },
         }}
         onClick={handleSave}
+        disabled={isLoading}
       >
         <TextRob16FontL
           sx={{
@@ -69,7 +121,8 @@ export const CTAsButtons = () => {
             maxWidth: "100%",
           },
         }}
-        onClick={() => {}}
+        onClick={resetAll}
+        disabled={isLoading}
       >
         <TextRob16FontL
           sx={{

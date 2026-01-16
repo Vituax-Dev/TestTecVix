@@ -5,7 +5,7 @@ import { TextRob14Font1Xs } from "../../../../../components/Text1Xs";
 import { useDropzone } from "react-dropzone";
 import { useUploadFile } from "../../../../../hooks/useUploadFile";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UploadFileIcon } from "../../../../../icons/UploadFileIcon";
 import { TextRob12Font2Xs } from "../../../../../components/Text2Xs";
 import { CircleIcon } from "../../../../../icons/CircleIcon";
@@ -15,17 +15,23 @@ export const PerfilPhotoUpload = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
   const { handleUpload, isUploading } = useUploadFile();
-  const [uploadedFile, setUploadedFile] = useState<string | null>("");
-  const { setImage } = useZUserProfile();
+  const { profileImgUrl, setImage } = useZUserProfile();
+  const [uploadedFile, setUploadedFile] = useState<string | null>(
+    profileImgUrl || ""
+  );
+
+  useEffect(() => {
+    setUploadedFile(profileImgUrl || "");
+  }, [profileImgUrl]);
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
 
-    const file = acceptedFiles[0]; // Seleciona o primeiro arquivo
+    const file = acceptedFiles[0];
     const response = await handleUpload(file);
 
     if (response && response.url) {
-      setUploadedFile(response.url); // Atualiza a URL do logo carregado
+      setUploadedFile(response.url);
       setImage({
         imageUrl: response.url,
         objectName: response.objectName,

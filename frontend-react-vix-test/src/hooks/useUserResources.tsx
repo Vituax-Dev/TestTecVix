@@ -57,11 +57,24 @@ export const useUserResources = () => {
       username: response.data.username,
       userEmail: response.data.email,
       idBrand: response.data.idBrandMaster,
-
       role: response.data.role,
       userPhoneNumber: response.data.userPhoneNumber,
     });
 
+    return response.data;
+  };
+
+  const getUserById = async (userId: string) => {
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.get<IUserDB>({
+      url: `/user/${userId}`,
+      auth,
+    });
+    setIsLoading(false);
+    if (response.error) {
+      return null;
+    }
     return response.data;
   };
 
@@ -93,5 +106,5 @@ export const useUserResources = () => {
     return response.data;
   };
 
-  return { isLoading, updateUser, createUserByManager };
+  return { isLoading, updateUser, createUserByManager, getUserById };
 };

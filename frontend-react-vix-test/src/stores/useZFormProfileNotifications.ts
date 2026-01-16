@@ -8,6 +8,7 @@ type FormValueTypes = {
 export interface IFormProfileNotificationsVar {
   fullNameForm: FormValueTypes;
   userName: FormValueTypes;
+  currentPassword: FormValueTypes;
   password: FormValueTypes;
   confirmPassword: FormValueTypes;
   userEmail: FormValueTypes;
@@ -32,6 +33,10 @@ const INIT_STATE: IFormProfileNotificationsVar = {
     errorMessage: "",
   },
   userName: {
+    value: "",
+    errorMessage: "",
+  },
+  currentPassword: {
     value: "",
     errorMessage: "",
   },

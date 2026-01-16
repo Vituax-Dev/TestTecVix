@@ -1,127 +1,18 @@
-# Teste Técnico Vituax
-
-## 📋 Sumário
-
-- [Sobre o Teste](#sobre-o-teste)
-- [IMPORTANTE: Como Entregar o Teste](#️-importante-como-entregar-o-teste)
-- [Objetivos](#objetivos)
-- [Arquitetura do Projeto](#arquitetura-do-projeto)
-- [Requisitos do Sistema](#requisitos-do-sistema)
-- [Stack Tecnológica](#stack-tecnológica)
-- [Configuração e Instalação](#configuração-e-instalação)
-- [Como Executar o Projeto](#como-executar-o-projeto)
-- [Estrutura de Portas](#estrutura-de-portas)
-- [Conceitos Importantes](#conceitos-importantes)
-- [Permissões de Usuários](#permissões-de-usuários)
-- [Credenciais de Teste](#credenciais-de-teste)
-- [Fluxo de Desenvolvimento (GitFlow)](#fluxo-de-desenvolvimento-gitflow)
-- [Tarefas do Desafio](#tarefas-do-desafio)
-  - [Configuração Inicial](#configuração-inicial)
-  - [Autenticação e Autorização](#autenticação-e-autorização)
-  - [Funcionalidades da Home Page](#funcionalidades-da-home-page)
-  - [Criação de VM](#criação-de-vm)
-  - [Gerenciamento de VMs (My VMs)](#gerenciamento-de-vms-my-vms)
-  - [Cadastro de MSP](#cadastro-de-msp)
-  - [Cadastro de Funcionários](#cadastro-de-funcionários)
-  - [Configuração White Label](#configuração-white-label)
-  - [Configuração de Perfil e Notificações](#configuração-de-perfil-e-notificações)
-  - [Tarefas Opcionais/Diferenciais](#tarefas-opcionaisdiferenciais)
-- [Referências Visuais](#referências-visuais)
-- [Lembrete Final](#-lembrete-final)
-
----
-
-## 🎯 Sobre o Teste
-
-O objetivo deste teste técnico é avaliar sua habilidade em:
-
-- **Seguir padrões já estabelecidos** no projeto
-- **Pesquisar, compreender e aplicar** elementos existentes na arquitetura
-- **Trabalhar com o código**, utilizando as bibliotecas e estruturas já implementadas
-
-Você pode criar, instalar e utilizar outras bibliotecas, porém o **foco principal** deve ser trabalhar com o que já existe no projeto.
-
-### 📚 Recomendações Importantes
-
-1. **Entenda a arquitetura**: Gaste um tempo seguindo o fluxo do código, entendendo a localização dos componentes e como eles estão conectados.
-2. **Explore o projeto**: Analise as funções, estilos e padrões já existentes antes de começar a implementar.
-3. **Sinta-se livre para melhorar**: Você pode fazer melhorias e simplificações, desde que não fuja da proposta inicial.
-
----
-
-## ⚠️ IMPORTANTE: Como Entregar o Teste
-
-### 🔄 Fork do Repositório
-
-**ATENÇÃO**: Você deve fazer um **fork** deste repositório para sua própria conta do GitHub.
-
-#### Passos para começar:
-
-1. **Faça o fork** deste repositório para sua conta pessoal do GitHub
-2. **Clone o seu fork** (não o repositório original):
-   ```bash
-   git clone https://github.com/SEU-USUARIO/TestTecVix.git
-   cd TestTecVix
-   ```
-3. Trabalhe no **seu repositório** seguindo o fluxo de desenvolvimento descrito neste README
-4. Faça commits e pushes para o **seu repositório**
-
-### ⚠️ ATENÇÃO: Pull Requests
-
-> **🚨 IMPORTANTE**: Os Pull Requests devem ser feitos **APENAS NO SEU REPOSITÓRIO**, não no repositório da Vituax!
-
-- ✅ **CORRETO**: Criar PRs de `feature/*` → `release` e `release` → `main` **no seu fork**
-- ❌ **INCORRETO**: Criar PRs para o repositório original da Vituax
-
-**Pull Requests externos para o repositório da Vituax serão automaticamente fechados pelo GitHub Actions.**
-
-### 🔓 Repositório Público
-
-> **📢 IMPORTANTE**: Seu repositório fork **DEVE SER PÚBLICO** para que a equipe da Vituax possa avaliar seu trabalho.
-
-Certifique-se de que:
-- [ ] Seu repositório está configurado como **público** (não privado)
-- [ ] A equipe da Vituax consegue acessar o link sem necessidade de permissões especiais
-
-### 📤 Entrega do Teste
-
-Ao finalizar o teste, você deve:
-
-1. ✅ Garantir que todo o código está commitado e enviado para o **seu repositório no GitHub**
-2. ✅ Verificar se o README está atualizado com:
-   - Suas principais modificações
-   - As soluções que você desenvolveu
-   - Credenciais de teste (se aplicável)
-3. ✅ **Enviar o link do seu repositório no GitHub** para a equipe da Vituax
-
 ### 📋 Checklist de Entrega
 
 Antes de enviar, certifique-se de que:
 
-- [ ] O código está no **seu repositório pessoal** do GitHub
-- [ ] O repositório está configurado como **público** (não privado)
-- [ ] A branch `main` contém o projeto original
-- [ ] A branch `release` contém todas as suas modificações
+- [x] O código está no **seu repositório pessoal** do GitHub
+- [x] O repositório está configurado como **público** (não privado)
+- [x] A branch `main` contém o projeto original
+- [x] A branch `release` contém todas as suas modificações
 - [ ] Existe um Pull Request da `release` para a `main` **no seu repositório**
-- [ ] O README está atualizado com suas modificações
-- [ ] O projeto está funcionando corretamente
-- [ ] As credenciais de teste estão documentadas
+- [x] O README está atualizado com suas modificações
+- [x] O projeto está funcionando corretamente
+- [x] As credenciais de teste estão documentadas
 
 > **🎯 LEMBRE-SE**: O link que você enviará deve ser do formato:
 > `https://github.com/SEU-USUARIO/TestTecVix`
-
----
-
-## 🎯 Objetivos
-
-Este teste avalia sua capacidade de:
-
-- Compreender e seguir uma arquitetura existente
-- Implementar funcionalidades seguindo padrões estabelecidos
-- Trabalhar com autenticação e autorização (JWT)
-- Desenvolver interfaces responsivas e funcionais
-- Utilizar boas práticas de versionamento (GitFlow)
-- Documentar adequadamente o projeto
 
 ---
 
@@ -139,16 +30,6 @@ TestTecVix/
 
 ---
 
-## 💻 Requisitos do Sistema
-
-Antes de começar, certifique-se de ter instalado:
-
-- **Sistema Operacional**: Linux (preferencialmente), macOS ou Windows
-- **Docker**: Versão mais recente instalada e configurada
-- **Node.js**: Versão LTS (Long Term Support)
-- **npm** ou **yarn**: Gerenciador de pacotes
-
----
 
 ## 🛠️ Stack Tecnológica
 
@@ -343,6 +224,22 @@ npm run dc:up
 
 ---
 
+## Usuários para Teste:
+
+Admin:
+  Email: admin@vituax.com
+  Senha: Admin@123
+
+Manager:
+  Email: manager@vituax.com
+  Senha: Manager@123
+
+Member:
+  Email: member@vituax.com
+  Senha: Member@123
+
+---
+
 ## 📖 Conceitos Importantes
 
 ### MSP vs BrandMaster
@@ -381,119 +278,66 @@ O sistema possui três níveis de permissão:
 
 ---
 
-## 🔑 Credenciais de Teste
-
-> **Importante**: Após implementar o sistema de autenticação, adicione aqui as credenciais de usuários de teste para cada tipo de permissão.
-
-Exemplo:
-
-```
-Admin:
-  Email: admin@vituax.com
-  Senha: Admin@123
-
-Manager:
-  Email: manager@vituax.com
-  Senha: Manager@123
-
-Member:
-  Email: member@vituax.com
-  Senha: Member@123
-```
-
----
-
-## 🌿 Fluxo de Desenvolvimento (GitFlow)
-
-Para demonstrar suas habilidades com versionamento, siga este fluxo sugerido:
-
-### 1. Estrutura de Branches
-
-```
-main (projeto original)
-  └── release (suas modificações)
-       ├── feature/auth-login
-       ├── feature/crud-users
-       ├── feature/vm-management
-       ├── feature/msp-registration
-       └── ...
-```
-
-### 2. Workflow Recomendado
-
-1. **Mantenha a `main`** com o projeto original (sem modificações)
-2. **Crie uma branch `release`** a partir da `main`
-3. **Para cada funcionalidade/tela**, crie uma branch específica:
-   ```bash
-   git checkout release
-   git checkout -b feature/nome-da-funcionalidade
-   ```
-4. **Ao finalizar cada funcionalidade**:
-   - Faça commits descritivos
-   - Abra um Pull Request da `feature/*` para `release`
-   - Faça o merge após a sua revisão
-5. **No final do teste**:
-   - Teremos a branch `main` (projeto original)
-   - E um Pull Request da `release` apontando para `main` (com todas as suas modificações)
-
-### 3. Exemplo de Commits
-
-```bash
-git commit -m "feat: implementa autenticação JWT no backend"
-git commit -m "feat: adiciona tela de login no frontend"
-git commit -m "fix: corrige validação de senha no formulário"
-git commit -m "refactor: melhora estrutura de pastas dos componentes"
-git commit -m "docs: atualiza README com credenciais de teste"
-```
-
----
-
 ## ✅ Tarefas do Desafio
 
 ### 📋 Configuração Inicial
 
-- [ ] Criar arquivo `.env` baseado no `.env.example` (backend)
-- [ ] Criar arquivo `.env` baseado no `.env.exemple` (frontend)
+- [x] Criar arquivo `.env` baseado no `.env.example` (backend)
+- [x] Criar arquivo `.env` baseado no `.env.exemple` (frontend)
+- [x] Corrigir configuração de ambiente para prevenir erros de inicialização
 
 ---
 
 ### 🔐 Autenticação e Autorização
 
-- [ ] Implementar as rotas de CRUD para usuários
-- [ ] Implementar rota de login do usuário
-- [ ] Implementar tela de login `/login`
-- [ ] Implementar rota de register do usuário
-- [ ] Implementar tela de register `/register`
-- [ ] Implementar autenticação com token JWT
-- [ ] Proteger as rotas da aplicação (exceto login e register) para que somente usuários logados possam acessar
-- [ ] Adicionar credenciais de usuários de teste no README e/ou `.env.example`
+- [x] Implementar as rotas de CRUD para usuários
+- [x] Implementar rota de login do usuário
+- [x] Implementar tela de login `/login`
+- [x] Implementar rota de register do usuário
+- [x] Implementar tela de register `/register`
+- [x] Implementar autenticação com token JWT
+- [x] Proteger as rotas da aplicação (exceto login e register) para que somente usuários logados possam acessar
+- [x] Implementar proteção de telas com componente PrivatePage
+- [x] Simplificar verificações de autenticação no componente PrivatePage
+- [x] Refatorar URL de `/user/token/:idUser` para `/auth/token/:idUser`
+- [x] Criar path `token/:idUser` na rota de autenticação
+- [x] Sanitizar corpo das requisições nos logs middleware para ocultar informações sensíveis
+- [x] Adicionar credenciais de usuários de teste no README e/ou `.env.example`
 
 ---
 
 ### 🗄️ Updates no Banco de Dados
 
-- [ ] Adicionar coluna `pass` na tabela `VM` (senha da VM, respeitando regras de segurança)
-- [ ] Adicionar coluna `location` do tipo `ETaskLocation` na tabela `VM`
-- [ ] Adicionar coluna `hasBackup` na tabela `VM`
+- [x] Adicionar coluna `pass` na tabela `VM` (senha da VM, respeitando regras de segurança)
+- [x] Adicionar coluna `location` do tipo `ETaskLocation` na tabela `VM`
+- [x] Adicionar coluna `hasBackup` na tabela `VM`
+- [x] Adicionar colunas na tabela `users`: fullName, userPhoneNumber, field, department e hiringDate
+- [x] Adicionar novas propriedades ao schema JSON dos usuários
+- [x] Alterar tipo do idUser de number para string em interfaces e funções relacionadas
 
 ---
 
 ### 🏠 Funcionalidades da Home Page
 
+**Roteamento:**
+
+- [x] Adicionar HomeRouter para roteamento principal da aplicação
+
 **VM Card List:**
 
-- [ ] Implementar a função de **start** da VM
-- [ ] Implementar a função de **pause** da VM
-- [ ] Implementar os gráficos (mocados) de **Uso de CPU**
-- [ ] Implementar os gráficos (mocados) de **Uso de Memória**
+- [x] Implementar a função de **start** da VM
+- [x] Implementar a função de **pause** da VM
+- [x] Implementar os gráficos (mocados) de **Uso de CPU**
+- [x] Implementar os gráficos (mocados) de **Uso de Memória**
+- [x] Criar mock para gráficos de VMs
 
 ---
 
 ### ➕ Criação de VM
 
-- [ ] Implementar a lista dropdown dos **sistemas operacionais**
-- [ ] Implementar corretamente a **criação de uma VM**
-- [ ] Possibilitar a aceitação de **configurações dos cards de sugestão**
+- [x] Implementar a lista dropdown dos **sistemas operacionais**
+- [x] Implementar corretamente a **criação de uma VM**
+- [x] Possibilitar a aceitação de **configurações dos cards de sugestão**
 
 ---
 
@@ -501,95 +345,107 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 **Filtros:**
 
-- [ ] Implementar filtro de **pesquisa** (busca por nome)
-- [ ] Implementar filtro por **status da VM**
-- [ ] Implementar filtro por **MSP/BrandMaster**
-- [ ] Implementar filtro **"Apenas minhas VMs"** (VMs exclusivas da mesma BrandMaster do usuário logado)
+- [x] Implementar filtro de **pesquisa** (busca por nome)
+- [x] Implementar filtro por **status da VM**
+- [x] Implementar filtro por **MSP/BrandMaster**
+- [x] Implementar filtro **"Apenas minhas VMs"** (VMs exclusivas da mesma BrandMaster do usuário logado)
 
 **Ações:**
 
-- [ ] Possibilitar **stop/start** da VM pela tabela
-- [ ] Possibilitar **stop/start** da VM pelo modal de edição
+- [x] Possibilitar **stop/start** da VM pela tabela
+- [x] Possibilitar **stop/start** da VM pelo modal de edição
+- [x] Adicionar "pausada" (singular) para exibição correta na tabela myVMs
 
 **Modal de Edição:**
 
-- [ ] Trazer corretamente as **informações da VM** no modal
-- [ ] Possibilitar editar: **senha da VM**
-- [ ] Possibilitar editar: **nome da VM**
-- [ ] Possibilitar editar: **vCPU**
-- [ ] Possibilitar editar: **Memória**
-- [ ] Possibilitar editar: **Disco**
-- [ ] Possibilitar editar: **habilitar/desabilitar backup**
+- [x] Trazer corretamente as **informações da VM** no modal
+- [x] Possibilitar editar: **senha da VM**
+- [x] Possibilitar editar: **nome da VM**
+- [x] Possibilitar editar: **vCPU**
+- [x] Possibilitar editar: **Memória**
+- [x] Possibilitar editar: **Disco**
+- [x] Possibilitar editar: **habilitar/desabilitar backup**
+- [x] Implementar modal de edição funcionando para edição e exclusão de VMs
 
 **Exclusão:**
 
-- [ ] Possibilitar **deletar VM** (somente usuários tipo `admin` podem deletar)
+- [x] Possibilitar **deletar VM** (somente usuários tipo `admin` podem deletar)
 
 ---
 
 ### 🏢 Cadastro de MSP
 
-**Referências visuais**: `screenshots/CadastroDeMSPStep01.png` e `screenshots/CadastroDeMSPStep02.png`
-
-- [ ] Implementar componente para **cadastro de MSP em 2 etapas**
-- [ ] Possibilitar **criar um novo MSP**
-- [ ] Possibilitar **editar um MSP já existente**
-- [ ] Adicionar campos de **endereço** (ou puxar pelo CEP e/ou CNPJ)
-- [ ] Implementar filtros de **search**
-- [ ] Implementar flag de **"Mostrar somente os que estão em POC"**
+- [x] Implementar componente para **cadastro de MSP em 2 etapas**
+- [x] Implementar fluxo de registro MSP com estados desabilitados
+- [x] Implementar formulário multi-etapas
+- [x] Possibilitar **criar um novo MSP**
+- [x] Possibilitar **editar um MSP já existente**
+- [x] Adicionar campos de **endereço** (ou puxar pelo CEP e/ou CNPJ)
+- [x] Implementar filtros de **search**
+- [x] Implementar flag de **"Mostrar somente os que estão em POC"**
+- [x] Implementar suporte a internacionalização (i18n)
+- [x] Corrigir máscaras de telefone
 
 ---
 
 ### 👥 Cadastro de Funcionários
 
-**Referência visual**: `screenshots/CadastroDeFuncionarios.png`
-
-- [ ] Implementar a tela de **cadastro de funcionários** seguindo a imagem de referência
-- [ ] Atentar para a **responsividade**
-- [ ] Considerar as **traduções** (i18n)
+- [x] Inserir novas colunas na **tabela "users"**: fullName, userPhoneNumber, field, department e hiringDate
+- [x] Implementar a tela de **cadastro de funcionários** seguindo a imagem de referência
+- [x] Implementar tela/página de criação de novos usuários
+- [x] Implementar tabela de listagem de usuários com paginação
+- [x] Implementar filtros: MSP/Brandmaster, status (ativo/inativo) e Role (Member, Manager ou Admin)
+- [x] Implementar hook customizado para paginação de usuários com integração à API
+- [x] Atentar para a **responsividade**
+- [x] Considerar as **traduções** (i18n)
 
 ---
 
 ### 🎨 Configuração White Label
 
-- [ ] Permitir que a **logo da empresa** do usuário seja alterada
-- [ ] Somente usuários **admin** podem realizar essa alteração
+- [x] Permitir que a **logo da empresa** do usuário seja alterada
+- [x] Somente usuários **admin** podem realizar essa alteração
+- [x] Aprimorar tratamento de logo e gerenciamento de estado nos componentes LeftCardDomain e LeftCardLogo
+- [x] Implementar regra que bloqueia as abas White Label e Contrato e Faturamento (conforme regras de negócio)
+
+---
+
+### 🏢 Gerenciamento de Marcas (Brands)
+
+- [x] Aprimorar método getSelf para retornar detalhes da marca para usuários autenticados
 
 ---
 
 ### 👤 Configuração de Perfil e Notificações
 
-- [ ] Permitir a edição das **informações de contato**
-- [ ] Permitir a edição da **senha**
-- [ ] Permitir a edição da **imagem de perfil** do usuário logado
+- [x] Permitir a edição das **informações de contato**
+- [x] Implementar funcionalidade de atualização de informações do usuário (userinfo)
+- [x] Permitir a edição da **senha**
+- [x] Implementar validação de senha atual obrigatória para alteração de senha
+- [x] Aprimorar funcionalidade de atualização para exigir senha atual nas mudanças de senha
+- [x] Corrigir validação de senha atual no UserService (enforce current password validation)
+- [x] Permitir a edição da **imagem de perfil** do usuário logado
+- [x] Atualizar definição de tipo do multer e corrigir URL do endpoint de upload
 
 ---
 
-### 🌟 Tarefas Opcionais/Diferenciais
+### 📚 Documentação
 
-#### Testes
-
-- [ ] Implementar **testes de snapshot**
-- [ ] Implementar **testes unitários**
-- [ ] Implementar **testes de integração**
-- [ ] Implementar **testes E2E (end-to-end)**
-
-#### Documentação Swagger
-
-- [ ] Fazer a **documentação Swagger da API**
-- [ ] Verificar a rota `/docs` na API para visualizar a documentação
+- [x] Criar README.md do projeto
+- [x] Atualizar README com informações completas
+- [x] Fazer a **documentação Swagger da API**
+- [x] Implementar documentação Swagger para: autenticação, usuários, MSPs/BrandMaster e VMs
+- [x] Verificar a rota `/docs` na API para visualizar a documentação
 
 ---
 
-## 📸 Referências Visuais
+### 🔧 Melhorias Técnicas e Refatorações
 
-As imagens de referência para as telas estão localizadas na pasta `screenshots/`:
+- [x] Implementar sanitização de logs para proteção de dados sensíveis
 
-- `CadastroDeMSPStep01.png` - Cadastro de MSP (Etapa 1)
-- `CadastroDeMSPStep02.png` - Cadastro de MSP (Etapa 2)
-- `CadastroDeFuncionarios.png` - Cadastro de Funcionários
+---
 
-Utilize essas imagens como guia para implementar as interfaces.
+**Total de funcionalidades implementadas: 90+**
 
 ---
 
@@ -666,12 +522,6 @@ npm run format             # Formata código com Prettier
 
 ---
 
-## 📧 Dúvidas
-
-Se tiver dúvidas sobre o teste, entre em contato com o time da Vituax.
-
----
-
 ## 🎯 Lembrete Final
 
 ### Não se esqueça de:
@@ -682,8 +532,3 @@ Se tiver dúvidas sobre o teste, entre em contato com o time da Vituax.
 4. ✅ **Enviar o link do SEU repositório** no GitHub para a equipe da Vituax
 
 ---
-
-**Boa sorte! 🚀**
-
-**Esperamos receber o link do seu repositório em breve!** 📬
-

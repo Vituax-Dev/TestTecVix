@@ -4,6 +4,7 @@ import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
 import { isManagerOrIsAdmin } from "../auth/isManagerOrIsAdmin";
 import { isAdmin } from "../auth/isAdmin";
 import { authUser } from "../auth/authUser";
+import { optionalAuthUser } from "../auth/optionalAuthUser";
 
 const BASE_PATH = API_VERSION.V1 + ROOT_PATH.BRANDMASTER; // /api/v1/brand-master
 
@@ -15,9 +16,13 @@ export const makeBrandMasterController = () => {
 
 const brandMasterController = makeBrandMasterController();
 
-brandMasterRoutes.get(`${BASE_PATH}/self`, authUser, async (req, res) => {
-  await brandMasterController.getSelf(req, res);
-});
+brandMasterRoutes.get(
+  `${BASE_PATH}/self`,
+  optionalAuthUser,
+  async (req, res) => {
+    await brandMasterController.getSelf(req, res);
+  },
+);
 
 brandMasterRoutes.get(
   `${BASE_PATH}/:idBrandMaster`,

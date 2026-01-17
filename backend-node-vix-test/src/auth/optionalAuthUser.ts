@@ -29,7 +29,7 @@ export const optionalAuthUser = async (
       }
     }
   } catch (error) {
-    // Silenciosamente ignora erros de token inválido
+    // ignora erros de token inválido
   }
 
   return next();

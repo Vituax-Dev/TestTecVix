@@ -7,10 +7,11 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
+    "rootDir": "./src",
     "typeRoots": ["./node_modules/@types", "./src/type"],
     "types": ["jest", "node"]
   },
   
-  "include": ["src/**/*", "prisma/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "__tests__", "**/*.test.ts", "temp"]
 }

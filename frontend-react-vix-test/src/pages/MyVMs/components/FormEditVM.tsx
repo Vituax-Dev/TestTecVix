@@ -25,6 +25,7 @@ import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
 import { ModalStartVM } from "./ModalStartVM";
 import { ModalStopVM } from "./ModalStopVM";
 import { osOptions } from "../../../utils/osOptions";
+import { toast } from "react-toastify";
 
 interface IProps {
   onClose: (edit?: boolean) => void;
@@ -42,6 +43,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
     isLoadingDeleteVM,
     getNetworkType,
     isLoadingUpdateVM,
+    updateVMStatus,
   } = useVmResource();
 
   const { statusHashMap } = useStatusInfo();
@@ -156,18 +158,25 @@ export const FormEditVM = ({ onClose }: IProps) => {
     }
   };
 
-  const handleStopVM = async () => {
-    // Atualiza apenas o status local, não fecha o modal
-    setStatus("STOPPED");
-    setVmIDToStop(0);
-    // Não chama onClose aqui para manter o modal aberto
-  };
+  const handleConfirmVMStatusChange = async () => {
+    if (!currentVM) return;
+    
+    const idVM = vmIDToStop || vmIDToStart;
+    const newStatus = vmIDToStop ? "STOPPED" : "RUNNING";
 
-  const handleStartVM = async () => {
-    // Atualiza apenas o status local, não fecha o modal
-    setStatus("RUNNING");
+    const updatedVM = await updateVMStatus({
+      idVM,
+      status: newStatus,
+    });
+
+    if (updatedVM) {
+      setStatus(newStatus);
+      setCurrentVM({ ...currentVM, status: newStatus });
+      toast.success(t("createVm.updateVmSuccess"));
+    }
+
+    setVmIDToStop(0);
     setVmIDToStart(0);
-    // Não chama onClose aqui para manter o modal aberto
   };
 
   // Validação do botão - verifica se todos os campos obrigatórios estão preenchidos
@@ -597,7 +606,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
         <ModalStartVM
           vmName={vmName}
           idVM={vmIDToStart}
-          onConfirm={handleStartVM}
+          onConfirm={handleConfirmVMStatusChange}
           onCancel={() => setVmIDToStart(0)}
         />
       )}
@@ -605,7 +614,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
         <ModalStopVM
           vmName={vmName}
           idVM={vmIDToStop}
-          onConfirm={handleStopVM}
+          onConfirm={handleConfirmVMStatusChange}
           onCancel={() => setVmIDToStop(0)}
         />
       )}

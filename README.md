@@ -445,6 +445,10 @@ Member:
 
 ---
 
+### Cross-Platform
+
+- [x] Agora o sistema web roda em diferentes plataformas
+
 **Total de funcionalidades implementadas: 90+**
 
 ---

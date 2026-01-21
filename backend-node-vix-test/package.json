@@ -9,7 +9,7 @@
     "clean": "if [ -d dist ]; then rm -rf dist; fi",
     "build": "npm run clean && npx prisma generate && npx tsc && mkdir -p dist/swagger/schemas && cp src/swagger/schemas/json-schema.json dist/swagger/schemas/json-schema.json && cp src/swagger/swagger.yaml dist/swagger/swagger.yaml",
     "start": "node --env-file .env dist/index.js --trace-warnings",
-    "dev": "ts-node-dev src/index.ts",
+    "dev": "ts-node-dev --files src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

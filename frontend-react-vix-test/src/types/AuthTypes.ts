@@ -13,3 +13,12 @@ export interface IUserLoginResponse {
     deletedAt: string | Date | null;
   };
 }
+
+export interface IRegisterResponse {
+  idUser: string;
+  username: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string | Date;
+}

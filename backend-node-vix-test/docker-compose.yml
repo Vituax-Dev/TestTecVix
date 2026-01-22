@@ -1,15 +1,22 @@
+
 services:
-  api:
-    build:
-      context: .
-    container_name: api-test-cloud
+  mysql:
+    image: mysql:8
+    container_name: mysql-test-cloud
     restart: always
-    env_file:
-      - .env
-    ports:
-      - "3001:3001"
     environment:
-      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: tecvix_test
+    ports:
+      - "3312:3306"
     volumes:
-      - ./:/app
-      - ./uploads:/app/uploads
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mysql_data:

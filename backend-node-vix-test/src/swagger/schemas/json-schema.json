@@ -224,6 +224,19 @@
           ],
           "default": false
         },
+        "pass": {
+          "type": "string",
+          "default": "vituax@123"
+        },
+        "location": {
+          "type": "string",
+          "default": "LOCAL",
+          "enum": [
+            "LOCAL",
+            "REMOTE",
+            "CLOUD"
+          ]
+        },
         "status": {
           "type": [
             "string",

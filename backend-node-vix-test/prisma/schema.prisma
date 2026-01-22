@@ -57,6 +57,10 @@ model vM {
   ram           Int
   disk          Int
   hasBackup     Boolean?     @default(false)
+
+  pass          String        @default("vituax@123") 
+  location      ETaskLocation @default(LOCAL)
+
   idBrandMaster Int?
   status        EVMStatus?
   createdAt     DateTime?    @default(now()) @db.DateTime(0)
@@ -97,4 +101,10 @@ enum ERole {
   admin
   manager
   member
+}
+
+enum ETaskLocation {
+  LOCAL
+  REMOTE
+  CLOUD
 }

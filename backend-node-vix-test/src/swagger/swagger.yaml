@@ -4,9 +4,9 @@ info:
   version: 1.0.0
   contact: {}
 servers:
-  - url: http://localhost:3001
+  - url: http://localhost:3001/api/v1
 paths:
-  /api/v1/auth/login:
+  /auth/login:
     post:
       tags:
         - Auth
@@ -45,7 +45,7 @@ paths:
         "401":
           description: Invalid credentials
 
-  /api/v1/auth/register:
+  /auth/register:
     post:
       tags:
         - Auth
@@ -92,7 +92,7 @@ paths:
         "400":
           description: Email already exists
 
-  /api/v1/users:
+  /users:
     get:
       tags:
         - Users
@@ -139,7 +139,7 @@ paths:
         "401":
           description: Unauthorized
 
-  /api/v1/users/{idUser}:
+  /users/{idUser}:
     get:
       tags:
         - Users

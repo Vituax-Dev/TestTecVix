@@ -47,11 +47,10 @@ export const useLogin = () => {
     }
 
     const response = await api.post<IUserLoginResponse>({
-      url: "/user/login",
+      url: "/auth/login",
       data: {
-        username: username || undefined,
         password,
-        email: email || undefined,
+        email,
       },
       tryRefetch: true,
     });
@@ -76,6 +75,7 @@ export const useLogin = () => {
       role: response.data.user.role,
     });
     setLoginTime(new Date());
+    navigate("/");
   };
 
   const goLogout = () => {

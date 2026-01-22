@@ -48,6 +48,7 @@ export class UserService {
         username: user.username,
         email: user.email,
         role: user.role,
+        isActive: user.isActive,
         profileImgUrl: user.profileImgUrl,
         idBrandMaster: user.idBrandMaster,
       },

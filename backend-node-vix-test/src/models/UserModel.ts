@@ -9,7 +9,7 @@ export class UserModel {
   }
 
   async findById(idUser: string) {
-    return prisma.user.findUnique({
+    return prisma.user.findFirst({
       where: { idUser, deletedAt: null },
       include: { brandMaster: true },
     });
@@ -34,8 +34,8 @@ export class UserModel {
   }
 
   async listAll(query: { page?: number; limit?: number; search?: string }) {
-    const page = query.page || 1;
-    const limit = query.limit || 10;
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
     const skip = (page - 1) * limit;
 
     const where: Prisma.userWhereInput = {
@@ -62,7 +62,12 @@ export class UserModel {
           isActive: true,
           profileImgUrl: true,
           idBrandMaster: true,
-          brandMaster: true,
+          brandMaster: {
+            select: {
+              idBrandMaster: true,
+              brandName: true,
+            },
+          },
           createdAt: true,
         },
       }),

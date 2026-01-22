@@ -16,4 +16,5 @@ export const ERROR_MESSAGE = {
   INVALID_DATA: "Invalid data",
   USERNAME_ALREADY_EXISTS: "Username already exists",
   EMAIL_ALREADY_EXISTS: "Email already exists",
+  USER_INACTIVE: "User account is inactive",
 };

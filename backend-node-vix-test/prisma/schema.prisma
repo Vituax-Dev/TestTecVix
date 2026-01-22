@@ -79,7 +79,7 @@ model user {
   idUser        String    @id @default(uuid())
   username      String
   password      String
-  email         String
+  email         String    @unique
   profileImgUrl String?
   role          ERole     @default(member)
   idBrandMaster Int?

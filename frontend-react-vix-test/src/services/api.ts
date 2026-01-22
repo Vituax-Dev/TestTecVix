@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { useZUserProfile } from "../stores/useZUserProfile";
 
 export interface IResponse<T> {
   message: string;
@@ -10,12 +11,20 @@ export interface IResponse<T> {
 export const baseAuth = (auth: Record<string, unknown> = {}) => {
   const signature = import.meta.env.VITE_SIGN_HASH || "";
 
+  const token = useZUserProfile.getState().token;
+
+  const finalAuth = auth.Authorization
+    ? auth
+    : token
+      ? { ...auth, Authorization: `Bearer ${token}` }
+      : auth;
+
   return {
     headers: {
       "x-sign": signature,
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
-      ...auth,
+      ...finalAuth,
     },
   };
 };
@@ -84,7 +93,6 @@ const app = async <T>({
         (error.code === "ECONNABORTED" && error.message.includes("timeout"))
       ) {
         if (tryRefetch) {
-          // implementar um log de registros desses erros
           return retryRequest<T>({
             method,
             url,

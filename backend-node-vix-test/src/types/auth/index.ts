@@ -10,6 +10,7 @@ export interface AuthResponse {
     username: string;
     email: string;
     role: string;
+    isActive: boolean;
   };
   token: string;
 }

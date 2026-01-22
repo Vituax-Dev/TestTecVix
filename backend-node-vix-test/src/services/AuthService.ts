@@ -40,6 +40,7 @@ class AuthService {
         username: userFound.username,
         email: userFound.email,
         role: userFound.role,
+        isActive: userFound.isActive ?? false,
       },
       token,
     };

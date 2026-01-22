@@ -92,6 +92,28 @@ paths:
         "400":
           description: Email already exists
 
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Refresh token
+      description: Get a new JWT token using the current valid token
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: New token generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: New JWT token
+        "401":
+          description: Unauthorized - Invalid or expired token
+
   /users:
     get:
       tags:

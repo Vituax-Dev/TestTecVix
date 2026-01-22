@@ -3,12 +3,31 @@ import { UserModel } from "../models/UserModel";
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
-import { genToken } from "../utils/jwt";
+import { genToken, verifyToken } from "../utils/jwt";
 import { loginUserSchema } from "../types/validations/User/loginUser";
 import { userCreatedSchema } from "../types/validations/User/createUser";
 
 export class UserService {
   private userModel = new UserModel();
+
+  async refreshToken(idUser: string) {
+    const user = await this.userModel.findById(idUser);
+    if (!user) {
+      throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
+    if (!user.isActive) {
+      throw new AppError(ERROR_MESSAGE.USER_INACTIVE, STATUS_CODE.UNAUTHORIZED);
+    }
+
+    const token = genToken({
+      idUser: user.idUser,
+      email: user.email,
+      role: user.role,
+    });
+
+    return { token };
+  }
 
   async login(data: unknown) {
     const { email, password } = loginUserSchema.parse(data);

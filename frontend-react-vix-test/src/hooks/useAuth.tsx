@@ -1,43 +1,44 @@
 import { useZUserProfile } from "../stores/useZUserProfile";
 import { useZGlobalVar } from "../stores/useZGlobalVar";
-import moment from "moment";
 import { api } from "../services/api";
 
-const REFRESH_TIME = 50;
+const REFRESH_TIME_MINUTES = 50;
 
 export const useAuth = () => {
-  const { token, setUser, idUser } = useZUserProfile();
+  const { token, setUser } = useZUserProfile();
   const { loginTime, setLoginTime } = useZGlobalVar();
 
-  const fetchNewUserToken = async () => {
-    if (!idUser) return "";
-    const response = await api.get<{ token: string | null }>({
-      url: `/user/token/${idUser}`,
-      auth: { Authorization: `Bearer ${token}` },
-      tryRefetch: true,
-    });
-    if (response.error || !response.data.token) {
-      return "";
-    }
+  const shouldRefresh = () => {
+    if (!token || !loginTime) return false;
+    const now = new Date().getTime();
+    const lastLogin = new Date(loginTime).getTime();
+    const diffMinutes = (now - lastLogin) / (1000 * 60);
+    return diffMinutes >= REFRESH_TIME_MINUTES;
+  };
 
-    return response.data.token;
+  const refreshToken = async () => {
+    const response = await api.post<{ token: string }>({
+      url: "/auth/refresh",
+      auth: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.error && response.data?.token) {
+      setUser({ token: response.data.token });
+      setLoginTime(new Date());
+      return response.data.token;
+    }
+    return token;
   };
 
   const getAuth = async (force = false) => {
-    if (
-      !force &&
-      token &&
-      loginTime &&
-      moment(loginTime).add(REFRESH_TIME, "minutes") > moment()
-    ) {
-      return { Authorization: `Bearer ${token}` };
+    if (!token) return {};
+
+    if (force || shouldRefresh()) {
+      const newToken = await refreshToken();
+      return { Authorization: `Bearer ${newToken}` };
     }
 
-    setLoginTime(new Date());
-
-    const newToken = await fetchNewUserToken();
-    setUser({ token: newToken });
-    return { Authorization: `Bearer ${newToken || token}` };
+    return { Authorization: `Bearer ${token}` };
   };
 
   return {

@@ -6,10 +6,12 @@ import { STATUS_CODE } from "../constants/statusCode";
 export class UserController {
   private userService = new UserService();
 
-  async refreshToken(req: CustomRequest<unknown>, res: Response) {
+  async refreshToken(req: CustomRequest<{ idUser: string }>, res: Response) {
     const idUser = req.user?.idUser;
     if (!idUser) {
-      return res.status(STATUS_CODE.UNAUTHORIZED).json({ message: "Unauthorized" });
+      return res
+        .status(STATUS_CODE.UNAUTHORIZED)
+        .json({ message: "Unauthorized" });
     }
     const result = await this.userService.refreshToken(idUser);
     return res.status(STATUS_CODE.OK).json(result);

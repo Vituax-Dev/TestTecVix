@@ -10,7 +10,7 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 
 export class BrandMasterService {
-  constructor() { }
+  constructor() {}
   private brandMasterModel = new BrandMasterModel();
 
   async getSelf(domain: string) {

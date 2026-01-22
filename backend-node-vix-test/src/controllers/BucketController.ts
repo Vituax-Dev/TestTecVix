@@ -5,20 +5,28 @@ import { IBucketService } from "../types/Interfaces/IBucketService";
 import path from "path";
 
 export class BucketController {
-  constructor(private bucketService: IBucketService) { }
+  constructor(private bucketService: IBucketService) {}
 
   async getFileInBucketByObjectName(
     req: CustomRequest<unknown>,
     res: Response,
   ) {
     const { objectName } = req.params;
-    const filePath = path.join(__dirname, "..", "..", "uploads", objectName as string);
+    const filePath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "uploads",
+      objectName as string,
+    );
     return res.sendFile(filePath);
   }
 
   async getFileByObjectName(req: CustomRequest<unknown>, res: Response) {
     const { objectName } = req.params;
-    const response = await this.bucketService.renewPresignedUrl(objectName as string);
+    const response = await this.bucketService.renewPresignedUrl(
+      objectName as string,
+    );
     return res.status(STATUS_CODE.OK).json({ url: response });
   }
 

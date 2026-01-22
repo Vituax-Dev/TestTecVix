@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import fs from "fs/promises";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 const SEEDS_FOLDER_NAME = ""; // "seeds" folder inside temp folder: ex: "temp/SEEDS_FOLDER_NAME"
@@ -120,6 +121,41 @@ async function main() {
     "<-- Tables to seed (Number of Fails [${tablesTryAgain.length}]) | Number of trys: ",
     MAX - limit,
   );
+
+  // Seed test users
+  console.log("------ Seeding test users ----------------");
+  const users = [
+    {
+      username: "Admin Vituax",
+      email: "admin@vituax.com",
+      password: await bcrypt.hash("Admin@123", 10),
+      role: "admin" as const,
+      isActive: true,
+    },
+    {
+      username: "Manager Vituax",
+      email: "manager@vituax.com",
+      password: await bcrypt.hash("Manager@123", 10),
+      role: "manager" as const,
+      isActive: true,
+    },
+    {
+      username: "Member Vituax",
+      email: "member@vituax.com",
+      password: await bcrypt.hash("Member@123", 10),
+      role: "member" as const,
+      isActive: true,
+    },
+  ];
+
+  for (const user of users) {
+    await prisma.user.upsert({
+      where: { email: user.email },
+      update: {},
+      create: user,
+    });
+  }
+  console.log("Test users seeded successfully");
 }
 
 main()

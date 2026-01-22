@@ -393,10 +393,6 @@ O sistema possui três níveis de permissão:
 
 ## 🔑 Credenciais de Teste
 
-> **Importante**: Após implementar o sistema de autenticação, adicione aqui as credenciais de usuários de teste para cada tipo de permissão.
-
-Exemplo:
-
 ```
 Admin:
   Email: admin@vituax.com

@@ -46,9 +46,10 @@ const swaggerOptions = {
 
 const swaggerDocs = {
   ...swaggerJSDoc(swaggerOptions),
-} as { paths: object; tags: Array<unknown>; components: object };
+} as { paths: object; tags: Array<unknown>; components: object; servers: Array<unknown> };
 swaggerDocs.paths = swaggerYamlDocs.paths;
 swaggerDocs.tags = swaggerYamlDocs.tags;
+swaggerDocs.servers = swaggerYamlDocs.servers;
 swaggerDocs.components = {
   ...swaggerDocs.components,
   ...swaggerYamlDocs.components,

@@ -13,7 +13,8 @@ interface IUserLoginResponse {
     deletedAt: string | Date | null;
     email: string;
     idBrandMaster: number | null;
-    idUser: string;
+    idUser: string; 
+    id: string; 
     isActive: boolean;
     profileImgUrl: null | string;
     role: "admin" | "manager" | "member";
@@ -22,11 +23,9 @@ interface IUserLoginResponse {
   };
 }
 
-
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setIsOpenModalUserNotActive, setLoginTime } =
-    useZGlobalVar();
+  const { setIsOpenModalUserNotActive, setLoginTime } = useZGlobalVar();
   const { setUser } = useZUserProfile();
   const { resetAllStates } = useZResetAllStates();
   const navigate = useNavigate();
@@ -47,27 +46,29 @@ export const useLogin = () => {
     }
 
     const response = await api.post<IUserLoginResponse>({
-      url: "/user/login",
+      url: "/auth/login",
       data: {
-        username: username || undefined,
+        username: username || username.trim() || undefined,
         password,
-        email: email || undefined,
+        email: email || email.trim() || undefined,
       },
       tryRefetch: true,
     });
 
     setIsLoading(false);
+
     if (response.error) {
       toast.error(response.message);
       return;
     }
+
     if (!response.data.user?.isActive) {
       setIsOpenModalUserNotActive(true);
       return;
     }
 
     setUser({
-      idUser: response.data.user.idUser,
+      idUser: response.data.user.id || response.data.user.idUser,
       profileImgUrl: response.data.user.profileImgUrl,
       username: response.data.user.username,
       userEmail: response.data.user.email,
@@ -75,7 +76,11 @@ export const useLogin = () => {
       token: response.data.token,
       role: response.data.user.role,
     });
+
     setLoginTime(new Date());
+
+    navigate("/");
+    toast.success("Login realizado com sucesso!");
   };
 
   const goLogout = () => {

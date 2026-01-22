@@ -247,6 +247,56 @@ paths:
         "404":
           description: User not found
 
+  /users/{idUser}/deactivate:
+    patch:
+      tags:
+        - Users
+      summary: Deactivate user
+      description: Set user isActive to false (requires admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idUser
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: User deactivated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "404":
+          description: User not found
+
+  /users/{idUser}/reactivate:
+    patch:
+      tags:
+        - Users
+      summary: Reactivate user
+      description: Set user isActive to true (requires admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: idUser
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: User reactivated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "404":
+          description: User not found
+
 components:
   securitySchemes:
     bearerAuth:

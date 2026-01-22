@@ -49,4 +49,16 @@ export class UserController {
     await this.userService.delete(String(idUser));
     return res.status(STATUS_CODE.NO_CONTENT).send();
   }
+
+  async deactivate(req: CustomRequest<unknown>, res: Response) {
+    const { idUser } = req.params;
+    const result = await this.userService.deactivate(String(idUser));
+    return res.status(STATUS_CODE.OK).json(result);
+  }
+
+  async reactivate(req: CustomRequest<unknown>, res: Response) {
+    const { idUser } = req.params;
+    const result = await this.userService.reactivate(String(idUser));
+    return res.status(STATUS_CODE.OK).json(result);
+  }
 }

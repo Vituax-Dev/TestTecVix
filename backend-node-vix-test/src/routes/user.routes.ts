@@ -61,4 +61,32 @@ userRoutes.delete(
   },
 );
 
+// Deactivate user - admin only
+userRoutes.patch(
+  `${BASE_PATH}/:idUser/deactivate`,
+  authUser,
+  isAdmin,
+  async (req, res, next) => {
+    try {
+      await userController.deactivate(req, res);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+// Reactivate user - admin only
+userRoutes.patch(
+  `${BASE_PATH}/:idUser/reactivate`,
+  authUser,
+  isAdmin,
+  async (req, res, next) => {
+    try {
+      await userController.reactivate(req, res);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 export { userRoutes };

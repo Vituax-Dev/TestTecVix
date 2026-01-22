@@ -3,7 +3,7 @@ import { UserModel } from "../models/UserModel";
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
-import { genToken, verifyToken } from "../utils/jwt";
+import { genToken } from "../utils/jwt";
 import { loginUserSchema } from "../types/validations/User/loginUser";
 import { userCreatedSchema } from "../types/validations/User/createUser";
 
@@ -148,6 +148,22 @@ export class UserService {
     if (!user) {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
-    return this.userModel.softDelete(idUser);
+    return this.userModel.hardDelete(idUser);
+  }
+
+  async deactivate(idUser: string) {
+    const user = await this.userModel.findById(idUser);
+    if (!user) {
+      throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+    return this.userModel.update(idUser, { isActive: false });
+  }
+
+  async reactivate(idUser: string) {
+    const user = await this.userModel.findById(idUser);
+    if (!user) {
+      throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+    return this.userModel.update(idUser, { isActive: true });
   }
 }

@@ -26,10 +26,9 @@ export class UserModel {
     });
   }
 
-  async softDelete(idUser: string) {
-    return prisma.user.update({
+  async hardDelete(idUser: string) {
+    return prisma.user.delete({
       where: { idUser },
-      data: { deletedAt: new Date(), updatedAt: new Date() },
     });
   }
 

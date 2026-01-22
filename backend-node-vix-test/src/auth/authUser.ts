@@ -12,17 +12,22 @@ export const authUser = async (
   next: NextFunction,
 ) => {
   const { authorization } = req.headers;
+  
   if (!authorization) {
     throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
   }
-  const token = authorization.split(" ")[1];
 
-  // const idUser = verifyToken(token);
-  // const user = //
+  const parts = authorization.split(" ");
+  
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
+    throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
+  }
 
-  // if (isInvalidUser) {
-  //   throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
-  // }
-  // req.user = user;
+  const token = parts[1];
+  const decoded = verifyToken(token);
+
+  req.user = decoded as unknown as user;
+
   return next();
+
 };

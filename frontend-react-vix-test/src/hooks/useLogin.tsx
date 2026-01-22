@@ -41,7 +41,9 @@ export const useLogin = () => {
     email: string;
   }) => {
     setIsLoading(true);
+
     if ((!username && !email) || !password) {
+      toast.warning("Preencha as credenciais corretamente.");
       setIsLoading(false);
       return;
     }
@@ -57,10 +59,12 @@ export const useLogin = () => {
     });
 
     setIsLoading(false);
+
     if (response.error) {
       toast.error(response.message);
       return;
     }
+
     if (!response.data.user?.isActive) {
       setIsOpenModalUserNotActive(true);
       return;
@@ -76,6 +80,9 @@ export const useLogin = () => {
       role: response.data.user.role,
     });
     setLoginTime(new Date());
+
+    toast.success(`Bem-vindo, ${response.data.user.username}!`);
+    navigate("/");
   };
 
   const goLogout = () => {

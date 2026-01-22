@@ -9,12 +9,25 @@ export interface IResponse<T> {
 
 export const baseAuth = (auth: Record<string, unknown> = {}) => {
   const signature = import.meta.env.VITE_SIGN_HASH || "";
+  
+  const storage = localStorage.getItem("userProfile");
+  let token = "";
+  
+  if (storage) {
+    try {
+      const parsed = JSON.parse(storage);
+      token = parsed.state?.token || ""; 
+    } catch (e) {
+      console.error("Erro ao ler token do localStorage", e);
+    }
+  }
 
   return {
     headers: {
       "x-sign": signature,
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
       ...auth,
     },
   };

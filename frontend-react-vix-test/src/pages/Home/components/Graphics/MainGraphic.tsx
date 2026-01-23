@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   XAxis,
   YAxis,
@@ -15,11 +15,55 @@ import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 import { IFormatData } from "../../../../types/socketType";
+import {
+  useZVMChartData,
+  generateNextValue,
+} from "../../../../stores/useZVMChartData";
 
 export const MainGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const { currentIdVM, currentVMName: vmName } = useZGlobalVar();
+  const { getVMChartData, updateCpuData } = useZVMChartData();
+  const [chartData, setChartData] = useState<IFormatData[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Carrega dados da VM atual e inicia atualização
+  useEffect(() => {
+    if (!currentIdVM) {
+      setChartData([]);
+      return;
+    }
+
+    // Carrega dados existentes da VM
+    const vmData = getVMChartData(currentIdVM);
+    setChartData(vmData.cpu);
+
+    // Inicia geração de novos dados a cada 2 segundos
+    intervalRef.current = setInterval(() => {
+      const currentData = getVMChartData(currentIdVM);
+      const lastValue = currentData.cpu[currentData.cpu.length - 1]?.value || 45;
+      const newValue = generateNextValue(lastValue, 15, 95, 8);
+
+      const newPoint: IFormatData = {
+        time: new Date().toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }),
+        value: newValue,
+      };
+
+      updateCpuData(currentIdVM, newPoint);
+      setChartData((prev) => [...prev, newPoint].slice(-20));
+    }, 2000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [currentIdVM]);
 
   const lastCpuUsage = chartData[chartData.length - 1]?.value || 0;
 
@@ -29,8 +73,6 @@ export const MainGraphic = () => {
       : lastCpuUsage < 90
         ? theme[mode].warning
         : theme[mode].danger;
-
-  const { currentVMName: vmName } = useZGlobalVar();
 
   // if (!chartData.length) return <EmptyFeedBack />;
 

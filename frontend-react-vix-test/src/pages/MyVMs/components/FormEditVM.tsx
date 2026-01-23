@@ -14,6 +14,7 @@ import { TextRob16Font1S } from "../../../components/Text1S";
 import { ModalConfirmCreate } from "../../VirtualMachine/components/ModalConfirmCreate";
 import { CloseXIcon } from "../../../icons/CloseXIcon";
 import { useZMyVMsList } from "../../../stores/useZMyVMsList";
+import { useZUserProfile } from "../../../stores/useZUserProfile";
 import { PlayCircleIcon } from "../../../icons/PlayCircleIcon";
 // import { PauseCircleIcon } from "../../../icons/PauseCircleIcon";
 import { StopCircleIcon } from "../../../icons/StopCircleIcon";
@@ -35,6 +36,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
     storageOptions,
     localizationOptions,
     updateVM,
+    updateVMStatus,
     validPassword,
     deleteVM,
     isLoadingDeleteVM,
@@ -44,6 +46,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
 
   const { statusHashMap } = useStatusInfo();
   const { currentVM, setCurrentVM } = useZMyVMsList();
+  const { role } = useZUserProfile();
   const [vmPassword, setVmPassword] = useState(currentVM.pass);
   const [vmName, setVmName] = useState(currentVM.vmName);
   const [vmSO, setVmSO] = useState<TOptions>({
@@ -87,35 +90,48 @@ export const FormEditVM = ({ onClose }: IProps) => {
   };
 
   const handleEditVm = async () => {
-    const vm = {
-      hasBackup,
-      vmPassword,
-      vmName,
-      vmSO,
-      vmvCpu,
-      vmMemory,
-      vmDisk,
-      vmStorageType,
-      vmLocalization,
-      status,
-      oldVM: currentVM,
-    };
     setOpenConfirm(false);
     const isValidPass = validPassword(vmPassword);
     if (!isValidPass) return;
-    await updateVM(
-      {
-        ...vm,
-        vmName: vmName,
-        vCPU: vmvCpu,
-        ram: vmMemory,
-        disk: vmDisk,
-        hasBackup: hasBackup,
-        os: String(vmSO?.value) || "",
-        pass: vmPassword,
-      },
-      currentVM.idVM,
-    );
+
+    // Build object with only changed fields (partial update)
+    const changedFields: Partial<{
+      vmName: string;
+      vCPU: number;
+      ram: number;
+      disk: number;
+      hasBackup: boolean;
+      os: string;
+      pass: string;
+      status: string | null;
+    }> = {};
+
+    if (vmName !== currentVM.vmName) changedFields.vmName = vmName;
+    if (vmvCpu !== currentVM.vCPU) changedFields.vCPU = vmvCpu;
+    if (vmMemory !== currentVM.ram) changedFields.ram = vmMemory;
+    if (vmDisk !== currentVM.disk) changedFields.disk = vmDisk;
+    if (hasBackup !== currentVM.hasBackup) changedFields.hasBackup = hasBackup;
+    if (String(vmSO?.value) !== currentVM.os) changedFields.os = String(vmSO?.value) || "";
+    if (vmPassword !== currentVM.pass) changedFields.pass = vmPassword;
+    if (status !== currentVM.status) changedFields.status = status;
+
+    // Only call API if there are changes
+    if (Object.keys(changedFields).length > 0) {
+      await updateVM(
+        {
+          ...changedFields,
+          vmName: changedFields.vmName ?? currentVM.vmName,
+          vCPU: changedFields.vCPU ?? currentVM.vCPU,
+          ram: changedFields.ram ?? currentVM.ram,
+          disk: changedFields.disk ?? currentVM.disk,
+          hasBackup: changedFields.hasBackup ?? currentVM.hasBackup,
+          os: changedFields.os ?? currentVM.os,
+          pass: changedFields.pass ?? currentVM.pass,
+          oldVM: currentVM,
+        },
+        currentVM.idVM,
+      );
+    }
     onClose(true);
   };
 
@@ -128,11 +144,19 @@ export const FormEditVM = ({ onClose }: IProps) => {
   };
 
   const handleStopVM = async () => {
+    await updateVMStatus({
+      idVM: currentVM.idVM,
+      status: "STOPPED",
+    });
     setStatus("STOPPED");
     onClose(true);
   };
 
   const handleStartVM = async () => {
+    await updateVMStatus({
+      idVM: currentVM.idVM,
+      status: "RUNNING",
+    });
     setStatus("RUNNING");
     onClose(true);
   };
@@ -474,7 +498,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
             </TextRob16Font1S>
           </Btn>
           <Btn
-            disabled={disabledBtn}
+            disabled={role !== "admin"}
             onClick={() => setOpenDeleteModal(true)}
             sx={{
               padding: "9px 24px",

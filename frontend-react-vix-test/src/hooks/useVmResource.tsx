@@ -99,6 +99,25 @@ export const useVmResource = () => {
     },
   ];
 
+  const osOptions: { value: EOS; label: string }[] = [
+    { value: EOS.ubuntu2404, label: "Ubuntu 24.04 LTS" },
+    { value: EOS.ubuntu2204, label: "Ubuntu 22.04 LTS" },
+    { value: EOS.ubuntu2004, label: "Ubuntu 20.04 LTS" },
+    { value: EOS.debian12, label: "Debian 12" },
+    { value: EOS.debian11, label: "Debian 11" },
+    { value: EOS.centos9, label: "CentOS 9" },
+    { value: EOS.centos10, label: "CentOS 10" },
+    { value: EOS.rockylinux10, label: "Rocky Linux 10" },
+    { value: EOS.fedora40, label: "Fedora 40" },
+    { value: EOS.opensuse, label: "OpenSUSE" },
+    { value: EOS.archlinux, label: "Arch Linux" },
+    { value: EOS.win10, label: "Windows 10" },
+    { value: EOS.win2019std, label: "Windows Server 2019" },
+    { value: EOS.win2022std, label: "Windows Server 2022" },
+    { value: EOS.pfsense, label: "pfSense" },
+    { value: EOS.mikrotik, label: "MikroTik" },
+  ];
+
   const validPassword = (vmPassword: string) => {
     const isValid = validatePassword(vmPassword, MIN_PASS_SIZE);
     if (isValid) return true;
@@ -336,6 +355,7 @@ export const useVmResource = () => {
     getNetworkType,
     storageOptions,
     localizationOptions,
+    osOptions,
     isLoading,
     networkTypeOptions,
     isLoadingCreateVM,

@@ -12,14 +12,13 @@ export class VMModel {
   }
 
   async totalCount({ query, idBrandMaster }: IListAllVM) {
-    const { status, idBrandMaster: idBrandMasterParams } = query;
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
+    const { status } = query;
 
     return prisma.vM.count({
       where: {
         deletedAt: null,
-        idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
+        // Se idBrandMaster foi passado, filtra por ele; senão, busca todos
+        ...(idBrandMaster !== undefined && { idBrandMaster }),
         status,
         vmName: {
           contains: query.search,
@@ -31,19 +30,17 @@ export class VMModel {
   async listAll({ query, idBrandMaster }: IListAllVM) {
     const limit = query.limit || 0;
     const skip = query.page ? query.page * limit : query.offset || 0;
-    const { status, idBrandMaster: idBrandMasterParams } = query;
+    const { status } = query;
     const orderBy =
       query.orderBy?.map(({ field, direction }) => ({
         [field]: direction,
       })) || [];
 
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
-
     const vms = await prisma.vM.findMany({
       where: {
         deletedAt: null,
-        idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
+        // Se idBrandMaster foi passado, filtra por ele; senão, busca todos
+        ...(idBrandMaster !== undefined && { idBrandMaster }),
         status,
         vmName: {
           contains: query.search,

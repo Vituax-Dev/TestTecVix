@@ -2,7 +2,12 @@ import { Response } from "express";
 import { CustomRequest } from "../types/custom";
 import { STATUS_CODE } from "../constants/statusCode";
 import { IBucketService } from "../types/Interfaces/IBucketService";
+import multer from "multer";
 import path from "path";
+
+interface UploadRequest extends CustomRequest<unknown>{
+  file?: Express.Multer.File;
+}
 
 export class BucketController {
   constructor(private bucketService: IBucketService) { }
@@ -22,7 +27,7 @@ export class BucketController {
     return res.status(STATUS_CODE.OK).json({ url: response });
   }
 
-  async uploadFile(req: CustomRequest<unknown>, res: Response) {
+  async uploadFile(req: UploadRequest, res: Response) {
     const file = req.file;
     if (!file)
       return res

@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 export interface IResponse<T> {
   message: string;
@@ -7,180 +7,74 @@ export interface IResponse<T> {
   data: T;
 }
 
-export const baseAuth = (auth: Record<string, unknown> = {}) => {
-  const signature = import.meta.env.VITE_SIGN_HASH || "";
+const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:3001/api/v1";
+const SIGNATURE = import.meta.env.VITE_SIGN_HASH || "";
 
-  return {
-    headers: {
-      "x-sign": signature,
-      "Access-Control-Allow-Origin": "*",
-      "Content-Type": "application/json",
-      ...auth,
-    },
-  };
-};
+const apiClient = axios.create({
+  baseURL: BASE_URL,
+  timeout: 80000,
+  headers: {
+    "x-sign": SIGNATURE,
+    "Content-Type": "application/json",
+  },
+});
 
-const retryRequest = async <T>({
-  method = "GET",
-  url = "",
-  data = {},
-  auth = {},
-  params = {},
-  timeout = 50000,
-  fullEndpoint = "",
-} = {}): Promise<IResponse<T>> => {
-  try {
-    const BASE_URL =
-      import.meta.env.VITE_BASE_URL || "http://localhost:3001/api/v1";
-    const nAuth = baseAuth(auth);
-    const response: { data: T } = await axios({
-      ...(timeout && { timeout }),
-      method,
-      url: fullEndpoint || `${BASE_URL}${url}`,
-      data,
-      params,
-      ...nAuth,
-    });
-
-    return { data: response.data, error: false, err: null, message: "" };
-  } catch (error) {
-    let message = "Unknown error";
-    if (error instanceof AxiosError) {
-      message = error?.response?.data?.message || error.message;
-    }
-    return { message, error: true, err: error, data: [] as T };
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    
+    config.headers.set("Authorization", `Bearer ${token}`);
   }
-};
+  return config;
+});
 
-const app = async <T>({
+const request = async <T>({
   method = "GET",
   url = "",
   data = {},
-  auth = {},
-  params = {},
+  auth,
+  params,
   timeout = 80000,
   fullEndpoint = "",
-  tryRefetch = false,
+}: {
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  url?: string;
+  data?: any;
+  auth?: Record<string, string>;
+  params?: any;
+  timeout?: number;
+  fullEndpoint?: string;
 } = {}): Promise<IResponse<T>> => {
   try {
-    const BASE_URL =
-      import.meta.env.VITE_BASE_URL || "http://localhost:3001/api/v1";
-    const nAuth = baseAuth(auth);
-    const response: { data: T } = await axios({
-      ...(timeout && { timeout }),
+    const response = await apiClient.request<T>({
       method,
-      url: fullEndpoint || `${BASE_URL}${url}`,
+      url: fullEndpoint || url,
       data,
       params,
-      ...nAuth,
+      timeout,
+      
+      ...(auth ? { headers: auth } : {}),
     });
 
     return { data: response.data, error: false, err: null, message: "" };
   } catch (error) {
     let message = "Unknown error";
     if (error instanceof AxiosError) {
-      if (
-        error.status === 403 ||
-        (error.code === "ECONNABORTED" && error.message.includes("timeout"))
-      ) {
-        if (tryRefetch) {
-          // implementar um log de registros desses erros
-          return retryRequest<T>({
-            method,
-            url,
-            data,
-            auth,
-            params,
-            timeout: timeout * 2 || undefined,
-            fullEndpoint,
-          });
-        }
-      }
-      message = error?.response?.data?.message || error.message;
+      message = (error.response?.data as any)?.message || error.message;
     }
     return { message, error: true, err: error, data: [] as T };
   }
 };
 
-const get = async <T>({
-  url = "",
-  data = {},
-  auth = {},
-  params = {},
-  timeout = undefined,
-  fullEndpoint = "",
-  tryRefetch = false,
-} = {}) => {
-  return app<T>({
-    method: "GET",
-    url,
-    auth,
-    data,
-    params,
-    timeout,
-    fullEndpoint,
-    tryRefetch,
-  });
-};
-
-const remove = async <T>({
-  url = "",
-  data = {},
-  auth = {},
-  timeout = undefined,
-  fullEndpoint = "",
-  tryRefetch = false,
-}) =>
-  app<T>({
-    method: "DELETE",
-    url,
-    data,
-    auth,
-    timeout,
-    fullEndpoint,
-    tryRefetch,
-  });
-
-const put = async <T>({
-  url = "",
-  data = {},
-  auth = {},
-  timeout = undefined,
-  fullEndpoint = "",
-  tryRefetch = false,
-}) => {
-  return app<T>({
-    method: "PUT",
-    url,
-    data,
-    auth,
-    timeout,
-    fullEndpoint,
-    tryRefetch,
-  });
-};
-
-const post = async <T>({
-  url = "",
-  data = {},
-  auth = {},
-  timeout = undefined,
-  fullEndpoint = "",
-  tryRefetch = false,
-}) =>
-  app<T>({
-    method: "POST",
-    url,
-    data,
-    auth,
-    timeout,
-    fullEndpoint,
-    tryRefetch,
-  });
+const get = async <T>(opts: any = {}) => request<T>({ method: "GET", ...opts });
+const post = async <T>(opts: any = {}) => request<T>({ method: "POST", ...opts });
+const put = async <T>(opts: any = {}) => request<T>({ method: "PUT", ...opts });
+const remove = async <T>(opts: any = {}) =>
+  request<T>({ method: "DELETE", ...opts });
 
 export const api = {
   get,
-  delete: remove,
-  put,
   post,
+  put,
+  delete: remove,
 };

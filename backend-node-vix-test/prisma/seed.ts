@@ -1,10 +1,14 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import fs from "fs/promises";
+import { Prisma, PrismaClient, ERole } from "@prisma/client";
+import { promises as fs } from "fs";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
+
 
 const prisma = new PrismaClient();
-const SEEDS_FOLDER_NAME = ""; // "seeds" folder inside temp folder: ex: "temp/SEEDS_FOLDER_NAME"
+const SEEDS_FOLDER_NAME = ""; 
 
 async function main() {
+  
   const isDroped = true;
   let limit = 10;
 
@@ -120,6 +124,37 @@ async function main() {
     "<-- Tables to seed (Number of Fails [${tablesTryAgain.length}]) | Number of trys: ",
     MAX - limit,
   );
+   console.log("🔑 Criando usuários fixos do README...");
+
+const fixedUsers = [
+  { email: "admin@vituax.com", password: "Admin@123", username: "admin", role: ERole.admin },
+  { email: "manager@vituax.com", password: "Manager@123", username: "manager", role: ERole.manager },
+  { email: "member@vituax.com", password: "Member@123", username: "member", role: ERole.member}
+];
+
+for (const u of fixedUsers) {
+  const hash = await bcrypt.hash(u.password, 10);
+  
+  
+  try {
+    await prisma.user.deleteMany({ where: { email: u.email } });
+  } catch {}
+  
+  
+  await prisma.user.create({
+    data: {
+      idUser: crypto.randomUUID(), 
+      email: u.email,
+      password: hash,
+      username: u.username,
+      role: u.role,
+      isActive: true,
+      idBrandMaster: null
+    }
+  });
+  console.log(`✅ ${u.email} criado com hash`);
+}
+
 }
 
 main()

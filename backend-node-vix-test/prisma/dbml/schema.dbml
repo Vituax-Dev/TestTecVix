@@ -47,6 +47,8 @@ Table vM {
   status EVMStatus
   pass String
   location ETaskLocation
+  storageType EStorageType [default: 'ssd']
+  networkType Int [default: 1]
   createdAt DateTime [default: `now()`]
   updatedAt DateTime [default: `now()`]
   deletedAt DateTime
@@ -73,6 +75,11 @@ Table user {
 Enum ETaskLocation {
   bre_barueri
   usa_miami
+}
+
+Enum EStorageType {
+  ssd
+  hd
 }
 
 Enum EVMStatus {

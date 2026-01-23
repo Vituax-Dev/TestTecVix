@@ -69,14 +69,17 @@ export const VmCard = ({
   const {
     updateThisVm,
     setUpdateThisVm,
+    currentIdVM,
     setCurrentIdVM,
     setCurrentVMOS,
     setCurrentVMName,
+    setCurrentVMStatus,
   } = useZGlobalVar();
 
   const {
     updateNameVm,
     updateDiskSizeVm,
+    updateVMStatus,
     getVMById: getVMByIdResource,
     isLoading,
     getOS,
@@ -108,8 +111,19 @@ export const VmCard = ({
 
   const handleConfirm = async () => {
     if (statusState !== preStatusState) {
-      setPreStatusState(statusState);
-
+      // Call API to update VM status
+      const result = await updateVMStatus({
+        idVM: vmId,
+        status: statusState as "RUNNING" | "STOPPED" | "PAUSED",
+      });
+      if (result) {
+        setPreStatusState(statusState);
+        // Atualiza status global para os gráficos pararem/iniciarem
+        setCurrentVMStatus(statusState as "RUNNING" | "STOPPED" | "PAUSED");
+      } else {
+        // Revert status on error
+        setStatusState(preStatusState);
+      }
       await getVMById();
     }
     setShowConfirmation(false);
@@ -141,6 +155,10 @@ export const VmCard = ({
 
   const confirmChangeName = async (val: string) => {
     setVmNameState(val);
+    // Atualiza o nome global se for a VM selecionada nos gráficos
+    if (vmId === currentIdVM) {
+      setCurrentVMName(val);
+    }
     await updateNameVm({ idVM: vmId, vmName: val.toString() });
     await getVMById();
   };
@@ -496,6 +514,7 @@ export const VmCard = ({
               setCurrentVMName(vmNameState as string);
               setCurrentIdVM(vmId as number);
               setCurrentVMOS(os);
+              setCurrentVMStatus(statusState as "RUNNING" | "STOPPED" | "PAUSED");
             }}
             sx={{
               width: "100%",

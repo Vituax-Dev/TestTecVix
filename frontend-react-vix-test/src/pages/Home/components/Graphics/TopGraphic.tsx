@@ -1,16 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from "recharts";
 import { Stack, Typography } from "@mui/material";
 import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
-import { IFormatData } from "../../../../types/socketType";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
+import {
+  useZVMChartData,
+  generateNextValue,
+} from "../../../../stores/useZVMChartData";
 
 export const TopGraphic = () => {
-  const [isLoading] = useState(false);
-  const [chartData] = useState<IFormatData[]>([]);
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const { currentIdVM, currentVMName: vmName, currentVMStatus } = useZGlobalVar();
+  const { getVMChartData, updateDiskData } = useZVMChartData();
+  const [diskUsage, setDiskUsage] = useState<number>(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Carrega dados da VM atual e inicia atualização (disco cresce lentamente)
+  useEffect(() => {
+    if (!currentIdVM) {
+      setDiskUsage(0);
+      return;
+    }
+
+    // Carrega dados existentes da VM
+    const vmData = getVMChartData(currentIdVM);
+    setDiskUsage(vmData.disk);
+
+    // Só gera novos dados se VM estiver RUNNING
+    if (currentVMStatus === "RUNNING") {
+      // Inicia geração de novos dados a cada 5 segundos (disco muda mais devagar)
+      intervalRef.current = setInterval(() => {
+        const currentData = getVMChartData(currentIdVM);
+        // Disco cresce lentamente com pequena variação
+        const newValue = generateNextValue(currentData.disk, 20, 85, 2);
+
+        updateDiskData(currentIdVM, newValue);
+        setDiskUsage(newValue);
+      }, 5000);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [currentIdVM, currentVMStatus]);
 
   const COLORS = [
     theme[mode].ok,
@@ -54,17 +90,15 @@ export const TopGraphic = () => {
     ];
   };
 
-  const cpuUsage = (chartData[chartData.length - 1]?.value || 0) / 100;
+  const normalizedDisk = diskUsage / 100;
   const valueColor =
-    cpuUsage < 0.6
+    normalizedDisk < 0.6
       ? theme[mode].ok
-      : cpuUsage < 0.85
+      : normalizedDisk < 0.85
         ? theme[mode].warning
         : theme[mode].danger;
 
-  const { currentVMName: vmName } = useZGlobalVar();
-
-  // if (!chartData.length) return <EmptyFeedBack />;
+  // if (!diskUsage) return <EmptyFeedBack />;
 
   return (
     <Stack
@@ -87,40 +121,36 @@ export const TopGraphic = () => {
       </Typography>
 
       <ResponsiveContainer width="100%" height="100%">
-        {!isLoading ? (
-          <PieChart>
-            <Pie
-              data={generateGaugeData(cpuUsage)}
-              startAngle={180}
-              endAngle={0}
-              innerRadius="85%"
-              outerRadius="120%"
-              dataKey="value"
-              stroke="none"
-              isAnimationActive={true}
-              animationDuration={2000}
-              cx="50%"
-              cy="75%"
-            >
-              {/* Mapeia as cores do gráfico */}
-              {generateGaugeData(cpuUsage).map((_entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index] || "#ccc"} />
-              ))}
-              <Label
-                value={`${(cpuUsage * 100).toFixed(2)}%`}
-                position="center"
-                style={{
-                  fill: valueColor,
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  textAnchor: "middle",
-                }}
-              />
-            </Pie>
-          </PieChart>
-        ) : (
-          <></>
-        )}
+        <PieChart>
+          <Pie
+            data={generateGaugeData(normalizedDisk)}
+            startAngle={180}
+            endAngle={0}
+            innerRadius="85%"
+            outerRadius="120%"
+            dataKey="value"
+            stroke="none"
+            isAnimationActive={true}
+            animationDuration={2000}
+            cx="50%"
+            cy="75%"
+          >
+            {/* Mapeia as cores do gráfico */}
+            {generateGaugeData(normalizedDisk).map((_entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index] || "#ccc"} />
+            ))}
+            <Label
+              value={`${diskUsage.toFixed(2)}%`}
+              position="center"
+              style={{
+                fill: valueColor,
+                fontSize: "14px",
+                fontWeight: "bold",
+                textAnchor: "middle",
+              }}
+            />
+          </Pie>
+        </PieChart>
       </ResponsiveContainer>
     </Stack>
   );

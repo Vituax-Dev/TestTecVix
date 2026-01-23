@@ -11,9 +11,11 @@ export interface IVMResource {
   disk: number;
   hasBackup: boolean;
   os: string;
-  pass: string;
+  pass?: string | null;
   status?: string | null;
-  networkType?: ENetworkType;
+  networkType?: ENetworkType | number;
+  storageType?: string | null;
+  location?: string | null;
   vmLocalization?: { label: string | null; value: unknown } | null;
   oldVM?: {
     vmName: string;
@@ -22,7 +24,7 @@ export interface IVMResource {
     disk: number;
     hasBackup: boolean;
     os: string;
-    pass: string;
+    pass?: string | null;
     status?: string | null;
     vmLocalization?: { label: string | null; value: unknown } | null;
   } | null;
@@ -78,6 +80,9 @@ export interface IVMCreatedResponse {
   status: string | null;
   idBrandMaster: number | null;
   pass: string | null;
+  location: string | null;
+  storageType: string | null;
+  networkType: number | null;
   createdAt: Date | string;
   updatedAt: Date | string;
   deletedAt: Date | string | null;
@@ -91,7 +96,6 @@ export interface IVMCreatedResponse {
   idVmIpsRegions?: number | null;
   idPortsByRegion?: number | null;
   idVlanGroup?: number | null;
-  networkType?: ENetworkType;
 }
 
 export interface IVLANGroup {

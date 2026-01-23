@@ -14,6 +14,7 @@ import { TextRob16Font1S } from "../../../components/Text1S";
 import { ModalConfirmCreate } from "../../VirtualMachine/components/ModalConfirmCreate";
 import { CloseXIcon } from "../../../icons/CloseXIcon";
 import { useZMyVMsList } from "../../../stores/useZMyVMsList";
+import { useZUserProfile } from "../../../stores/useZUserProfile";
 import { PlayCircleIcon } from "../../../icons/PlayCircleIcon";
 // import { PauseCircleIcon } from "../../../icons/PauseCircleIcon";
 import { StopCircleIcon } from "../../../icons/StopCircleIcon";
@@ -34,16 +35,21 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const {
     storageOptions,
     localizationOptions,
+    networkTypeOptions,
     updateVM,
+    updateVMStatus,
     validPassword,
     deleteVM,
     isLoadingDeleteVM,
     getNetworkType,
+    getLocalization,
+    getStorageType,
     isLoadingUpdateVM,
   } = useVmResource();
 
   const { statusHashMap } = useStatusInfo();
   const { currentVM, setCurrentVM } = useZMyVMsList();
+  const { role } = useZUserProfile();
   const [vmPassword, setVmPassword] = useState(currentVM.pass);
   const [vmName, setVmName] = useState(currentVM.vmName);
   const [vmSO, setVmSO] = useState<TOptions>({
@@ -53,14 +59,15 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const [vmvCpu, setVmvCpu] = useState(currentVM.vCPU);
   const [vmMemory, setVmMemory] = useState(currentVM.ram);
   const [vmDisk, setVmDisk] = useState(currentVM.disk);
-  const [vmStorageType] = useState<TOptions>({
-    value: "ssd",
-    label: "SSD",
-  });
-  const [vmLocalization] = useState<TOptions>({
-    label: localizationOptions[0]?.label,
-    value: localizationOptions[0]?.value,
-  });
+  // Usa o storageType do banco de dados ou o primeiro da lista como fallback
+  const vmStorageFromDB = getStorageType({ storageTypeValue: currentVM.storageType });
+  const [vmStorageType, setVmStorageType] = useState<TOptions | null>(vmStorageFromDB);
+  // Usa o networkType do banco de dados
+  const vmNetworkFromDB = getNetworkType({ networkTypeValue: currentVM.networkType });
+  const [vmNetworkType, setVmNetworkType] = useState<TOptions | null>(vmNetworkFromDB);
+  // Usa o location do banco de dados ou o primeiro da lista como fallback
+  const vmLocationFromDB = getLocalization({ locationValue: currentVM.location });
+  const [vmLocalization] = useState<TOptions | null>(vmLocationFromDB);
   const [hasBackup, setHasBackup] = useState(currentVM.hasBackup);
 
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -87,35 +94,52 @@ export const FormEditVM = ({ onClose }: IProps) => {
   };
 
   const handleEditVm = async () => {
-    const vm = {
-      hasBackup,
-      vmPassword,
-      vmName,
-      vmSO,
-      vmvCpu,
-      vmMemory,
-      vmDisk,
-      vmStorageType,
-      vmLocalization,
-      status,
-      oldVM: currentVM,
-    };
     setOpenConfirm(false);
     const isValidPass = validPassword(vmPassword);
     if (!isValidPass) return;
-    await updateVM(
-      {
-        ...vm,
-        vmName: vmName,
-        vCPU: vmvCpu,
-        ram: vmMemory,
-        disk: vmDisk,
-        hasBackup: hasBackup,
-        os: String(vmSO?.value) || "",
-        pass: vmPassword,
-      },
-      currentVM.idVM,
+
+    // Dados atuais do formulário (apenas campos editáveis)
+    const formData = {
+      vmName,
+      vCPU: vmvCpu,
+      ram: vmMemory,
+      disk: vmDisk,
+      hasBackup,
+      os: String(vmSO?.value) || "",
+      status,
+      pass: vmPassword,
+      storageType: (vmStorageType?.value as string) || null,
+      networkType: vmNetworkType?.value || null,
+    };
+
+    // Dados originais da VM
+    const originalData = {
+      vmName: currentVM.vmName,
+      vCPU: currentVM.vCPU,
+      ram: currentVM.ram,
+      disk: currentVM.disk,
+      hasBackup: currentVM.hasBackup,
+      os: currentVM.os,
+      status: currentVM.status,
+      pass: currentVM.pass,
+      storageType: currentVM.storageType,
+      networkType: currentVM.networkType,
+    };
+
+    // Filtra apenas campos que mudaram
+    const changedFields = Object.fromEntries(
+      Object.entries(formData).filter(
+        ([key, value]) => value !== originalData[key as keyof typeof originalData]
+      )
     );
+
+    // Só chama API se houver mudanças
+    if (Object.keys(changedFields).length > 0) {
+      await updateVM(
+        { ...originalData, ...changedFields, oldVM: currentVM },
+        currentVM.idVM,
+      );
+    }
     onClose(true);
   };
 
@@ -128,23 +152,30 @@ export const FormEditVM = ({ onClose }: IProps) => {
   };
 
   const handleStopVM = async () => {
+    await updateVMStatus({
+      idVM: currentVM.idVM,
+      status: "STOPPED",
+    });
     setStatus("STOPPED");
     onClose(true);
   };
 
   const handleStartVM = async () => {
+    await updateVMStatus({
+      idVM: currentVM.idVM,
+      status: "RUNNING",
+    });
     setStatus("RUNNING");
     onClose(true);
   };
 
+  // vmPassword e vmLocalization não são editáveis, então não bloqueiam o botão
   const disabledBtn =
     !vmName ||
     !vmSO ||
     !vmvCpu ||
     !vmMemory ||
-    !vmDisk ||
-    !vmPassword ||
-    !vmLocalization;
+    !vmDisk;
 
   return (
     <>
@@ -203,12 +234,11 @@ export const FormEditVM = ({ onClose }: IProps) => {
             }}
           >
             <LabelInputVM
-              onChange={() => {}}
+              onChange={setVmPassword}
               value={vmPassword}
               label={t("createVm.password")}
               placeholder={t("createVm.userPassword")}
               type="password"
-              disabled
             />
             <PasswordValidations vmPassword={vmPassword} />
           </Stack>
@@ -304,11 +334,10 @@ export const FormEditVM = ({ onClose }: IProps) => {
             }}
           >
             <DropDowText
-              disabled
               label={t("createVm.storageType")}
               data={storageOptions}
               value={vmStorageType}
-              onChange={() => {}}
+              onChange={(val) => setVmStorageType(val)}
               sxContainer={{
                 "@media (min-width: 660px)": {
                   maxWidth: "180px",
@@ -317,13 +346,10 @@ export const FormEditVM = ({ onClose }: IProps) => {
             />
             {/* Network Type */}
             <DropDowText
-              disabled
               label={t("createVm.network")}
-              data={[]}
-              value={getNetworkType({
-                networkTypeValue: currentVM.networkType,
-              })}
-              onChange={() => {}}
+              data={networkTypeOptions}
+              value={vmNetworkType}
+              onChange={(val) => setVmNetworkType(val)}
               sxContainer={{
                 maxWidth: "280px",
               }}
@@ -474,7 +500,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
             </TextRob16Font1S>
           </Btn>
           <Btn
-            disabled={disabledBtn}
+            disabled={role !== "admin"}
             onClick={() => setOpenDeleteModal(true)}
             sx={{
               padding: "9px 24px",
@@ -517,11 +543,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
           vmDisk={vmDisk.toString()}
           vmStorageType={vmStorageType?.label}
           vmLocalization={vmLocalization?.label}
-          vmNetwork={
-            getNetworkType({
-              networkTypeValue: currentVM.networkType,
-            })?.label
-          }
+          vmNetwork={vmNetworkType?.label}
           status={statusHashMap[status]}
         />
       )}

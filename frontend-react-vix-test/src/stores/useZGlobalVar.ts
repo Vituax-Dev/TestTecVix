@@ -14,6 +14,7 @@ export interface IGlobalVar {
   currentIdVM: null | number;
   currentVMName: null | string;
   currentVMOS: null | string | EOS;
+  currentVMStatus: null | "RUNNING" | "STOPPED" | "PAUSED";
   socketRef: IGenericSocket;
   search: null | string;
   searchGlobalHeader: string;
@@ -29,6 +30,7 @@ const INIT_STATE: IGlobalVar = {
   currentIdVM: null,
   currentVMName: null,
   currentVMOS: null,
+  currentVMStatus: null,
   socketRef: mockSocket,
   search: null,
   searchGlobalHeader: "",
@@ -47,6 +49,7 @@ interface IGlobalVarState extends IGlobalVar {
   setSocketRef: (socketRef: IGenericSocket) => void;
   setCurrentVMName: (currentVMName: string | null) => void;
   setCurrentVMOS: (currentVMOS: EOS | string | null) => void;
+  setCurrentVMStatus: (currentVMStatus: "RUNNING" | "STOPPED" | "PAUSED" | null) => void;
   setSearch: (search: string | null) => void;
   setSearchGlobalHeader: (search: string) => void;
   setTotalCountVMs: (totalCountVMs: number) => void;
@@ -79,5 +82,6 @@ export const useZGlobalVar = create<IGlobalVarState>((set) => ({
   setSpiceIdOpened: (spiceIdOpened) =>
     set((state) => ({ ...state, spiceIdOpened })),
   setCurrentVMOS: (currentVMOS) => set((state) => ({ ...state, currentVMOS })),
+  setCurrentVMStatus: (currentVMStatus) => set((state) => ({ ...state, currentVMStatus })),
   resetAll: () => set((state) => ({ ...state, ...INIT_STATE })),
 }));

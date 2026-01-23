@@ -99,6 +99,25 @@ export const useVmResource = () => {
     },
   ];
 
+  const osOptions: { value: EOS; label: string }[] = [
+    { value: EOS.ubuntu2404, label: "Ubuntu 24.04 LTS" },
+    { value: EOS.ubuntu2204, label: "Ubuntu 22.04 LTS" },
+    { value: EOS.ubuntu2004, label: "Ubuntu 20.04 LTS" },
+    { value: EOS.debian12, label: "Debian 12" },
+    { value: EOS.debian11, label: "Debian 11" },
+    { value: EOS.centos9, label: "CentOS 9" },
+    { value: EOS.centos10, label: "CentOS 10" },
+    { value: EOS.rockylinux10, label: "Rocky Linux 10" },
+    { value: EOS.fedora40, label: "Fedora 40" },
+    { value: EOS.opensuse, label: "OpenSUSE" },
+    { value: EOS.archlinux, label: "Arch Linux" },
+    { value: EOS.win10, label: "Windows 10" },
+    { value: EOS.win2019std, label: "Windows Server 2019" },
+    { value: EOS.win2022std, label: "Windows Server 2022" },
+    { value: EOS.pfsense, label: "pfSense" },
+    { value: EOS.mikrotik, label: "MikroTik" },
+  ];
+
   const validPassword = (vmPassword: string) => {
     const isValid = validatePassword(vmPassword, MIN_PASS_SIZE);
     if (isValid) return true;
@@ -311,6 +330,34 @@ export const useVmResource = () => {
     return networkTypeOptions[0];
   };
 
+  const getLocalization = ({
+    locationValue,
+  }: {
+    locationValue?: string | null;
+  }): { value: ETaskLocation; label: string } | null => {
+    if (locationValue) {
+      return (
+        localizationOptions?.find((loc) => loc.value === locationValue) ||
+        localizationOptions[0]
+      );
+    }
+    return localizationOptions[0] || null;
+  };
+
+  const getStorageType = ({
+    storageTypeValue,
+  }: {
+    storageTypeValue?: string | null;
+  }): { value: string; label: string } | null => {
+    if (storageTypeValue) {
+      return (
+        storageOptions?.find((st) => st.value === storageTypeValue) ||
+        storageOptions[0]
+      );
+    }
+    return storageOptions[0] || null;
+  };
+
   const monitoringVMStatus = async (idVM: number) => {
     const auth = await getAuth();
     const response = await api.get<boolean>({
@@ -334,8 +381,11 @@ export const useVmResource = () => {
     deleteVM,
     getOS,
     getNetworkType,
+    getLocalization,
+    getStorageType,
     storageOptions,
     localizationOptions,
+    osOptions,
     isLoading,
     networkTypeOptions,
     isLoadingCreateVM,

@@ -18,7 +18,6 @@ import { PasswordValidations } from "./PasswordValidations";
 import { useZVMSugestion } from "../../../stores/useZVMSugestion";
 import { ENetworkType } from "../../../types/VMTypes";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
-import { BTNISOsSection } from "./BTNISOsSection";
 import { useZVM } from "../../../stores/useZVM";
 
 export const FormVM = () => {
@@ -39,6 +38,8 @@ export const FormVM = () => {
     setVmDisk,
     vmLocalization,
     setVmLocalization,
+    vmStorageType,
+    setVmStorageType,
     hasBackup,
     setHasBackup,
     vmNetwork,
@@ -53,6 +54,7 @@ export const FormVM = () => {
     storageOptions,
     localizationOptions,
     networkTypeOptions,
+    osOptions,
     isLoadingCreateVM,
   } = useVmResource();
 
@@ -64,10 +66,6 @@ export const FormVM = () => {
     resetAll,
   } = useZVMSugestion();
 
-  const vmStorageType = {
-    value: "ssd",
-    label: "SSD",
-  };
   const handleCancel = () => {
     setVmPassword(genStrongPass(MIN_PASS_SIZE));
     setVmName("");
@@ -76,37 +74,26 @@ export const FormVM = () => {
     setVmMemory(0);
     setVmDisk(0);
     setVmLocalization(null);
+    setVmStorageType({ value: "ssd", label: "SSD" });
     setHasBackup(false);
     setVmNetwork(networkTypeOptions[0]);
   };
 
   const handleCreateVm = async () => {
-    const vm = {
-      hasBackup,
-      vmPassword,
-      vmName,
-      vmNetwork,
-      vmSO,
-      vmvCpu,
-      vmMemory,
-      vmDisk,
-      vmStorageType,
-      vmLocalization,
-    };
-
     const isValidPass = validPassword(vmPassword);
     if (!isValidPass) return;
 
     await createVm({
-      ...vm,
-      networkType: vmNetwork?.value,
-      vmName: vmName,
+      vmName,
       vCPU: vmvCpu,
       ram: vmMemory,
       disk: vmDisk,
-      hasBackup: hasBackup,
+      hasBackup,
       os: String(vmSO?.value) || "",
       pass: vmPassword,
+      location: (vmLocalization?.value as string) || null,
+      storageType: (vmStorageType?.value as string) || "ssd",
+      networkType: vmNetwork?.value || ENetworkType.public,
     });
   };
 
@@ -225,7 +212,12 @@ export const FormVM = () => {
             value={vmLocalization}
             onChange={setVmLocalization}
           />
-          <BTNISOsSection vmNameLabel={vmSO?.label} />
+          <DropDowText
+            label={t("createVm.operationalSystem")}
+            data={osOptions}
+            value={vmSO}
+            onChange={setVmSO}
+          />
         </Stack>
         {/* Sliders */}
         <Stack
@@ -284,11 +276,10 @@ export const FormVM = () => {
             }}
           >
             <DropDowText
-              disabled
               label={t("createVm.storageType")}
               data={storageOptions}
               value={vmStorageType}
-              onChange={() => {}}
+              onChange={(val) => setVmStorageType(val)}
               sxContainer={{
                 maxWidth: "180px",
               }}

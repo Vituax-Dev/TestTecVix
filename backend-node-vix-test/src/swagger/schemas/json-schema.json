@@ -251,6 +251,24 @@
             "usa_miami"
           ]
         },
+        "storageType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "ssd",
+          "enum": [
+            "ssd",
+            "hd"
+          ]
+        },
+        "networkType": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": 1
+        },
         "createdAt": {
           "type": [
             "string",

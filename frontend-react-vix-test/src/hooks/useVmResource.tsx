@@ -344,6 +344,20 @@ export const useVmResource = () => {
     return localizationOptions[0] || null;
   };
 
+  const getStorageType = ({
+    storageTypeValue,
+  }: {
+    storageTypeValue?: string | null;
+  }): { value: string; label: string } | null => {
+    if (storageTypeValue) {
+      return (
+        storageOptions?.find((st) => st.value === storageTypeValue) ||
+        storageOptions[0]
+      );
+    }
+    return storageOptions[0] || null;
+  };
+
   const monitoringVMStatus = async (idVM: number) => {
     const auth = await getAuth();
     const response = await api.get<boolean>({
@@ -368,6 +382,7 @@ export const useVmResource = () => {
     getOS,
     getNetworkType,
     getLocalization,
+    getStorageType,
     storageOptions,
     localizationOptions,
     osOptions,

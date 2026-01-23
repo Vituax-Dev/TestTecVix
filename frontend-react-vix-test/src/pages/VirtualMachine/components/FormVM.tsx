@@ -81,33 +81,20 @@ export const FormVM = () => {
   };
 
   const handleCreateVm = async () => {
-    const vm = {
-      hasBackup,
-      vmPassword,
-      vmName,
-      vmNetwork,
-      vmSO,
-      vmvCpu,
-      vmMemory,
-      vmDisk,
-      vmStorageType,
-      vmLocalization,
-    };
-
     const isValidPass = validPassword(vmPassword);
     if (!isValidPass) return;
 
     await createVm({
-      ...vm,
-      networkType: vmNetwork?.value,
-      vmName: vmName,
+      vmName,
       vCPU: vmvCpu,
       ram: vmMemory,
       disk: vmDisk,
-      hasBackup: hasBackup,
+      hasBackup,
       os: String(vmSO?.value) || "",
       pass: vmPassword,
-      location: vmLocalization?.value || null,
+      location: (vmLocalization?.value as string) || null,
+      storageType: vmStorageType?.value || "ssd",
+      networkType: vmNetwork?.value || ENetworkType.public,
     });
   };
 

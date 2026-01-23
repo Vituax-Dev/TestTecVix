@@ -42,6 +42,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
     isLoadingDeleteVM,
     getNetworkType,
     getLocalization,
+    getStorageType,
     isLoadingUpdateVM,
   } = useVmResource();
 
@@ -57,10 +58,9 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const [vmvCpu, setVmvCpu] = useState(currentVM.vCPU);
   const [vmMemory, setVmMemory] = useState(currentVM.ram);
   const [vmDisk, setVmDisk] = useState(currentVM.disk);
-  const [vmStorageType] = useState<TOptions>({
-    value: "ssd",
-    label: "SSD",
-  });
+  // Usa o storageType do banco de dados ou o primeiro da lista como fallback
+  const vmStorageFromDB = getStorageType({ storageTypeValue: currentVM.storageType });
+  const [vmStorageType] = useState<TOptions | null>(vmStorageFromDB);
   // Usa o location do banco de dados ou o primeiro da lista como fallback
   const vmLocationFromDB = getLocalization({ locationValue: currentVM.location });
   const [vmLocalization] = useState<TOptions | null>(vmLocationFromDB);
@@ -94,7 +94,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
     const isValidPass = validPassword(vmPassword);
     if (!isValidPass) return;
 
-    // Dados atuais do formulário
+    // Dados atuais do formulário (apenas campos editáveis)
     const formData = {
       vmName,
       vCPU: vmvCpu,
@@ -102,7 +102,6 @@ export const FormEditVM = ({ onClose }: IProps) => {
       disk: vmDisk,
       hasBackup,
       os: String(vmSO?.value) || "",
-      pass: vmPassword,
       status,
     };
 
@@ -114,7 +113,6 @@ export const FormEditVM = ({ onClose }: IProps) => {
       disk: currentVM.disk,
       hasBackup: currentVM.hasBackup,
       os: currentVM.os,
-      pass: currentVM.pass,
       status: currentVM.status,
     };
 

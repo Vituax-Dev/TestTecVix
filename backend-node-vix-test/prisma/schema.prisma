@@ -55,6 +55,11 @@ enum ETaskLocation {
   usa_miami
 }
 
+enum EStorageType {
+  ssd
+  hd
+}
+
 model vM {
   idVM          Int            @id @default(autoincrement())
   vmName        String?
@@ -66,6 +71,8 @@ model vM {
   status        EVMStatus?
   pass          String?
   location      ETaskLocation?
+  storageType   EStorageType?  @default(ssd)
+  networkType   Int?           @default(1)
   createdAt     DateTime?      @default(now()) @db.DateTime(0)
   updatedAt     DateTime?      @default(now()) @db.DateTime(0)
   deletedAt     DateTime?      @db.DateTime(0)

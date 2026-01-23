@@ -20,5 +20,8 @@ userRoutes.post(
   },
 );
 
+userRoutes.post(`${BASE_PATH}/register`, async (req, res) => {
+  await userController.register(req, res);
+});
 
 export { userRoutes };

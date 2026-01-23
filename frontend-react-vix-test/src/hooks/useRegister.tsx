@@ -47,11 +47,12 @@ export const useRegister = () => {
     }
 
     const response = await api.post({
-      url: "/user",
+      url: "/user/register",
       data: {
         username,
         password,
         email,
+        role: "member",
         idBrandMaster: idBrand,
       },
     });

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/AppError";
 import { ZodError } from "zod";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { STATUS_CODE } from "../constants/statusCode";
 
 export const errorHandler = (
   err:
@@ -26,7 +27,23 @@ export const errorHandler = (
   }
 
   if (err instanceof PrismaClientKnownRequestError) {
-    return res.status(400).json(err);
+    // Unique constraint violation
+    if (err.code === "P2002") {
+      const target = err.meta?.target as string;
+      // Extract field name: "user_username_key" -> "username"
+      const field = target.split("_").slice(1, -1).join("_");
+      return res.status(STATUS_CODE.CONFLICT).json({
+        message: `'${field}' already exists`,
+      });
+    }
+
+    return res
+      .status(STATUS_CODE.BAD_REQUEST)
+      .json(
+        process.env.NODE_ENV !== "production"
+          ? err
+          : { message: "Database error" },
+      );
   }
   return res.status(err?.status || 500).json(err);
 };

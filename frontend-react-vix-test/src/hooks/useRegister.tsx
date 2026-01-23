@@ -52,7 +52,6 @@ export const useRegister = () => {
         username,
         password,
         email,
-        idBrandMaster: idBrand,
       },
     });
 

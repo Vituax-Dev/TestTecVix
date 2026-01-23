@@ -47,9 +47,11 @@ export const MyVMsPage = () => {
       page: page || currentPage - 1 || 0,
       orderBy: orderBy ? `${orderBy}:${order}` : undefined,
       limit,
-      idBrandMaster: idBrand,
+      idBrandMaster: onlyMyVMs ? idBrand : undefined,
       status,
+      onlyMyBrand: onlyMyVMs ? "true" : "false",
     });
+
     setVMList(vmList);
     setTotalCount(totalCount);
     if (isFirstLoading) setIsFirstLoading(false);

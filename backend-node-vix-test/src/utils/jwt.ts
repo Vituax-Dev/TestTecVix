@@ -8,6 +8,7 @@ const secret = process.env.JWT_SECRET || "chave_fallback";
 interface IPayload {
   idUser: string;
   role: string;
+  idBrandMaster: number | null;
 }
 
 export const genToken = (payload: IPayload) => {

@@ -24,4 +24,8 @@ userRoutes.post(`${BASE_PATH}/register`, async (req, res) => {
   await userController.register(req, res);
 });
 
+userRoutes.get(`${BASE_PATH}/token/:idUser`, async (req, res) => {
+  await userController.refreshToken(req, res);
+});
+
 export { userRoutes };

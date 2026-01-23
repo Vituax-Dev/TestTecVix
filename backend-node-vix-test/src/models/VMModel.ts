@@ -28,22 +28,22 @@ export class VMModel {
     });
   }
 
-  async listAll({ query, idBrandMaster }: IListAllVM) {
-    const limit = query.limit || 0;
-    const skip = query.page ? query.page * limit : query.offset || 0;
-    const { status, idBrandMaster: idBrandMasterParams } = query;
+  async listAll({ query }: IListAllVM) {
+    const limit = Number(query.limit) || 0;
+    const skip = query.page ? Number(query.page) * limit : Number(query.offset) || 0;
+    
+    const idBrandMaster = query.idBrandMaster ? Number(query.idBrandMaster) : undefined;
+    const status = query.status;
+
     const orderBy =
       query.orderBy?.map(({ field, direction }) => ({
         [field]: direction,
       })) || [];
 
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
-
     const vms = await prisma.vM.findMany({
       where: {
         deletedAt: null,
-        idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
+        idBrandMaster: idBrandMaster, 
         status,
         vmName: {
           contains: query.search,

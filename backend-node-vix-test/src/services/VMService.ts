@@ -8,7 +8,7 @@ import { TVMUpdate, vMUpdatedSchema } from "../types/validations/VM/updateVM";
 import { vmListAllSchema } from "../types/validations/VM/vmListAll";
 
 export class VMService {
-  constructor() {}
+  constructor() { }
 
   private vMModel = new VMModel();
 
@@ -16,11 +16,32 @@ export class VMService {
     return this.vMModel.getById(idVM);
   }
 
-  async listAll(query: unknown, user: user) {
-    const validQuery = vmListAllSchema.parse(query);
-    return this.vMModel.listAll({
-      query: validQuery,
-    });
+  async listAll(query: any, user: user) {
+    try {
+      const validQuery = vmListAllSchema.parse(query);
+
+      // Identifica se o checkbox "Apenas minhas VMs" foi marcado no Frontend
+      const isRequestingOnlyMyBrand = query.onlyMyBrand === 'true';
+
+      if (isRequestingOnlyMyBrand) {
+        // Se o usuário quer apenas as dele, mas NÃO tem empresa vinculada
+        if (!user.idBrandMaster && user.role !== "admin") {
+          // Retornamos lista vazia imediatamente sem consultar o banco
+          return { totalCount: 0, result: [] };
+        }
+
+        // Se ele tem empresa, aplicamos o filtro normalmente
+        if (user.role !== "admin") {
+          validQuery.idBrandMaster = user.idBrandMaster;
+        }
+      }
+
+      // Se o checkbox estiver desmarcado (isRequestingOnlyMyBrand === false), 
+      // validQuery.idBrandMaster continuará undefined e o Prisma retornará todas as VMs.
+      return await this.vMModel.listAll({ query: validQuery });
+    } catch (error) {
+      throw error;
+    }
   }
 
   async createNewVM(data: unknown, user: user) {
@@ -29,6 +50,7 @@ export class VMService {
     const createdVM = await this.vMModel.createNewVM({
       ...validateData,
       status: "RUNNING",
+      idBrandMaster: validateData.idBrandMaster || user.idBrandMaster,
     });
 
     return createdVM;
@@ -47,6 +69,10 @@ export class VMService {
   }
 
   async deleteVM(idVM: number, user: user) {
+    if (user.role !== "admin") {
+      throw new AppError("Apenas administradores podem excluir VMs.", STATUS_CODE.FORBIDDEN);
+    }
+
     const oldVM = await this.getById(idVM);
     if (!oldVM) {
       throw new AppError(ERROR_MESSAGE.NOT_FOUND, STATUS_CODE.NOT_FOUND);

@@ -4,6 +4,7 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 import bcrypt from "bcrypt";
 import { genToken } from "../utils/jwt";
+import jwt from "jsonwebtoken";
 
 export class UserService {
   async authenticate({ email, password }: any) {
@@ -32,7 +33,7 @@ export class UserService {
       throw new AppError("Credenciais inválidas.", 401);
     }
 
-    const token = genToken({ idUser: user.idUser, role: user.role });
+    const token = genToken({ idUser: user.idUser, role: user.role , idBrandMaster: user.idBrandMaster});
 
     return {
       user: {
@@ -78,4 +79,26 @@ export class UserService {
       throw new AppError("Erro interno ao criar usuário.", 500);
     }
   }
+
+  async generateNewToken(idUser: string ) {
+  const user = await prisma.user.findUnique({
+    where: { idUser },
+  });
+
+  if (!user || !user.isActive) {
+    throw new Error("Usuário inválido para renovação de token.");
+  }
+
+  const token = jwt.sign(
+    { 
+      idUser: user.idUser, 
+      role: user.role, 
+      idBrandMaster: user.idBrandMaster 
+    },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "1d" } 
+  );
+
+  return { token };
+}
 }

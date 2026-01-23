@@ -18,16 +18,23 @@ export const authUser = async (
   }
 
   const parts = authorization.split(" ");
-  
   if (parts.length !== 2 || parts[0] !== "Bearer") {
     throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
   }
 
-  const token = parts[1];
-  const decoded = verifyToken(token);
-
-  req.user = decoded as unknown as user;
-
-  return next();
-
+  try {
+    const token = parts[1];
+    const decoded = verifyToken(token) as any;
+    console.log("DEBUG [Middleware]: Token Decodificado ->", decoded); // Verifique se idBrandMaster existe aqui
+    
+    req.user = {
+      idUser: decoded.idUser,
+      role: decoded.role,
+      idBrandMaster: decoded.idBrandMaster,
+    } as user;
+    console.log("DEBUG [Middleware]: req.user populado ->", req.user);
+    return next();
+  } catch (error) {
+    throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
+  }
 };

@@ -47,13 +47,18 @@ export const useListVms = () => {
     if (response.error) {
       if (!response.message.includes("expired")) toast.error(response.message);
       setVmList([]);
-      setVmTotalCount(0);
-      setTotalCountVMs(0);
-      goLogout();
+      setIsLoading(false);
       return;
     }
 
-    setVmList(response.data?.result);
+    const vmsWithStats = response.data?.result.map((vm: any) => ({
+      ...vm,
+      cpuUsage: Math.floor(Math.random() * 100),
+      ramUsage: Math.floor(Math.random() * 100),
+    }));
+
+    
+    setVmList(vmsWithStats);
     setVmTotalCount(response.data?.totalCount);
     setTotalCountVMs(response.data?.totalCount);
 
@@ -65,8 +70,10 @@ export const useListVms = () => {
   };
 
   useEffect(() => {
-    fetchListVms({ idBrandMaster: idBrand, limit: 20 });
-  }, []);
+    if (idBrand) {
+        fetchListVms({ idBrandMaster: idBrand, limit: 20 });
+    }
+}, [idBrand]);
 
   return { vmList, vmTotalCount, isLoading, fetchListVms };
 };

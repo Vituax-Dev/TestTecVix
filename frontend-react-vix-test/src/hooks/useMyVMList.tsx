@@ -17,6 +17,7 @@ export const useMyVMList = () => {
       search?: string;
       orderBy?: string; // field_name:asc or field_name:desc
       idBrandMaster?: number | "null";
+      onlyMyBrand?: string;
     } = {},
   ) => {
     const auth = await getAuth();

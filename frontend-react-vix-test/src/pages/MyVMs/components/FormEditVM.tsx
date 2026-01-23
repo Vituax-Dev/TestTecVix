@@ -41,6 +41,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
     deleteVM,
     isLoadingDeleteVM,
     getNetworkType,
+    getLocalization,
     isLoadingUpdateVM,
   } = useVmResource();
 
@@ -60,10 +61,9 @@ export const FormEditVM = ({ onClose }: IProps) => {
     value: "ssd",
     label: "SSD",
   });
-  const [vmLocalization] = useState<TOptions>({
-    label: localizationOptions[0]?.label,
-    value: localizationOptions[0]?.value,
-  });
+  // Usa o location do banco de dados ou o primeiro da lista como fallback
+  const vmLocationFromDB = getLocalization({ locationValue: currentVM.location });
+  const [vmLocalization] = useState<TOptions | null>(vmLocationFromDB);
   const [hasBackup, setHasBackup] = useState(currentVM.hasBackup);
 
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -161,14 +161,13 @@ export const FormEditVM = ({ onClose }: IProps) => {
     onClose(true);
   };
 
+  // vmPassword e vmLocalization não são editáveis, então não bloqueiam o botão
   const disabledBtn =
     !vmName ||
     !vmSO ||
     !vmvCpu ||
     !vmMemory ||
-    !vmDisk ||
-    !vmPassword ||
-    !vmLocalization;
+    !vmDisk;
 
   return (
     <>

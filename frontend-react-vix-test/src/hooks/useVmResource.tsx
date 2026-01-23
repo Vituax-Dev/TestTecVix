@@ -330,6 +330,20 @@ export const useVmResource = () => {
     return networkTypeOptions[0];
   };
 
+  const getLocalization = ({
+    locationValue,
+  }: {
+    locationValue?: string | null;
+  }): { value: ETaskLocation; label: string } | null => {
+    if (locationValue) {
+      return (
+        localizationOptions?.find((loc) => loc.value === locationValue) ||
+        localizationOptions[0]
+      );
+    }
+    return localizationOptions[0] || null;
+  };
+
   const monitoringVMStatus = async (idVM: number) => {
     const auth = await getAuth();
     const response = await api.get<boolean>({
@@ -353,6 +367,7 @@ export const useVmResource = () => {
     deleteVM,
     getOS,
     getNetworkType,
+    getLocalization,
     storageOptions,
     localizationOptions,
     osOptions,

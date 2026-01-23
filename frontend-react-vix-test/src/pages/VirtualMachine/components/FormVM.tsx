@@ -38,6 +38,8 @@ export const FormVM = () => {
     setVmDisk,
     vmLocalization,
     setVmLocalization,
+    vmStorageType,
+    setVmStorageType,
     hasBackup,
     setHasBackup,
     vmNetwork,
@@ -64,10 +66,6 @@ export const FormVM = () => {
     resetAll,
   } = useZVMSugestion();
 
-  const vmStorageType = {
-    value: "ssd",
-    label: "SSD",
-  };
   const handleCancel = () => {
     setVmPassword(genStrongPass(MIN_PASS_SIZE));
     setVmName("");
@@ -76,6 +74,7 @@ export const FormVM = () => {
     setVmMemory(0);
     setVmDisk(0);
     setVmLocalization(null);
+    setVmStorageType({ value: "ssd", label: "SSD" });
     setHasBackup(false);
     setVmNetwork(networkTypeOptions[0]);
   };
@@ -93,7 +92,7 @@ export const FormVM = () => {
       os: String(vmSO?.value) || "",
       pass: vmPassword,
       location: (vmLocalization?.value as string) || null,
-      storageType: vmStorageType?.value || "ssd",
+      storageType: (vmStorageType?.value as string) || "ssd",
       networkType: vmNetwork?.value || ENetworkType.public,
     });
   };
@@ -277,11 +276,10 @@ export const FormVM = () => {
             }}
           >
             <DropDowText
-              disabled
               label={t("createVm.storageType")}
               data={storageOptions}
               value={vmStorageType}
-              onChange={() => {}}
+              onChange={(val) => setVmStorageType(val)}
               sxContainer={{
                 maxWidth: "180px",
               }}

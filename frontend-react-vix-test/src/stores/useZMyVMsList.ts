@@ -43,7 +43,7 @@ const INIT_STATE: IVMList = {
   currentVM: null,
   orderBy: null,
   order: null,
-  limit: 10,
+  limit: 8,
   companyId: null,
   onlyBrandMaster: false,
   status: undefined,

@@ -12,7 +12,7 @@ import {
 export const TopGraphic = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
-  const { currentIdVM, currentVMName: vmName } = useZGlobalVar();
+  const { currentIdVM, currentVMName: vmName, currentVMStatus } = useZGlobalVar();
   const { getVMChartData, updateDiskData } = useZVMChartData();
   const [diskUsage, setDiskUsage] = useState<number>(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -28,22 +28,25 @@ export const TopGraphic = () => {
     const vmData = getVMChartData(currentIdVM);
     setDiskUsage(vmData.disk);
 
-    // Inicia geração de novos dados a cada 5 segundos (disco muda mais devagar)
-    intervalRef.current = setInterval(() => {
-      const currentData = getVMChartData(currentIdVM);
-      // Disco cresce lentamente com pequena variação
-      const newValue = generateNextValue(currentData.disk, 20, 85, 2);
+    // Só gera novos dados se VM estiver RUNNING
+    if (currentVMStatus === "RUNNING") {
+      // Inicia geração de novos dados a cada 5 segundos (disco muda mais devagar)
+      intervalRef.current = setInterval(() => {
+        const currentData = getVMChartData(currentIdVM);
+        // Disco cresce lentamente com pequena variação
+        const newValue = generateNextValue(currentData.disk, 20, 85, 2);
 
-      updateDiskData(currentIdVM, newValue);
-      setDiskUsage(newValue);
-    }, 5000);
+        updateDiskData(currentIdVM, newValue);
+        setDiskUsage(newValue);
+      }, 5000);
+    }
 
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [currentIdVM]);
+  }, [currentIdVM, currentVMStatus]);
 
   const COLORS = [
     theme[mode].ok,

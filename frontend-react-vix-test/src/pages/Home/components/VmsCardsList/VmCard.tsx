@@ -72,6 +72,7 @@ export const VmCard = ({
     setCurrentIdVM,
     setCurrentVMOS,
     setCurrentVMName,
+    setCurrentVMStatus,
   } = useZGlobalVar();
 
   const {
@@ -116,6 +117,8 @@ export const VmCard = ({
       });
       if (result) {
         setPreStatusState(statusState);
+        // Atualiza status global para os gráficos pararem/iniciarem
+        setCurrentVMStatus(statusState as "RUNNING" | "STOPPED" | "PAUSED");
       } else {
         // Revert status on error
         setStatusState(preStatusState);
@@ -506,6 +509,7 @@ export const VmCard = ({
               setCurrentVMName(vmNameState as string);
               setCurrentIdVM(vmId as number);
               setCurrentVMOS(os);
+              setCurrentVMStatus(statusState as "RUNNING" | "STOPPED" | "PAUSED");
             }}
             sx={{
               width: "100%",

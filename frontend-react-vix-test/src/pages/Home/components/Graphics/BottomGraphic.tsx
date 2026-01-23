@@ -25,7 +25,7 @@ import {
 export const BottomGraphic = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
-  const { currentIdVM, currentVMName: vmName } = useZGlobalVar();
+  const { currentIdVM, currentVMName: vmName, currentVMStatus } = useZGlobalVar();
   const { getVMChartData, updateMemoryData } = useZVMChartData();
   const [chartData, setChartData] = useState<IFormatData[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -41,32 +41,35 @@ export const BottomGraphic = () => {
     const vmData = getVMChartData(currentIdVM);
     setChartData(vmData.memory);
 
-    // Inicia geração de novos dados a cada 2 segundos
-    intervalRef.current = setInterval(() => {
-      const currentData = getVMChartData(currentIdVM);
-      const lastValue =
-        currentData.memory[currentData.memory.length - 1]?.value || 55;
-      const newValue = generateNextValue(lastValue, 30, 95, 6);
+    // Só gera novos dados se VM estiver RUNNING
+    if (currentVMStatus === "RUNNING") {
+      // Inicia geração de novos dados a cada 2 segundos
+      intervalRef.current = setInterval(() => {
+        const currentData = getVMChartData(currentIdVM);
+        const lastValue =
+          currentData.memory[currentData.memory.length - 1]?.value || 55;
+        const newValue = generateNextValue(lastValue, 30, 95, 6);
 
-      const newPoint: IFormatData = {
-        time: new Date().toLocaleTimeString("pt-BR", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        }),
-        value: newValue,
-      };
+        const newPoint: IFormatData = {
+          time: new Date().toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          }),
+          value: newValue,
+        };
 
-      updateMemoryData(currentIdVM, newPoint);
-      setChartData((prev) => [...prev, newPoint].slice(-20));
-    }, 2000);
+        updateMemoryData(currentIdVM, newPoint);
+        setChartData((prev) => [...prev, newPoint].slice(-20));
+      }, 2000);
+    }
 
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [currentIdVM]);
+  }, [currentIdVM, currentVMStatus]);
 
   const lastMemoryData =
     Number(chartData[chartData.length - 1]?.value?.toFixed(2)) || 0;

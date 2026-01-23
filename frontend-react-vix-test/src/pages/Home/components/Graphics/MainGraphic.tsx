@@ -23,7 +23,7 @@ import {
 export const MainGraphic = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
-  const { currentIdVM, currentVMName: vmName } = useZGlobalVar();
+  const { currentIdVM, currentVMName: vmName, currentVMStatus } = useZGlobalVar();
   const { getVMChartData, updateCpuData } = useZVMChartData();
   const [chartData, setChartData] = useState<IFormatData[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -39,31 +39,34 @@ export const MainGraphic = () => {
     const vmData = getVMChartData(currentIdVM);
     setChartData(vmData.cpu);
 
-    // Inicia geração de novos dados a cada 2 segundos
-    intervalRef.current = setInterval(() => {
-      const currentData = getVMChartData(currentIdVM);
-      const lastValue = currentData.cpu[currentData.cpu.length - 1]?.value || 45;
-      const newValue = generateNextValue(lastValue, 15, 95, 8);
+    // Só gera novos dados se VM estiver RUNNING
+    if (currentVMStatus === "RUNNING") {
+      // Inicia geração de novos dados a cada 2 segundos
+      intervalRef.current = setInterval(() => {
+        const currentData = getVMChartData(currentIdVM);
+        const lastValue = currentData.cpu[currentData.cpu.length - 1]?.value || 45;
+        const newValue = generateNextValue(lastValue, 15, 95, 8);
 
-      const newPoint: IFormatData = {
-        time: new Date().toLocaleTimeString("pt-BR", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        }),
-        value: newValue,
-      };
+        const newPoint: IFormatData = {
+          time: new Date().toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          }),
+          value: newValue,
+        };
 
-      updateCpuData(currentIdVM, newPoint);
-      setChartData((prev) => [...prev, newPoint].slice(-20));
-    }, 2000);
+        updateCpuData(currentIdVM, newPoint);
+        setChartData((prev) => [...prev, newPoint].slice(-20));
+      }, 2000);
+    }
 
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [currentIdVM]);
+  }, [currentIdVM, currentVMStatus]);
 
   const lastCpuUsage = chartData[chartData.length - 1]?.value || 0;
 

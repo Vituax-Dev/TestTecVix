@@ -94,41 +94,41 @@ export const FormEditVM = ({ onClose }: IProps) => {
     const isValidPass = validPassword(vmPassword);
     if (!isValidPass) return;
 
-    // Build object with only changed fields (partial update)
-    const changedFields: Partial<{
-      vmName: string;
-      vCPU: number;
-      ram: number;
-      disk: number;
-      hasBackup: boolean;
-      os: string;
-      pass: string;
-      status: string | null;
-    }> = {};
+    // Dados atuais do formulário
+    const formData = {
+      vmName,
+      vCPU: vmvCpu,
+      ram: vmMemory,
+      disk: vmDisk,
+      hasBackup,
+      os: String(vmSO?.value) || "",
+      pass: vmPassword,
+      status,
+    };
 
-    if (vmName !== currentVM.vmName) changedFields.vmName = vmName;
-    if (vmvCpu !== currentVM.vCPU) changedFields.vCPU = vmvCpu;
-    if (vmMemory !== currentVM.ram) changedFields.ram = vmMemory;
-    if (vmDisk !== currentVM.disk) changedFields.disk = vmDisk;
-    if (hasBackup !== currentVM.hasBackup) changedFields.hasBackup = hasBackup;
-    if (String(vmSO?.value) !== currentVM.os) changedFields.os = String(vmSO?.value) || "";
-    if (vmPassword !== currentVM.pass) changedFields.pass = vmPassword;
-    if (status !== currentVM.status) changedFields.status = status;
+    // Dados originais da VM
+    const originalData = {
+      vmName: currentVM.vmName,
+      vCPU: currentVM.vCPU,
+      ram: currentVM.ram,
+      disk: currentVM.disk,
+      hasBackup: currentVM.hasBackup,
+      os: currentVM.os,
+      pass: currentVM.pass,
+      status: currentVM.status,
+    };
 
-    // Only call API if there are changes
+    // Filtra apenas campos que mudaram
+    const changedFields = Object.fromEntries(
+      Object.entries(formData).filter(
+        ([key, value]) => value !== originalData[key as keyof typeof originalData]
+      )
+    );
+
+    // Só chama API se houver mudanças
     if (Object.keys(changedFields).length > 0) {
       await updateVM(
-        {
-          ...changedFields,
-          vmName: changedFields.vmName ?? currentVM.vmName,
-          vCPU: changedFields.vCPU ?? currentVM.vCPU,
-          ram: changedFields.ram ?? currentVM.ram,
-          disk: changedFields.disk ?? currentVM.disk,
-          hasBackup: changedFields.hasBackup ?? currentVM.hasBackup,
-          os: changedFields.os ?? currentVM.os,
-          pass: changedFields.pass ?? currentVM.pass,
-          oldVM: currentVM,
-        },
+        { ...originalData, ...changedFields, oldVM: currentVM },
         currentVM.idVM,
       );
     }

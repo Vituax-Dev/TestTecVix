@@ -58,12 +58,46 @@ export const useListVms = () => {
     setVmTotalCount(response.data?.totalCount);
     setTotalCountVMs(response.data?.totalCount);
 
-    // Seleciona automaticamente a primeira VM RUNNING, ou a primeira da lista
-    if (!currentIdVM && response.data?.result.length) {
-      const vms = response.data.result;
-      // Busca a primeira VM com status RUNNING
+    const vms = response.data?.result || [];
+    
+    // SEMPRE verifica se a VM selecionada ainda existe e está RUNNING
+    if (currentIdVM) {
+      // Busca a VM atualmente selecionada na lista
+      const currentVM = vms.find((vm) => vm.idVM === currentIdVM);
+      
+      if (currentVM && currentVM.status === "RUNNING") {
+        // VM existe e está RUNNING - atualiza dados (nome pode ter mudado)
+        setCurrentVMName(currentVM.vmName);
+        setCurrentVMOS(currentVM.os);
+        setCurrentVMStatus(currentVM.status as "RUNNING" | "STOPPED" | "PAUSED" | null);
+      } else {
+        // VM não existe, foi excluída ou não está RUNNING
+        // Busca a próxima VM RUNNING
+        const nextRunningVM = vms.find((vm) => vm.status === "RUNNING");
+        
+        if (nextRunningVM) {
+          setCurrentIdVM(nextRunningVM.idVM);
+          setCurrentVMName(nextRunningVM.vmName);
+          setCurrentVMOS(nextRunningVM.os);
+          setCurrentVMStatus(nextRunningVM.status as "RUNNING" | "STOPPED" | "PAUSED" | null);
+        } else if (vms.length > 0) {
+          // Nenhuma VM RUNNING, seleciona a primeira (parada)
+          const firstVM = vms[0];
+          setCurrentIdVM(firstVM.idVM);
+          setCurrentVMName(firstVM.vmName);
+          setCurrentVMOS(firstVM.os);
+          setCurrentVMStatus(firstVM.status as "RUNNING" | "STOPPED" | "PAUSED" | null);
+        } else {
+          // Nenhuma VM disponível
+          setCurrentIdVM(null);
+          setCurrentVMName(null);
+          setCurrentVMOS(null);
+          setCurrentVMStatus(null);
+        }
+      }
+    } else if (vms.length > 0) {
+      // Não tinha VM selecionada - seleciona a primeira RUNNING
       const firstRunningVM = vms.find((vm) => vm.status === "RUNNING");
-      // Se não encontrar nenhuma RUNNING, usa a primeira da lista
       const selectedVM = firstRunningVM || vms[0];
       
       setCurrentIdVM(selectedVM.idVM);

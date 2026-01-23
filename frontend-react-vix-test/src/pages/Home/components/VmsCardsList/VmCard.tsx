@@ -69,6 +69,7 @@ export const VmCard = ({
   const {
     updateThisVm,
     setUpdateThisVm,
+    currentIdVM,
     setCurrentIdVM,
     setCurrentVMOS,
     setCurrentVMName,
@@ -154,6 +155,10 @@ export const VmCard = ({
 
   const confirmChangeName = async (val: string) => {
     setVmNameState(val);
+    // Atualiza o nome global se for a VM selecionada nos gráficos
+    if (vmId === currentIdVM) {
+      setCurrentVMName(val);
+    }
     await updateNameVm({ idVM: vmId, vmName: val.toString() });
     await getVMById();
   };

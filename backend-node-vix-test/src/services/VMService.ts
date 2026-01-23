@@ -20,24 +20,17 @@ export class VMService {
     try {
       const validQuery = vmListAllSchema.parse(query);
 
-      // Identifica se o checkbox "Apenas minhas VMs" foi marcado no Frontend
       const isRequestingOnlyMyBrand = query.onlyMyBrand === 'true';
 
       if (isRequestingOnlyMyBrand) {
-        // Se o usuário quer apenas as dele, mas NÃO tem empresa vinculada
         if (!user.idBrandMaster && user.role !== "admin") {
-          // Retornamos lista vazia imediatamente sem consultar o banco
           return { totalCount: 0, result: [] };
         }
-
-        // Se ele tem empresa, aplicamos o filtro normalmente
         if (user.role !== "admin") {
           validQuery.idBrandMaster = user.idBrandMaster;
         }
       }
 
-      // Se o checkbox estiver desmarcado (isRequestingOnlyMyBrand === false), 
-      // validQuery.idBrandMaster continuará undefined e o Prisma retornará todas as VMs.
       return await this.vMModel.listAll({ query: validQuery });
     } catch (error) {
       throw error;
@@ -79,5 +72,16 @@ export class VMService {
     }
     const deletedVm = await this.vMModel.deleteVM(idVM);
     return deletedVm;
+  }
+
+  async changeStatus(idVM: number, status: "RUNNING" | "STOPPED", user: user) {
+    const vm = await this.getById(idVM);
+    if (!vm) throw new AppError(ERROR_MESSAGE.NOT_FOUND, STATUS_CODE.NOT_FOUND);
+
+    if (vm.idBrandMaster !== user.idBrandMaster) {
+      throw new AppError("Não autorizado", STATUS_CODE.FORBIDDEN);
+    }
+
+    return await this.vMModel.updateStatus(idVM, status);
   }
 }

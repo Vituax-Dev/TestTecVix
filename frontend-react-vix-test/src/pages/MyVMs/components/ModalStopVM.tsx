@@ -17,13 +17,17 @@ interface IProps {
 }
 
 export const ModalStopVM = ({ idVM, onConfirm, onCancel, vmName }: IProps) => {
+  const { changeVmStatus, isLoading } = useVmResource(); 
   const { mode, theme } = useZTheme();
   const { t } = useTranslation();
-  const { isLoading } = useVmResource();
   const [vmID, setVmID] = useState(idVM);
 
   const handleConfirm = async () => {
-    onConfirm();
+    const result = await changeVmStatus(vmID, 'stop'); 
+    
+    if (result) {
+       onConfirm();
+    }
   };
 
   const handleCancel = () => {

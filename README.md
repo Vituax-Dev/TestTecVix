@@ -492,8 +492,8 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 **VM Card List:**
 
-- [ ] Implementar a função de **start** da VM
-- [ ] Implementar a função de **stop** da VM
+- [x] Implementar a função de **start** da VM
+- [x] Implementar a função de **stop** da VM
 - [ ] Implementar os gráficos (mocados) de **Uso de CPU**
 - [ ] Implementar os gráficos (mocados) de **Uso de Memória**
 
@@ -518,8 +518,8 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 **Ações:**
 
-- [ ] Possibilitar **stop/start** da VM pela tabela
-- [ ] Possibilitar **stop/start** da VM pelo modal de edição
+- [x] Possibilitar **stop/start** da VM pela tabela
+- [x] Possibilitar **stop/start** da VM pelo modal de edição
 
 **Modal de Edição:**
 

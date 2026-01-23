@@ -196,4 +196,24 @@ export const api = {
   delete: remove,
   put,
   post,
+  patch: async <T>({
+    url = "",
+    data = {},
+    auth = {},
+    params = {},
+    timeout = undefined,
+    fullEndpoint = "",
+    tryRefetch = false,
+  } = {}): Promise<IResponse<T>> => {
+    return app<T>({
+      method: "PATCH",
+      url,
+      data,
+      auth,
+      params,
+      timeout,
+      fullEndpoint,
+      tryRefetch,
+    });
+  },
 };

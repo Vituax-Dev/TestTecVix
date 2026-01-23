@@ -5,7 +5,7 @@ import { STATUS_CODE } from "../constants/statusCode";
 import { user } from "@prisma/client";
 
 export class VMController {
-  constructor() {}
+  constructor() { }
   private vMService = new VMService();
 
   async getById(req: CustomRequest<unknown>, res: Response) {
@@ -37,6 +37,13 @@ export class VMController {
     const { idVM } = req.params;
     const user = req.user as user;
     const result = await this.vMService.deleteVM(Number(idVM), user);
+    return res.status(STATUS_CODE.OK).json(result);
+  }
+
+  async changeStatus(req: CustomRequest<unknown>, res: Response, status: "RUNNING" | "STOPPED") {
+    const { idVM } = req.params;
+    const user = req.user as user;
+    const result = await this.vMService.changeStatus(Number(idVM), status, user);
     return res.status(STATUS_CODE.OK).json(result);
   }
 }

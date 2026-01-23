@@ -84,6 +84,18 @@ export const useVmResource = () => {
     },
   ];
 
+  const changeVmStatus = async (idVM: number, action: "start" | "stop") => {
+    try {
+      const response = await api.patch({
+        url: `/vm/${idVM}/${action}`,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao dar ${action} na VM`, error);
+      throw error;
+    }
+  };
+
   const networkTypeOptions: { value: ENetworkType; label: string }[] = [
     {
       value: ENetworkType.public,
@@ -344,5 +356,6 @@ export const useVmResource = () => {
     getOSDeletedLabel,
     monitoringVMStatus,
     updateVMStatus,
+    changeVmStatus
   };
 };

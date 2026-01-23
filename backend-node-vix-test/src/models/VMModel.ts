@@ -31,7 +31,7 @@ export class VMModel {
   async listAll({ query }: IListAllVM) {
     const limit = Number(query.limit) || 0;
     const skip = query.page ? Number(query.page) * limit : Number(query.offset) || 0;
-    
+
     const idBrandMaster = query.idBrandMaster ? Number(query.idBrandMaster) : undefined;
     const status = query.status;
 
@@ -43,7 +43,7 @@ export class VMModel {
     const vms = await prisma.vM.findMany({
       where: {
         deletedAt: null,
-        idBrandMaster: idBrandMaster, 
+        idBrandMaster: idBrandMaster,
         status,
         vmName: {
           contains: query.search,
@@ -54,8 +54,8 @@ export class VMModel {
       orderBy: orderBy.length
         ? orderBy
         : {
-            updatedAt: "desc",
-          },
+          updatedAt: "desc",
+        },
       include: {
         brandMaster: {
           select: {
@@ -90,6 +90,16 @@ export class VMModel {
     return await prisma.vM.update({
       where: { idVM },
       data: { updatedAt: new Date(), deletedAt: new Date() },
+    });
+  }
+
+  async updateStatus(idVM: number, status: "RUNNING" | "STOPPED" | "PAUSED") {
+    return await prisma.vM.update({
+      where: { idVM },
+      data: {
+        status: status, 
+        updatedAt: new Date()
+      },
     });
   }
 }

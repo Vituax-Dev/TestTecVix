@@ -17,23 +17,23 @@ interface IProps {
 }
 
 export const ModalStartVM = ({ idVM, onConfirm, onCancel, vmName }: IProps) => {
+  const { changeVmStatus, isLoading } = useVmResource(); 
   const { mode, theme } = useZTheme();
   const { t } = useTranslation();
-  const { isLoading } = useVmResource();
   const [vmID, setVmID] = useState(idVM);
 
   const handleConfirm = async () => {
-    onConfirm();
+    const result = await changeVmStatus(vmID, 'start');
+    
+    if (result) {
+       onConfirm();
+    }
   };
 
   const handleCancel = () => {
     setVmID(0);
     onCancel();
   };
-
-  useEffect(() => {
-    if (idVM !== vmID) setVmID(idVM);
-  }, [idVM]);
 
   return (
     <>

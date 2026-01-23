@@ -26,6 +26,7 @@ import { TextRob14Font1Xs } from "../../../../components/Text1Xs";
 import { TerminalIcon } from "../../../../icons/TerminalIcon";
 import { MonitorIcon } from "../../../../icons/MonitorIcon";
 import { IVMTask, taskMock } from "../../../../types/VMTypes";
+import { useListVms } from "../../../../hooks/useListVms";
 
 export interface IVmCardProps {
   vmId: number;
@@ -66,6 +67,9 @@ export const VmCard = ({
   const [preDisk, setPreDisk] = useState<number | string>(0);
   const [taskState, setTaskState] = useState(task);
   const { ref, position } = useSelfPosition(openModalSlider);
+  const { changeVmStatus } = useVmResource();
+  const { fetchListVms } = useListVms();
+
   const {
     updateThisVm,
     setUpdateThisVm,
@@ -108,23 +112,31 @@ export const VmCard = ({
 
   const handleConfirm = async () => {
     if (statusState !== preStatusState) {
-      setPreStatusState(statusState);
+      const action = statusState === "RUNNING" ? "start" : "stop";
 
-      await getVMById();
+      const result = await changeVmStatus(vmId, action);
+
+      if (result) {
+        setPreStatusState(statusState);
+        await fetchListVms();
+      } else {
+        setStatusState(preStatusState);
+      }
     }
     setShowConfirmation(false);
   };
-
   const handleStop = () => {
-    setStatusState("STOPPED");
-    if (checkStatus(statusState, taskState?.action).isRunning)
+    if (statusState !== "STOPPED") {
+      setStatusState("STOPPED");
       setShowConfirmation(true);
+    }
   };
 
   const handleStart = () => {
-    setStatusState("RUNNING");
-    if (!checkStatus(statusState, taskState?.action).isRunning)
+    if (statusState !== "RUNNING") {
+      setStatusState("RUNNING");
       setShowConfirmation(true);
+    }
   };
 
   const closeModalWarning = () => {
@@ -237,7 +249,7 @@ export const VmCard = ({
               backgroundColor: actionExec ? theme[mode].blue : "transparent",
               border:
                 checkStatus(statusState, taskState?.action).isStopped ||
-                  checkStatus(statusState, taskState?.action).isPaused
+                checkStatus(statusState, taskState?.action).isPaused
                   ? "1px solid"
                   : "0px solid",
               borderColor: actionExec ? theme[mode].blue : theme[mode].tertiary,
@@ -529,7 +541,7 @@ export const VmCard = ({
                 checkStatus(statusState, taskState?.action, taskState?.task)
                   .isWaiting
               }
-              onClick={() => { }}
+              onClick={() => {}}
               sx={{
                 width: "40px",
                 height: "27px",
@@ -554,7 +566,7 @@ export const VmCard = ({
                 checkStatus(statusState, taskState?.action, taskState?.task)
                   .isWaiting
               }
-              onClick={() => { }}
+              onClick={() => {}}
               sx={{
                 width: "40px",
                 height: "27px",

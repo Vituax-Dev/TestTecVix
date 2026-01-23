@@ -18,6 +18,7 @@ export const useListVms = () => {
     setCurrentVMName,
     setTotalCountVMs,
     setCurrentVMOS,
+    setCurrentVMStatus,
   } = useZGlobalVar();
   const { idBrand } = useZUserProfile();
   const { goLogout } = useLogin();
@@ -57,10 +58,18 @@ export const useListVms = () => {
     setVmTotalCount(response.data?.totalCount);
     setTotalCountVMs(response.data?.totalCount);
 
+    // Seleciona automaticamente a primeira VM RUNNING, ou a primeira da lista
     if (!currentIdVM && response.data?.result.length) {
-      setCurrentIdVM(response.data?.result[0].idVM);
-      setCurrentVMName(response.data?.result[0].vmName);
-      setCurrentVMOS(response.data?.result[0].os);
+      const vms = response.data.result;
+      // Busca a primeira VM com status RUNNING
+      const firstRunningVM = vms.find((vm) => vm.status === "RUNNING");
+      // Se não encontrar nenhuma RUNNING, usa a primeira da lista
+      const selectedVM = firstRunningVM || vms[0];
+      
+      setCurrentIdVM(selectedVM.idVM);
+      setCurrentVMName(selectedVM.vmName);
+      setCurrentVMOS(selectedVM.os);
+      setCurrentVMStatus(selectedVM.status as "RUNNING" | "STOPPED" | "PAUSED" | null);
     }
   };
 

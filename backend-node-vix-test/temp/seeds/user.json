@@ -1,1 +1,46 @@
-{}
+[
+    {
+        "idUser": "1",
+        "username": "Admin Vituax Test",
+        "email": "test.admin@vituax.com",
+        "password": "Admin@123",
+        "role": "admin",
+        "isActive": true,
+        "idBrandMaster": 2,
+        "createdAt": "2025-10-21T11:00:00.000Z",
+        "updatedAt": "2025-10-21T11:00:00.000Z"
+    },
+    {
+        "idUser": "2",
+        "username": "Gerente Vituax Test",
+        "email": "manager@vituax.com",
+        "password": "Manager@123",
+        "role": "manager",
+        "isActive": true,
+        "idBrandMaster": 1,
+        "createdAt": "2025-03-21T09:15:00.000Z",
+        "updatedAt": "2025-03-21T09:15:00.000Z"
+    },
+    {
+        "idUser": "3",
+        "username": "Membro Vituax Test",
+        "email": "member@vituax.com",
+        "password": "Member@123",
+        "role": "member",
+        "isActive": true,
+        "idBrandMaster": 1,
+        "createdAt": "2025-03-22T14:30:00.000Z",
+        "updatedAt": "2025-03-22T14:30:00.000Z"
+    },
+    {
+        "idUser": "4",
+        "username": "User Inativo",
+        "email": "inactive@test.com",
+        "password": "User@123",
+        "role": "member",
+        "isActive": false,
+        "idBrandMaster": 2,
+        "createdAt": "2025-11-01T08:00:00.000Z",
+        "updatedAt": "2025-11-01T08:00:00.000Z"
+    }
+]

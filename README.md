@@ -758,9 +758,26 @@ Verifique se:
 
 ## 🔐 Credenciais de Teste
 
+Para validar os diferentes níveis de permissão e o isolamento de dados por MSP (BrandMaster), utilize as seguintes contas pré-configuradas no banco de dados:
 
-- **E-mail:** member@vituax.com
-- **Senha:** Member@123
-- **Role:** member
+### 🚀 Administrador (Vituax Global / BrandMaster 2)
+- **E-mail:** `test.admin@vituax.com`
+- **Senha:** `Admin@123`
+- **Role:** `admin` 
 
-> **Nota:** No ambiente de desenvolvimento atual, a senha está sendo validada em texto puro para facilitar os testes com os dados iniciais do banco SQLite.
+### 💼 Gerente (BrandMaster 1 - UPIX)
+- **E-mail:** `manager@vituax.com`
+- **Senha:** `Manager@123`
+- **Role:** `manager`
+
+### 👤 Membro (BrandMaster 1 - UPIX)
+- **E-mail:** `member@vituax.com`
+- **Senha:** `Member@123`
+- **Role:** `member` 
+
+### 🚫 Usuário Inativo (Teste de Bloqueio)
+- **E-mail:** `inactive@test.com`
+- **Senha:** `User@123`
+- **Status:** `isActive: false`
+
+> **Nota de Segurança:** As senhas acima refletem os dados inseridos via `seed`. Em ambiente de produção, todas as senhas são criptografadas utilizando `bcrypt` com 10 rounds de salt.

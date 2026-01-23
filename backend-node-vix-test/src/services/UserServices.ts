@@ -15,10 +15,21 @@ export class UserService {
       throw new AppError(ERROR_MESSAGE.INVALID_CREDENTIALS, STATUS_CODE.UNAUTHORIZED);
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    //Feito para garantir o hash das senhas e garantir o funcionamento das credenciais de testes criadas via seeds.
+    const isHash = user.password.startsWith("$2a$") ||
+      user.password.startsWith("$2b$") ||
+      user.password.startsWith("$2y$");
 
-    if (!passwordMatch) {
-      throw new AppError(ERROR_MESSAGE.INVALID_CREDENTIALS, STATUS_CODE.UNAUTHORIZED);
+    let isPasswordValid = false;
+
+    if (isHash) {
+      isPasswordValid = await bcrypt.compare(password, user.password);
+    } else {
+      isPasswordValid = user.password === password;
+    }
+
+    if (!isPasswordValid) {
+      throw new AppError("Credenciais inválidas.", 401);
     }
 
     const token = genToken({ idUser: user.idUser, role: user.role });
@@ -49,22 +60,22 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
-    const user = await prisma.user.create({
-      data: {
-        email: email.trim(),
-        username: username.trim(),
-        password: hashedPassword,
-        role: role || "member", 
-        isActive: true,
-        ...(idBrandMaster && { idBrandMaster }) 
-      }
-    });
+      const user = await prisma.user.create({
+        data: {
+          email: email.trim(),
+          username: username.trim(),
+          password: hashedPassword,
+          role: role || "member",
+          isActive: true,
+          ...(idBrandMaster && { idBrandMaster })
+        }
+      });
 
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
-  } catch (error: any) {
-    console.error("Erro ao criar usuário no Prisma:", error.message);
-    throw new AppError("Erro interno ao criar usuário.", 500);
-  }
+      const { password: _, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    } catch (error: any) {
+      console.error("Erro ao criar usuário no Prisma:", error.message);
+      throw new AppError("Erro interno ao criar usuário.", 500);
+    }
   }
 }

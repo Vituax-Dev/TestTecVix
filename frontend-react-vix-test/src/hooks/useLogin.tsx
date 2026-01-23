@@ -76,9 +76,11 @@ export const useLogin = () => {
       role: response.data.user.role,
     });
     setLoginTime(new Date());
+    navigate("/");
   };
 
-  const goLogout = () => {
+  const goLogout = async () => {
+    await api.post({ url: "/user/logout" });
     resetAllStates();
     return navigate("/login");
   };

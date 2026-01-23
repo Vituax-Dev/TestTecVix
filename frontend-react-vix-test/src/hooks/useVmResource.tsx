@@ -3,7 +3,6 @@ import { api } from "../services/api";
 import { useZUserProfile } from "../stores/useZUserProfile";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./useAuth";
 import { useState } from "react";
 import { passwordRegex, validatePassword } from "../utils/genStrongPass";
 import { MIN_PASS_SIZE } from "../configs/contants";
@@ -28,7 +27,6 @@ export const useVmResource = () => {
   const { t } = useTranslation();
   const { idBrand, role } = useZUserProfile();
   const navigate = useNavigate();
-  const { getAuth } = useAuth();
 
   const osNotFound = {
     idVMISO: 0,
@@ -126,13 +124,11 @@ export const useVmResource = () => {
   const createVm = async (vm: IVMResource) => {
     setIsLoadingCreateVM(true);
 
-    const auth = await getAuth();
     const response = await api.post<IVMCreatedResponse>({
       url: "/vm",
       data: {
         ...vm,
       },
-      auth,
     });
 
     if (response.error) {
@@ -152,11 +148,9 @@ export const useVmResource = () => {
     idVM: number;
     vmName: string;
   }) => {
-    const auth = await getAuth();
     const response = await api.put<IVMCreatedResponse>({
       url: `/vm/${idVM}`,
       data: { vmName },
-      auth,
     });
     if (response.error) {
       toast.error(response.message);
@@ -174,11 +168,9 @@ export const useVmResource = () => {
     idVM: number;
     status: "RUNNING" | "STOPPED" | "PAUSED";
   }) => {
-    const auth = await getAuth();
     const response = await api.put<IVMCreatedResponse>({
       url: `/vm/${idVM}`,
       data: { status },
-      auth,
     });
     if (response.error) {
       toast.error(response.message);
@@ -195,11 +187,9 @@ export const useVmResource = () => {
     idVM: number;
     disk: number;
   }) => {
-    const auth = await getAuth();
     const response = await api.put<IVMCreatedResponse>({
       url: `/vm/${idVM}`,
       data: { disk },
-      auth,
     });
 
     if (response.error) {
@@ -213,10 +203,8 @@ export const useVmResource = () => {
 
   const getVMById = async (idVM: number) => {
     setIsLoading(true);
-    const auth = await getAuth();
     const response = await api.get<IVMCreatedResponse>({
       url: `/vm/${idVM}`,
-      auth,
       tryRefetch: true,
     });
     setIsLoading(false);
@@ -229,7 +217,6 @@ export const useVmResource = () => {
   };
 
   const updateVM = async (vm: IVMResource, idVM: number) => {
-    const auth = await getAuth();
     setIsLoadingUpdateVM(true);
     const [response] = await Promise.all([
       api.put<IVMCreatedResponse>({
@@ -238,7 +225,6 @@ export const useVmResource = () => {
           ...vm,
           idBrandMaster: idBrand,
         },
-        auth,
       }),
     ]);
 
@@ -256,10 +242,8 @@ export const useVmResource = () => {
     if (role !== "admin") return toast.error(t("generic.errorOlnlyAdmin"));
     if (!idVM) return;
     setIsLoadingDeleteVM(true);
-    const auth = await getAuth();
     const response = await api.delete<IVMCreatedResponse>({
       url: `/vm/${idVM}`,
-      auth,
     });
     if (response.error) {
       toast.error(response.message);
@@ -312,10 +296,8 @@ export const useVmResource = () => {
   };
 
   const monitoringVMStatus = async (idVM: number) => {
-    const auth = await getAuth();
     const response = await api.get<boolean>({
       url: `/vm/monitoring/status/${idVM}`,
-      auth,
     });
     if (response.error) {
       toast.error(response.message);

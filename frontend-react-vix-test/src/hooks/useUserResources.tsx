@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { TRole, useZUserProfile } from "../stores/useZUserProfile";
-import { useAuth } from "./useAuth";
 import { api } from "../services/api";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -30,17 +29,14 @@ interface ICreateNewUser {
 
 export const useUserResources = () => {
   const { idUser, setUser, role, idBrand } = useZUserProfile();
-  const { getAuth } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
   const updateUser = async (data: Partial<IUserDB>) => {
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put<IUserDB>({
       url: `/user/${idUser}`,
       data,
-      auth,
     });
     setIsLoading(false);
     if (response.error) {
@@ -68,11 +64,9 @@ export const useUserResources = () => {
       return null;
     }
 
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.post({
       url: `/user/new-user`,
-      auth,
       data: {
         ...data,
         idBrandMaster,

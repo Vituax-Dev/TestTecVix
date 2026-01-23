@@ -1,16 +1,32 @@
 import jwt, { TokenExpiredError } from "jsonwebtoken";
-// import { AppError } from "../errors/AppError";
+import { AppError } from "../errors/AppError";
+import { STATUS_CODE } from "../constants/statusCode";
+import { ERROR_MESSAGE } from "../constants/erroMessages";
+
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET is not defined in environment variables");
+}
 
 const secret = process.env.JWT_SECRET;
 
-interface IPayload {}
+interface ITokenPayload {
+  idUser: string;
+  email: string;
+  role: string;
+}
 
-export const genToken = (payload: IPayload) => {};
+export const genToken = (payload: ITokenPayload) => {
+  return jwt.sign(payload, secret, { expiresIn: "1h" });
+};
 
-export const verifyToken = (token: string) => {
+export const verifyToken = (token: string): ITokenPayload => {
   try {
-    return; // data;
+    const data = jwt.verify(token, secret) as ITokenPayload;
+    return data;
   } catch (error) {
-    // throws new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
+    if (error instanceof TokenExpiredError) {
+      throw new AppError("Token expired", STATUS_CODE.UNAUTHORIZED);
+    }
+    throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
   }
 };

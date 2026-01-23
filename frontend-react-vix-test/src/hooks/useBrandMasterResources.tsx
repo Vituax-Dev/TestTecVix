@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuth } from "./useAuth";
 import { toast } from "react-toastify";
 import { api } from "../services/api";
 import { IListAll } from "../types/ListAllTypes";
@@ -116,7 +115,6 @@ export interface INewMSPResponse {
 
 export const useBrandMasterResources = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { getAuth } = useAuth();
   const { role, idBrand } = useZUserProfile();
   const { t } = useTranslation();
   const {
@@ -133,11 +131,9 @@ export const useBrandMasterResources = () => {
     domain,
   }: IUpdateBrandMaster) => {
     if (!role || (role !== "admin" && role !== "manager")) return;
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put({
       url: `/brand-master/${idBrand}`,
-      auth,
       data: {
         brandName,
         brandLogo,
@@ -164,11 +160,9 @@ export const useBrandMasterResources = () => {
       return;
     }
 
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put<IBrandMasterResource>({
       url: `/brand-master/${idBrand}`,
-      auth,
       data,
     });
     setIsLoading(false);
@@ -213,11 +207,9 @@ export const useBrandMasterResources = () => {
       return;
     }
 
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.post({
       url: `/dns/register`,
-      auth,
       data: {
         idBrandMaster: idBrand,
         domain,
@@ -239,11 +231,9 @@ export const useBrandMasterResources = () => {
       toast.error(t("generic.errorOlnlyAdmin"));
       return;
     }
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.post<INewMSPResponse>({
       url: `/brand-master`,
-      auth,
       data: {
         brandName: data.companyName,
         isActive: true,
@@ -277,11 +267,9 @@ export const useBrandMasterResources = () => {
   };
 
   const listAllBrands = async () => {
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.get<IListAll<INewMSPResponse>>({
       url: "/brand-master",
-      auth,
     });
     setIsLoading(true);
 
@@ -303,13 +291,11 @@ export const useBrandMasterResources = () => {
       toast.error(t("generic.errorOlnlyAdmin"));
       return;
     }
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.delete<{
       brandMaster: IBrandMasterBasicInfo;
     }>({
       url: `/brand-master/${brandMasterId}`,
-      auth,
     });
 
     setIsLoading(false);
@@ -330,10 +316,8 @@ export const useBrandMasterResources = () => {
       toast.error(t("generic.errorOlnlyAdmin"));
       return;
     }
-    const auth = await getAuth();
     const response = await api.put<INewMSPResponse>({
       url: `/brand-master/${brandMasterId}`,
-      auth,
       data: {
         brandName: data.brandName,
         emailContact: data.emailContact,
@@ -365,11 +349,9 @@ export const useBrandMasterResources = () => {
 
   const getSelf = async () => {
     if (!idBrand) return null;
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.get<INewMSPResponse>({
       url: `/brand-master/${idBrand}`,
-      auth,
     });
     setIsLoading(true);
 

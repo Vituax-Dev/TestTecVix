@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAuth } from "./useAuth";
 import { api } from "../services/api";
 import { IListAll, IParams } from "../types/ListAllTypes";
 import { IVMBackup } from "../types/VMTypes";
@@ -9,17 +8,14 @@ export const useVMBackupResource = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
-  const { getAuth } = useAuth();
 
   const listAllBackupsFromThisVM = async (
     idVM: number,
     params: IParams = {},
   ) => {
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.get<IListAll<IVMBackup>>({
       url: "/vm-backup",
-      auth,
       params: {
         ...params,
         idVM,
@@ -38,11 +34,9 @@ export const useVMBackupResource = () => {
   };
 
   const restoreThisBackup = async (idVMBackup: number) => {
-    const auth = await getAuth();
     setIsLoadingUpdate(true);
     const response = await api.put<IVMBackup>({
       url: `/vm-backup/restore/${idVMBackup}`,
-      auth,
       data: { isRestored: true },
     });
     setIsLoadingUpdate(false);
@@ -54,11 +48,9 @@ export const useVMBackupResource = () => {
   };
 
   const createBackup = async (idVM: number) => {
-    const auth = await getAuth();
     setIsLoadingCreate(true);
     const response = await api.post<IVMBackup>({
       url: `/vm-backup`,
-      auth,
       data: { idVM },
     });
     setIsLoadingCreate(false);

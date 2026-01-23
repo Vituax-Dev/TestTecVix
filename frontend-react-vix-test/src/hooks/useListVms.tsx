@@ -3,7 +3,6 @@ import { api } from "../services/api";
 import { IListAll } from "../types/ListAllTypes";
 import { toast } from "react-toastify";
 import { useLogin } from "./useLogin";
-import { useAuth } from "./useAuth";
 import { useZGlobalVar } from "../stores/useZGlobalVar";
 import { useZUserProfile } from "../stores/useZUserProfile";
 import { IVMCreatedResponse } from "../types/VMTypes";
@@ -21,7 +20,6 @@ export const useListVms = () => {
   } = useZGlobalVar();
   const { idBrand } = useZUserProfile();
   const { goLogout } = useLogin();
-  const { getAuth } = useAuth();
 
   const fetchListVms = async (
     params: {
@@ -32,11 +30,9 @@ export const useListVms = () => {
       idBrandMaster?: number;
     } = {},
   ) => {
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.get<IListAll<IVMCreatedResponse>>({
       url: "/vm",
-      auth,
       params: {
         ...params,
         //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined

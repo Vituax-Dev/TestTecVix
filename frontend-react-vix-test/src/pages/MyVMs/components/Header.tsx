@@ -9,7 +9,6 @@ import { useEffect } from "react";
 import { CheckboxLabel } from "../../VirtualMachine/components/CheckboxLabel";
 import { formatToIOptionMPS } from "../../../utils/formatOptions";
 import { api } from "../../../services/api";
-import { useAuth } from "../../../hooks/useAuth";
 import { IListAll } from "../../../types/ListAllTypes";
 import { TrashIcon } from "../../../icons/TrashIcon";
 
@@ -28,10 +27,7 @@ export const Header = () => {
     selectedMSP,
   } = useZMyVMsList();
 
-  const { getAuth } = useAuth();
-
   const fetchMSPs = async () => {
-    const auth = await getAuth();
     const response = await api.get<
       IListAll<{
         idBrandMaster: number;
@@ -40,7 +36,6 @@ export const Header = () => {
       }>
     >({
       url: `/brand-master`,
-      auth,
       params: {
         orderBy: "deletedAt:asc,brandName:asc",
       },

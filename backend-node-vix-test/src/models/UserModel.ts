@@ -2,6 +2,12 @@ import { prisma } from "../database/client";
 import { TUserCreate } from "../types/validations/User/createUser";
 
 export class UserModel {
+  async findByEmail(email: string) {
+    return await prisma.user.findFirst({
+      where: { email, deletedAt: null },
+    });
+  }
+
   async createUser(data: TUserCreate) {
     return await prisma.user.create({
       data: { ...data },

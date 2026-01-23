@@ -2,12 +2,10 @@ import { useState } from "react";
 import { api } from "../services/api";
 import { IListAll } from "../types/ListAllTypes";
 import { toast } from "react-toastify";
-import { useAuth } from "./useAuth";
 import { IVMCreatedResponse } from "../types/VMTypes";
 
 export const useMyVMList = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { getAuth } = useAuth();
 
   const fetchMyVmsList = async (
     params: {
@@ -19,11 +17,9 @@ export const useMyVMList = () => {
       idBrandMaster?: number | "null";
     } = {},
   ) => {
-    const auth = await getAuth();
     setIsLoading(true);
     const response = await api.get<IListAll<IVMCreatedResponse>>({
       url: "/vm",
-      auth,
       params: {
         ...params,
         //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined

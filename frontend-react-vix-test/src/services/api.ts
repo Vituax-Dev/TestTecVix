@@ -7,15 +7,13 @@ export interface IResponse<T> {
   data: T;
 }
 
-export const baseAuth = (auth: Record<string, unknown> = {}) => {
+export const baseAuth = () => {
   const signature = import.meta.env.VITE_SIGN_HASH || "";
 
   return {
+    withCredentials: true,
     headers: {
       "x-sign": signature,
-      "Access-Control-Allow-Origin": "*",
-      "Content-Type": "application/json",
-      ...auth,
     },
   };
 };
@@ -24,7 +22,6 @@ const retryRequest = async <T>({
   method = "GET",
   url = "",
   data = {},
-  auth = {},
   params = {},
   timeout = 50000,
   fullEndpoint = "",
@@ -32,14 +29,14 @@ const retryRequest = async <T>({
   try {
     const BASE_URL =
       import.meta.env.VITE_BASE_URL || "http://localhost:3001/api/v1";
-    const nAuth = baseAuth(auth);
+    const config = baseAuth();
     const response: { data: T } = await axios({
       ...(timeout && { timeout }),
       method,
       url: fullEndpoint || `${BASE_URL}${url}`,
       data,
       params,
-      ...nAuth,
+      ...config,
     });
 
     return { data: response.data, error: false, err: null, message: "" };
@@ -56,7 +53,6 @@ const app = async <T>({
   method = "GET",
   url = "",
   data = {},
-  auth = {},
   params = {},
   timeout = 80000,
   fullEndpoint = "",
@@ -65,14 +61,14 @@ const app = async <T>({
   try {
     const BASE_URL =
       import.meta.env.VITE_BASE_URL || "http://localhost:3001/api/v1";
-    const nAuth = baseAuth(auth);
+    const config = baseAuth();
     const response: { data: T } = await axios({
       ...(timeout && { timeout }),
       method,
       url: fullEndpoint || `${BASE_URL}${url}`,
       data,
       params,
-      ...nAuth,
+      ...config,
     });
 
     return { data: response.data, error: false, err: null, message: "" };
@@ -89,7 +85,6 @@ const app = async <T>({
             method,
             url,
             data,
-            auth,
             params,
             timeout: timeout * 2 || undefined,
             fullEndpoint,
@@ -105,7 +100,6 @@ const app = async <T>({
 const get = async <T>({
   url = "",
   data = {},
-  auth = {},
   params = {},
   timeout = undefined,
   fullEndpoint = "",
@@ -114,7 +108,6 @@ const get = async <T>({
   return app<T>({
     method: "GET",
     url,
-    auth,
     data,
     params,
     timeout,
@@ -126,7 +119,6 @@ const get = async <T>({
 const remove = async <T>({
   url = "",
   data = {},
-  auth = {},
   timeout = undefined,
   fullEndpoint = "",
   tryRefetch = false,
@@ -135,7 +127,6 @@ const remove = async <T>({
     method: "DELETE",
     url,
     data,
-    auth,
     timeout,
     fullEndpoint,
     tryRefetch,
@@ -144,7 +135,6 @@ const remove = async <T>({
 const put = async <T>({
   url = "",
   data = {},
-  auth = {},
   timeout = undefined,
   fullEndpoint = "",
   tryRefetch = false,
@@ -153,7 +143,6 @@ const put = async <T>({
     method: "PUT",
     url,
     data,
-    auth,
     timeout,
     fullEndpoint,
     tryRefetch,
@@ -163,7 +152,6 @@ const put = async <T>({
 const post = async <T>({
   url = "",
   data = {},
-  auth = {},
   timeout = undefined,
   fullEndpoint = "",
   tryRefetch = false,
@@ -172,7 +160,6 @@ const post = async <T>({
     method: "POST",
     url,
     data,
-    auth,
     timeout,
     fullEndpoint,
     tryRefetch,

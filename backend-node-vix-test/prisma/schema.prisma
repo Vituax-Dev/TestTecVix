@@ -59,6 +59,8 @@ model vM {
   hasBackup     Boolean?       @default(false)
   pass          String
   location      ETaskLocation
+  networkType   ENetworkType
+  storageType   EStorageType
   idBrandMaster Int?
   status        EVMStatus?
   createdAt     DateTime?      @default(now()) @db.DateTime(0)
@@ -104,4 +106,15 @@ enum ERole {
   admin
   manager
   member
+}
+
+enum ENetworkType {
+  public
+  private
+  public_private
+}
+
+enum EStorageType {
+  ssd
+  hd
 }

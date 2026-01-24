@@ -99,15 +99,16 @@ export const FormVM = () => {
 
     await createVm({
       ...vm,
-      networkType: vmNetwork?.value,
+      networkType: vmNetwork.value,
+      storageType: vmStorageType.value,
       vmName: vmName,
       vCPU: vmvCpu,
       ram: vmMemory,
       disk: vmDisk,
       hasBackup: hasBackup,
-      os: String(vmSO?.value) || "",
+      os: vmSO.value as string,
       pass: vmPassword,
-      location: vmLocalization!.value as string,
+      location: vmLocalization.value as string,
     });
   };
 
@@ -130,7 +131,7 @@ export const FormVM = () => {
     if (sugestionVCPU) setVmvCpu(sugestionVCPU);
     if (sugestionRAM) setVmMemory(sugestionRAM);
     if (sugestionDisk) setVmDisk(sugestionDisk);
-  }, [sugestionOS, sugestionVCPU, sugestionRAM, sugestionDisk]);
+  }, [sugestionOS, sugestionVCPU, sugestionRAM, sugestionDisk, setVmSO, setVmvCpu, setVmMemory, setVmDisk]);
 
   useEffect(() => {
     if (!vmNetwork) {

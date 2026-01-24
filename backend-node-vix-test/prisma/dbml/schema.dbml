@@ -45,6 +45,8 @@ Table vM {
   hasBackup Boolean [default: false]
   pass String [not null]
   location ETaskLocation [not null]
+  networkType ENetworkType [not null]
+  storageType EStorageType [not null]
   idBrandMaster Int
   status EVMStatus
   createdAt DateTime [default: `now()`]
@@ -85,6 +87,17 @@ Enum ERole {
   admin
   manager
   member
+}
+
+Enum ENetworkType {
+  public
+  private
+  public_private
+}
+
+Enum EStorageType {
+  ssd
+  hd
 }
 
 Ref: vM.idBrandMaster > brandMaster.idBrandMaster

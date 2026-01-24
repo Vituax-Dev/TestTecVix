@@ -2,6 +2,8 @@ import { z } from "zod";
 
 const EVMStatus = z.enum(["RUNNING", "STOPPED", "PAUSED"]);
 const ETaskLocation = z.enum(["bre_barueri", "usa_miami"]);
+const ENetworkType = z.enum(["public", "private", "public_private"]);
+const EStorageType = z.enum(["ssd", "hd"]);
 
 // Password validation regex
 export const passwordRegex = {
@@ -20,6 +22,8 @@ export const vMCreatedSchema = z.object({
   hasBackup: z.boolean().optional().default(false),
   pass: z.string().min(12, "Password must be at least 12 characters"),
   location: ETaskLocation,
+  networkType: ENetworkType,
+  storageType: EStorageType,
   idBrandMaster: z.number().nullable().optional(),
   status: EVMStatus.optional(),
   os: z.string().optional(),

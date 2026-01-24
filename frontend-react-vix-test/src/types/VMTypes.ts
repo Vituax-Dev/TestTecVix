@@ -1,7 +1,12 @@
 export enum ENetworkType {
-  public = 1,
-  public_private = 2,
-  private = 3,
+  public = "public",
+  public_private = "public_private",
+  private = "private",
+}
+
+export enum EStorageType {
+  ssd = "ssd",
+  hd = "hd",
 }
 
 export interface IVMResource {
@@ -14,7 +19,8 @@ export interface IVMResource {
   pass: string;
   location: string;
   status?: string | null;
-  networkType?: ENetworkType;
+  networkType: string;
+  storageType: string;
   vmLocalization?: { label: string | null; value: unknown } | null;
   oldVM?: {
     vmName: string;
@@ -24,6 +30,9 @@ export interface IVMResource {
     hasBackup: boolean;
     os: string;
     pass: string;
+    location: string;
+    networkType: string;
+    storageType: string;
     status?: string | null;
     vmLocalization?: { label: string | null; value: unknown } | null;
   } | null;

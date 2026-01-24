@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `vM` ALTER COLUMN `networkType` DROP DEFAULT,
+    ALTER COLUMN `storageType` DROP DEFAULT;

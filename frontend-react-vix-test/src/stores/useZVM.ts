@@ -3,9 +3,10 @@ import { IGenericOptionsTyped, TOptions } from "../types/FormType";
 import { MIN_PASS_SIZE } from "../configs/contants";
 import { genStrongPass } from "../utils/genStrongPass";
 import { ENetworkType } from "../types/VMTypes";
+import { EOS } from "./useZVMSugestion";
 
 export interface IVMForm {
-  vmSO: TOptions | null;
+  vmSO: IGenericOptionsTyped<EOS> | null;
   isOpenVMMarketPlace: boolean;
   vmPassword: string;
   vmName: string;
@@ -43,7 +44,7 @@ const INIT_STATE: IVMForm = {
 };
 
 interface IVMFormState extends IVMForm {
-  setVmSO(vmSO: TOptions): void;
+  setVmSO(vmSO: IGenericOptionsTyped<EOS> | null): void;
   setIsOpenVMMarketPlace(isOpenVMMarketPlace: boolean): void;
   setVmPassword(vmPassword: string): void;
   newRandomPassword: () => void;

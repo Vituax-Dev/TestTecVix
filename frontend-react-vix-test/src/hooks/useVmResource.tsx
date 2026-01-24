@@ -280,7 +280,7 @@ export const useVmResource = () => {
     networkTypeValue,
   }: {
     networkTypeLabel?: string;
-    networkTypeValue?: number;
+    networkTypeValue?: ENetworkType;
   }): { value: ENetworkType; label: string } => {
     if (networkTypeLabel)
       return (

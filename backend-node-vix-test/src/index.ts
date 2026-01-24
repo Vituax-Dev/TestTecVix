@@ -11,9 +11,8 @@ const host = "localhost";
 if (process.env.NODE_ENV !== "test") {
   (async () => {
     const server = http.createServer(app);
-
     socketSetup(server);
-
+    
     server.listen(port, () => {
       console.log("Server started on port %s:%s 🚀", host, port);
     });

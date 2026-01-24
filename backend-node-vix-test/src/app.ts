@@ -7,12 +7,13 @@ import { routes } from "./routes/_index";
 import { notImplemented } from "./middlewares/notImplemented";
 import { errorHandler } from "./middlewares/errorHandler";
 import { setupSwagger } from "./swagger";
+import path from "path";
 
 const app = express();
 
 app.use(
   cors({
-    origin: "*",
+    origin: true,
     credentials: true,
   }),
 );
@@ -26,5 +27,7 @@ app.use(routes);
 setupSwagger(app);
 app.use(notImplemented);
 app.use(errorHandler as unknown as ErrorRequestHandler);
-
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '..', 'frontend', 'dist', 'App.tsx'));
+});
 export { app };

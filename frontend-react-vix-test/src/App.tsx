@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
+import { RouterProvider } from "react-router-dom";
+import { CssBaseline } from "@mui/material";
+import { appRoutes } from "./routes/_index";
+import "./configs/i18n";
 
 function App() {
-    const [count, setCount] = useState(0);
-
-    return (
-        <div>
-            <button data-testid="count" onClick={() => setCount((c) => c + 1)}>
-            </button>
-        </div>
-    );
+  return (
+    <>
+      <CssBaseline />
+      <RouterProvider router={appRoutes} />
+    </>
+  );
 }
 
 export default App;

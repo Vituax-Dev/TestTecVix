@@ -1,4 +1,4 @@
-import { Box, Button, Divider, IconButton, Stack } from "@mui/material";
+import { Box, Button, Divider, IconButton, Stack, CircularProgress} from "@mui/material";
 import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 
@@ -80,6 +80,9 @@ export const VmCard = ({
     getVMById: getVMByIdResource,
     isLoading,
     getOS,
+    startVM,
+    stopVM,
+    isLoadingStartStopVM,
   } = useVmResource();
 
   const getVMById = async () => {
@@ -106,12 +109,32 @@ export const VmCard = ({
     setStatusState(preStatusState);
   };
 
-  const handleConfirm = async () => {
+   const handleConfirm = async () => {
     if (statusState !== preStatusState) {
-      setPreStatusState(statusState);
+      // Start
+      if (statusState === "RUNNING") {
+        const res = await startVM(vmId);
+        if (!res) {
+          setStatusState(preStatusState);
+          setShowConfirmation(false);
+          return;
+        }
+      }
 
+      // Stop
+      if (statusState === "STOPPED") {
+        const res = await stopVM(vmId);
+        if (!res) {
+          setStatusState(preStatusState);
+          setShowConfirmation(false);
+          return;
+        }
+      }
+
+      setPreStatusState(statusState);
       await getVMById();
     }
+
     setShowConfirmation(false);
   };
 
@@ -143,7 +166,9 @@ export const VmCard = ({
     setVmNameState(val);
     await updateNameVm({ idVM: vmId, vmName: val.toString() });
     await getVMById();
-  };
+  }; 
+
+  
 
   const hasPandingTaskShutdown =
     taskState?.action === "pending" && taskState?.operation === "shutdown";
@@ -228,7 +253,7 @@ export const VmCard = ({
         >
           {/* Start */}
           <Btn
-            disabled={checkStatus(statusState, taskState?.action).isWaiting}
+            disabled={isLoadingStartStopVM || checkStatus(statusState, taskState?.action).isWaiting}
             onClick={handleStart}
             className="w-full"
             sx={{
@@ -474,8 +499,12 @@ export const VmCard = ({
           <Button onClick={handleCancel} sx={{}}>
             <CloseIcon sx={{ color: theme[mode].red, fontSize: "14px" }} />
           </Button>
-          <Button onClick={handleConfirm}>
-            <CheckIcon sx={{ color: theme[mode].blue, fontSize: "14px" }} />
+          <Button onClick={handleConfirm} disabled={isLoadingStartStopVM}>
+             {isLoadingStartStopVM ? (
+             <CircularProgress size={14} sx={{ color: theme[mode].blue }} />
+            ) : (
+                <CheckIcon sx={{ color: theme[mode].blue, fontSize: "14px" }} />
+               )}   
           </Button>
         </Box>
         {/* Button Show charts */}

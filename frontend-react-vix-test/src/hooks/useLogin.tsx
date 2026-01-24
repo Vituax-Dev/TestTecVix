@@ -6,27 +6,9 @@ import { useZUserProfile } from "../stores/useZUserProfile";
 import { useNavigate } from "react-router-dom";
 import { useZResetAllStates } from "../stores/useZResetAllStates";
 
-interface IUserLoginResponse {
-  token: string | null;
-  user: {
-    createdAt: string | Date;
-    deletedAt: string | Date | null;
-    email: string;
-    idBrandMaster: number | null;
-    idUser: string;
-    isActive: boolean;
-    profileImgUrl: null | string;
-    role: "admin" | "manager" | "member";
-    updatedAt: string | Date;
-    username: string;
-  };
-}
-
-
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setIsOpenModalUserNotActive, setLoginTime } =
-    useZGlobalVar();
+  const { setIsOpenModalUserNotActive, setLoginTime } = useZGlobalVar();
   const { setUser } = useZUserProfile();
   const { resetAllStates } = useZResetAllStates();
   const navigate = useNavigate();
@@ -40,48 +22,87 @@ export const useLogin = () => {
     password: string;
     email: string;
   }) => {
-    setIsLoading(true);
-    if ((!username && !email) || !password) {
+    try {
+      setIsLoading(true);
+
+      // Validação mínima dos campos
+      if ((!username && !email) || !password) {
+        toast.error("Preencha email/usuário e senha");
+        return;
+      }
+
+      // Chamada da API
+      const response = await api.post<{
+        token: string;
+        user: {
+          idUser: string;
+          username: string;
+          email: string;
+          role: "admin" | "manager" | "member";
+          profileImgUrl: string | null;
+          idBrandMaster: number | null;
+        };
+      }>({
+        url: "/auth/login",
+        data: {
+          username: username || undefined,
+          password,
+          email: email || undefined,
+        },
+        tryRefetch: true,
+      });
+
+      
+
+      
+      if (response.error) {
+        toast.error(response.message);
+        return;
+      }
+
+      const { token, user } = response.data;
+
+      
+      if (!token) {
+        toast.error("Token inválido");
+        return;
+      }
+
+      
+      localStorage.setItem("token", token);
+
+      
+      setUser({
+        idUser: user.idUser,
+        profileImgUrl: user.profileImgUrl,
+        username: user.username,
+        userEmail: user.email,
+        idBrand: user.idBrandMaster,
+        token: token,
+        role: user.role,
+      });
+
+      // Marca o horário do login
+      setLoginTime(new Date());
+
+      // Redireciona para home (rota "/")
+      navigate("/", { replace: true });
+    } catch (err) {
+      toast.error("Erro ao realizar login");
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    const response = await api.post<IUserLoginResponse>({
-      url: "/auth/login",
-      data: {
-        username: username || undefined,
-        password,
-        email: email || undefined,
-      },
-      tryRefetch: true,
-    });
-
-    setIsLoading(false);
-    if (response.error) {
-      toast.error(response.message);
-      return;
-    }
-    if (!response.data.user?.isActive) {
-      setIsOpenModalUserNotActive(true);
-      return;
-    }
-
-    setUser({
-      idUser: response.data.user.idUser,
-      profileImgUrl: response.data.user.profileImgUrl,
-      username: response.data.user.username,
-      userEmail: response.data.user.email,
-      idBrand: response.data.user.idBrandMaster,
-      token: response.data.token,
-      role: response.data.user.role,
-    });
-    setLoginTime(new Date());
-    navigate("/home");
   };
 
   const goLogout = () => {
+    // Limpa estados globais
     resetAllStates();
-    return navigate("/login");
+
+    // Remove token
+    localStorage.removeItem("token");
+
+    // Vai pro login
+    navigate("/login", { replace: true });
   };
 
   return { goLogin, isLoading, goLogout };

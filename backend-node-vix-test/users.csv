@@ -1,0 +1,4 @@
+email,profileImgUrl,role,idBrandMaster,isActive,lastLoginDate,createdAt,updatedAt,deletedAt
+manager@vituax.com,,manager,,true,2026-01-24T14:19:23.000Z,2026-01-23T05:08:38.000Z,2026-01-23T05:08:38.000Z,
+admin@vituax.com,,admin,,true,2026-01-24T14:13:50.000Z,2026-01-23T05:08:38.000Z,2026-01-23T05:08:38.000Z,
+member@vituax.com,,member,,true,2026-01-24T05:05:59.000Z,2026-01-23T05:08:38.000Z,2026-01-23T05:08:38.000Z,

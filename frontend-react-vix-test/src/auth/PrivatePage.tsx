@@ -23,27 +23,32 @@ export const PrivatePage = ({
   const { idUser, token, role } = useZUserProfile();
 
   useEffect(() => {
-    switch (true) {
-      case !idUser || !token:
-        resetAllStates();
-        navigate("/login");
-        break;
-      
-      case onlyAdmin && role !== "admin":
-        navigate(-1);
-        break;
-      
-      case onlyManagerOrAdmin && role !== "admin" && role !== "manager":
-        navigate(-1);
-        break;
-
-      default:
-        setIsChecking(false);
-        break;
+    // Se não tem token ou idUser, reseta e vai pro login
+    if (!idUser || !token) {
+      resetAllStates();
+      navigate("/login");
+      return;
     }
-  }, [idUser, token, role, onlyAdmin, onlyManagerOrAdmin, navigate, resetAllStates]);
 
-  if (!idUser || !token) return <FullPage />;
+    // Verifica permissões
+    if (onlyAdmin && role !== "admin") {
+      navigate(-1);
+      return;
+    }
+
+    if (onlyManagerOrAdmin && role !== "admin" && role !== "manager") {
+      navigate(-1);
+      return;
+    }
+
+    // Tudo OK, pode mostrar a página
+    setIsChecking(false);
+  }, [idUser, token, role, onlyAdmin, onlyManagerOrAdmin, navigate]);
+  // IMPORTANTE: resetAllStates NÃO está no array de dependências para evitar loop
+
+  if (!idUser || !token) {
+    return <FullPage />;
+  }
 
   if (isChecking) {
     return <FullPage />;

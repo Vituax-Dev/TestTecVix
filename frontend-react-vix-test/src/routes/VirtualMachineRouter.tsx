@@ -2,10 +2,10 @@ import { PrivatePage } from "../auth/PrivatePage";
 import { VirtualMachinePage } from "../pages/VirtualMachine";
 
 export const VirtualMachineRouter = {
-  path: "/virtual-machine",
+  path: "/create-vm",
   element: (
     <PrivatePage onlyManagerOrAdmin>
-      <VirtualMachinePage />,
+      <VirtualMachinePage />
     </PrivatePage>
   ),
 };

@@ -25,6 +25,7 @@ export const useVmResource = () => {
   const [isLoadingCreateVM, setIsLoadingCreateVM] = useState(false);
   const [isLoadingUpdateVM, setIsLoadingUpdateVM] = useState(false);
   const [isLoadingDeleteVM, setIsLoadingDeleteVM] = useState(false);
+  const [isLoadingStartStopVM, setIsLoadingStartStopVM] = useState(false);
   const { t } = useTranslation();
   const { idBrand, role } = useZUserProfile();
   const navigate = useNavigate();
@@ -252,6 +253,40 @@ export const useVmResource = () => {
     return;
   };
 
+  const startVM = async (idVM: number) => {
+    const auth = await getAuth();
+    const response = await api.post<IVMCreatedResponse>({
+      url: `/vm/${idVM}/start`,
+      auth,
+      data: {},
+    });
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    toast.success(t("home.startSuccess") || "VM started successfully");
+    return response.data;
+  };
+
+  const stopVM = async (idVM: number) => {
+    const auth = await getAuth();
+    const response = await api.post<IVMCreatedResponse>({
+      url: `/vm/${idVM}/stop`,
+      auth,
+      data: {},
+    });
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    toast.success(t("home.stopSuccess") || "VM stopped successfully");
+    return response.data;
+  };
+
   const deleteVM = async (idVM: number) => {
     if (role !== "admin") return toast.error(t("generic.errorOlnlyAdmin"));
     if (!idVM) return;
@@ -344,5 +379,8 @@ export const useVmResource = () => {
     getOSDeletedLabel,
     monitoringVMStatus,
     updateVMStatus,
+    startVM,
+    stopVM,
+    isLoadingStartStopVM,
   };
 };

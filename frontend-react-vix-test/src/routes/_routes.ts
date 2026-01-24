@@ -8,12 +8,21 @@ import { WhiteLabelRouter } from "./WhiteLabelRouter";
 import { NotFoundRouter } from "./NotFoundRouter";
 
 export const mainRoutes = [
-  DefaultRouter,
-  HomeRouter,
+  // Rota de login (pública)
   LoginRouter,
+  
+  // Rota raiz "/" - Redireciona para /home ou /login baseado na autenticação
+  DefaultRouter,
+  
+  // Rota /home - Home (protegida)
+  HomeRouter,
+  
+  // Outras rotas protegidas específicas
   VirtualMachineRouter,
   MyVMsRouter,
   MSPRegisterRouter,
   WhiteLabelRouter,
-  NotFoundRouter, 
+  
+  // 404 catch-all - DEVE ser a última rota
+  NotFoundRouter,
 ];

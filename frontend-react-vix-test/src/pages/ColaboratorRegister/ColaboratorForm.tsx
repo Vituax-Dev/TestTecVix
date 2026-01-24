@@ -5,10 +5,12 @@ import { useZColaboratorRegister } from "../../stores/useZColaboratorRegister";
 import { InputLabelTooltip } from "../../components/Inputs/InputLabelTooltip";
 import { DropDownLabelToolTip } from "../../components/Inputs/DropDownLabelToolTip";
 import { TextRob16Font1S } from "../../components/Text1S";
+import { TextRob14Font1Xs } from "../../components/Text1Xs";
 import { useUserResources } from "../../hooks/useUserResources";
 import { useBrandMasterResources } from "../../hooks/useBrandMasterResources";
 import { useEffect, useState } from "react";
 import { useZUserProfile } from "../../stores/useZUserProfile";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface IColaboratorFormProps {
   onSuccess: () => void;
@@ -17,13 +19,14 @@ interface IColaboratorFormProps {
 export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
-  const { createUserByManager, isVituaxUser, isLoading } = useUserResources();
+  const { createUserByManager, isVituaxUser, isLoading, updateUserById } = useUserResources();
   const { listAllBrands } = useBrandMasterResources();
   const { idBrand } = useZUserProfile();
   const [companies, setCompanies] = useState<{ label: string; value: number | null }[]>([]);
   const [showError, setShowError] = useState(false);
 
   const {
+    idUser,
     colaboratorName,
     setColaboratorName,
     email,
@@ -51,6 +54,8 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
     selectedMSP,
     setSelectedMSP,
     resetInputs,
+    isEditingMode,
+    setIsEditingMode,
   } = useZColaboratorRegister();
 
   useEffect(() => {
@@ -83,15 +88,21 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
   ];
 
   const validateForm = () => {
-    if (!colaboratorName || !email || !username || !password || !permission) {
+    if (!colaboratorName || !email || !username || !permission) {
       setShowError(true);
       return false;
     }
-    if (password !== confirmPassword) {
+    // Password is required only for new users
+    if (!isEditingMode && (!password || password.length < 8)) {
       setShowError(true);
       return false;
     }
-    if (password.length < 8) {
+    // If editing and password is provided, validate it
+    if (isEditingMode && password && password.length < 8) {
+      setShowError(true);
+      return false;
+    }
+    if (password && password !== confirmPassword) {
       setShowError(true);
       return false;
     }
@@ -102,28 +113,57 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
   const handleSave = async () => {
     if (!validateForm()) return;
 
-    const result = await createUserByManager({
-      username,
-      email,
-      password,
-      fullName: colaboratorName,
-      phone: phone || undefined,
-      position: position || undefined,
-      department: department || undefined,
-      hiringDate: hiringDate || undefined,
-      role: permission as "admin" | "manager" | "member",
-      isActive: status === "active" || status === "",
-      idBrandMaster: isVituaxUser ? idBrandMaster : idBrand,
-    });
+    if (isEditingMode && idUser) {
+      // Update existing user
+      const updateData: Record<string, unknown> = {
+        username,
+        email,
+        fullName: colaboratorName,
+        phone: phone || undefined,
+        position: position || undefined,
+        department: department || undefined,
+        hiringDate: hiringDate || undefined,
+        role: permission as "admin" | "manager" | "member",
+        isActive: status === "active" || status === "",
+      };
+      
+      // Only include password if it was changed
+      if (password) {
+        updateData.password = password;
+      }
 
-    if (result) {
-      resetInputs();
-      onSuccess();
+      const result = await updateUserById(idUser, updateData);
+      if (result) {
+        resetInputs();
+        setIsEditingMode(false);
+        onSuccess();
+      }
+    } else {
+      // Create new user
+      const result = await createUserByManager({
+        username,
+        email,
+        password,
+        fullName: colaboratorName,
+        phone: phone || undefined,
+        position: position || undefined,
+        department: department || undefined,
+        hiringDate: hiringDate || undefined,
+        role: permission as "admin" | "manager" | "member",
+        isActive: status === "active" || status === "",
+        idBrandMaster: isVituaxUser ? idBrandMaster : idBrand,
+      });
+
+      if (result) {
+        resetInputs();
+        onSuccess();
+      }
     }
   };
 
   const handleClear = () => {
     resetInputs();
+    setIsEditingMode(false);
     setShowError(false);
   };
 
@@ -146,19 +186,55 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
         padding: "24px",
         boxSizing: "border-box",
         gap: "24px",
+        ...(isEditingMode && {
+          border: `2px solid ${theme[mode].warning}`,
+        }),
       }}
     >
-      {/* Section Title */}
-      <TextRob16Font1S
+      {/* Section Title with Edit Mode Indicator */}
+      <Box
         sx={{
-          color: theme[mode].black,
-          fontSize: "16px",
-          fontWeight: 500,
-          lineHeight: "24px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "12px",
         }}
       >
-        {t("colaboratorRegister.subtitle")}
-      </TextRob16Font1S>
+        <TextRob16Font1S
+          sx={{
+            color: theme[mode].black,
+            fontSize: "16px",
+            fontWeight: 500,
+            lineHeight: "24px",
+          }}
+        >
+          {t("colaboratorRegister.subtitle")}
+        </TextRob16Font1S>
+        
+        {isEditingMode && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "6px 16px",
+              borderRadius: "20px",
+              backgroundColor: theme[mode].warning + "20",
+            }}
+          >
+            <EditIcon sx={{ color: theme[mode].warning, fontSize: "18px" }} />
+            <TextRob14Font1Xs
+              sx={{
+                color: theme[mode].warning,
+                fontWeight: "600",
+              }}
+            >
+              {t("colaboratorRegister.editingMode")}
+            </TextRob14Font1Xs>
+          </Box>
+        )}
+      </Box>
 
       {/* Row 1: Full Name, Email, Phone */}
       <Box
@@ -264,13 +340,13 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
             <>
               {t("colaboratorRegister.password")}{" "}
               <span style={{ color: theme[mode].gray }}>
-                {t("colaboratorRegister.required")}
+                {isEditingMode ? t("colaboratorRegister.optional") : t("colaboratorRegister.required")}
               </span>
             </>
           }
-          placeholder="Password"
+          placeholder={isEditingMode ? t("colaboratorRegister.leaveBlankToKeep") : "Password"}
           sxContainer={{
-            ...(showError && (!password || password.length < 8) && {
+            ...(showError && !isEditingMode && (!password || password.length < 8) && {
               "& .MuiOutlinedInput-root fieldset": {
                 borderColor: theme[mode].danger + " !important",
               },
@@ -282,7 +358,7 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
           onChange={setConfirmPassword}
           type="password"
           label={t("colaboratorRegister.confirmPassword")}
-          placeholder="Confirm Password"
+          placeholder={isEditingMode ? t("colaboratorRegister.leaveBlankToKeep") : "Confirm Password"}
           sxContainer={{
             ...(showError && password !== confirmPassword && {
               "& .MuiOutlinedInput-root fieldset": {
@@ -405,6 +481,7 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
             onChange={handleCompanyChange}
             label={t("colaboratorRegister.companyName")}
             placeholder=""
+            disabled={isEditingMode}
           />
         ) : (
           <InputLabelTooltip
@@ -430,18 +507,18 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
           onClick={handleSave}
           disabled={isLoading}
           sx={{
-            backgroundColor: theme[mode].btnDarkBlue,
+            backgroundColor: isEditingMode ? theme[mode].warning : theme[mode].btnDarkBlue,
             color: theme[mode].light,
             borderRadius: "24px",
             padding: "12px 48px",
             textTransform: "none",
             fontWeight: 500,
             "&:hover": {
-              backgroundColor: theme[mode].primary,
+              backgroundColor: isEditingMode ? theme[mode].yellowLight : theme[mode].primary,
             },
           }}
         >
-          {t("colaboratorRegister.save")}
+          {isEditingMode ? t("colaboratorRegister.update") : t("colaboratorRegister.save")}
         </Button>
         <Button
           variant="outlined"
@@ -459,7 +536,7 @@ export const ColaboratorForm = ({ onSuccess }: IColaboratorFormProps) => {
             },
           }}
         >
-          {t("colaboratorRegister.clear")}
+          {isEditingMode ? t("generic.cancel") : t("colaboratorRegister.clear")}
         </Button>
       </Stack>
     </Stack>

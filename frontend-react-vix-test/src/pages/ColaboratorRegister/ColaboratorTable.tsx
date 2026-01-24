@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Box, IconButton, Stack, Tooltip } from "@mui/material";
+import { Box, IconButton, Modal, Stack, Tooltip } from "@mui/material";
 import { useZTheme } from "../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import {
@@ -16,6 +16,7 @@ import { useUserResources } from "../../hooks/useUserResources";
 import { useZUserProfile } from "../../stores/useZUserProfile";
 import { ColaboratorTableFilters } from "./ColaboratorTableFilters";
 import CustomPagination from "../../components/Pagination/CustomPagination";
+import { ModalDeleteUser } from "./ModalDeleteUser";
 import moment from "moment";
 
 interface IColaboratorTableProps {
@@ -29,24 +30,45 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
   const { role } = useZUserProfile();
   const [loadingDelete, setLoadingDelete] = useState<string | null>(null);
 
-  const { users, page, totalPage, setPage, limit } = useZColaboratorRegister();
+  const { 
+    users, 
+    page, 
+    totalPage, 
+    setPage, 
+    limit, 
+    userToDelete, 
+    setUserToDelete,
+    fillFormForEdit,
+    idUser: editingUserId,
+    isEditingMode,
+  } = useZColaboratorRegister();
 
-  const handleDelete = async (user: Colaborator) => {
+  const handleOpenDeleteModal = (user: Colaborator) => {
     if (role !== "admin") return;
-    const confirmed = window.confirm(
-      t("colaboratorRegister.areYouSure", { username: user.name })
-    );
-    if (!confirmed) return;
+    setUserToDelete(user);
+  };
 
-    setLoadingDelete(user.idUser);
-    await deleteUser(user.idUser);
+  const handleCloseDeleteModal = () => {
+    setUserToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
+    setLoadingDelete(userToDelete.idUser);
+    const success = await deleteUser(userToDelete.idUser);
     setLoadingDelete(null);
-    onRefresh();
+    setUserToDelete(null); // Always close modal after attempt
+    
+    if (success) {
+      onRefresh();
+    }
   };
 
   const handleEdit = (user: Colaborator) => {
-    // TODO: Implement edit functionality
-    console.log("Edit user:", user);
+    // Fill form with user data for editing
+    fillFormForEdit(user);
+    // Scroll to form
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const getRoleBadgeColor = (permission: string) => {
@@ -128,7 +150,9 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
             {t("myVMs.noOptions")}
           </TextRob14Font1Xs>
         ) : (
-          users.map((user) => (
+          users.map((user) => {
+            const isBeingEdited = isEditingMode && editingUserId === user.idUser;
+            return (
             <Fragment key={user.idUser}>
               <Box
                 sx={{
@@ -139,9 +163,11 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
                   padding: "12px 8px",
                   gap: "16px",
                   borderRadius: "8px",
-                  transition: "background-color 0.2s ease",
+                  transition: "all 0.2s ease",
+                  border: isBeingEdited ? `2px solid ${theme[mode].warning}` : "2px solid transparent",
+                  backgroundColor: isBeingEdited ? `${theme[mode].warning}15` : "transparent",
                   "&:hover": {
-                    backgroundColor: theme[mode].grayLight,
+                    backgroundColor: isBeingEdited ? `${theme[mode].warning}25` : theme[mode].grayLight,
                   },
                   "@media (max-width: 800px)": {
                     flexDirection: "column",
@@ -326,7 +352,7 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
                     <Tooltip title={t("generic.delete")}>
                       <IconButton
                         size="small"
-                        onClick={() => handleDelete(user)}
+                        onClick={() => handleOpenDeleteModal(user)}
                         disabled={loadingDelete === user.idUser}
                         sx={{
                           color: theme[mode].danger,
@@ -342,9 +368,31 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
                 </Box>
               </Box>
             </Fragment>
-          ))
+          );})
         )}
       </Stack>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        open={!!userToDelete}
+        onClose={handleCloseDeleteModal}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Box>
+          {userToDelete && (
+            <ModalDeleteUser
+              userToDelete={userToDelete}
+              onClose={handleCloseDeleteModal}
+              onConfirm={handleConfirmDelete}
+              isLoading={!!loadingDelete}
+            />
+          )}
+        </Box>
+      </Modal>
 
       {/* Pagination */}
       {totalPage > 1 && (

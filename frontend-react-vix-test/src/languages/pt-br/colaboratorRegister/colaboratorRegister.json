@@ -5,6 +5,7 @@
   "completeName": "Nome completo",
   "completeNamePlaceholder": "José da Silva",
   "required": "(Obrigatório)",
+  "optional": "(Opcional)",
   "email": "E-mail",
   "emailPlaceholder": "jose@email.com",
   "phone": "Telefone",
@@ -25,6 +26,7 @@
   "back": "Voltar",
   "clear": "Limpar",
   "save": "Salvar",
+  "update": "Atualizar",
   "tableTitle": "Usuários cadastrados",
   "fillFields": "O campo acima deve ser preenchido.",
   "lastActivity": "Última atividade:",
@@ -44,5 +46,11 @@
   "ok": "OK",
   "registersManagement": "Gerenciamento de usuários",
   "pinCode": "PinCode",
-  "areYouSure": "Tem certeza que deseja deletar o usuário {{ username }}?"
+  "areYouSure": "Tem certeza que deseja deletar o usuário {{ username }}?",
+  "editingMode": "Modo de edição",
+  "cannotDeleteLastAdmin": "Não é possível excluir o último administrador da empresa",
+  "cannotDemoteLastAdmin": "Não é possível rebaixar o último administrador da empresa",
+  "cannotChangeUserCompany": "Não é possível alterar a empresa do funcionário após o cadastro",
+  "emailAlreadyExists": "Este e-mail já está em uso",
+  "leaveBlankToKeep": "Deixe em branco para manter a senha atual"
 }

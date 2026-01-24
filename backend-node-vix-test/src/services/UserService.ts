@@ -201,10 +201,32 @@ export class UserService {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
 
-    const updateData = data as { password?: string; [key: string]: unknown };
+    const updateData = data as { password?: string; hiringDate?: string | Date; role?: "admin" | "manager" | "member"; idBrandMaster?: number | null; [key: string]: unknown };
+    
+    // Hash password if provided
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
     }
+
+    // Convert hiringDate string to Date object if provided
+    if (updateData.hiringDate && typeof updateData.hiringDate === "string") {
+      updateData.hiringDate = new Date(updateData.hiringDate);
+    }
+
+    // Check if trying to demote the last admin
+    if (user.role === "admin" && updateData.role && updateData.role !== "admin") {
+      const adminCount = await this.userModel.countAdminsByBrandMaster(user.idBrandMaster);
+      if (adminCount <= 1) {
+        throw new AppError(
+          ERROR_MESSAGE.CANNOT_DEMOTE_LAST_ADMIN,
+          STATUS_CODE.BAD_REQUEST,
+        );
+      }
+    }
+
+    // Always remove idBrandMaster from update - company cannot be changed after registration
+    // This ensures the field is never sent to Prisma, so it won't overwrite the existing value
+    delete updateData.idBrandMaster;
 
     return this.userModel.update(idUser, updateData);
   }
@@ -214,6 +236,21 @@ export class UserService {
     if (!user) {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
+
+    // Check if user is an admin
+    if (user.role === "admin") {
+      // Count admins in the same company (idBrandMaster)
+      const adminCount = await this.userModel.countAdminsByBrandMaster(user.idBrandMaster);
+      
+      // If this is the last admin, prevent deletion
+      if (adminCount <= 1) {
+        throw new AppError(
+          ERROR_MESSAGE.CANNOT_DELETE_LAST_ADMIN,
+          STATUS_CODE.BAD_REQUEST,
+        );
+      }
+    }
+
     return this.userModel.hardDelete(idUser);
   }
 

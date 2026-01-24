@@ -169,20 +169,30 @@ export const useUserResources = () => {
     return { users, totalPages: response.data.totalPages };
   };
 
-  const deleteUser = async (userId: string) => {
-    if (role !== "admin") return null;
+  // Map backend error messages to translation keys
+  const translateErrorMessage = (message: string): string => {
+    const errorMap: Record<string, string> = {
+      "Cannot delete the last admin of this company": t("colaboratorRegister.cannotDeleteLastAdmin"),
+      "Cannot demote the last admin of this company": t("colaboratorRegister.cannotDemoteLastAdmin"),
+      "Cannot change user's company after registration": t("colaboratorRegister.cannotChangeUserCompany"),
+      "Email already exists": t("colaboratorRegister.emailAlreadyExists"),
+      "User not found": t("generic.notFound"),
+    };
+    return errorMap[message] || message;
+  };
 
+  const deleteUser = async (userId: string): Promise<boolean> => {
     const auth = await getAuth();
     setIsLoading(true);
-    const response = await api.del({
+    const response = await api.delete({
       url: `/users/${userId}`,
       auth,
     });
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
-      return null;
+      toast.error(translateErrorMessage(response.message));
+      return false;
     }
 
     toast.success(t("generic.deleted"));
@@ -200,7 +210,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      toast.error(translateErrorMessage(response.message));
       return null;
     }
 

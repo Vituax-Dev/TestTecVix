@@ -5,6 +5,7 @@
   "completeName": "Full Name",
   "completeNamePlaceholder": "John Doe",
   "required": "(Required)",
+  "optional": "(Optional)",
   "email": "Email",
   "emailPlaceholder": "john@email.com",
   "phone": "Phone",
@@ -25,6 +26,7 @@
   "back": "Back",
   "clear": "Clear",
   "save": "Save",
+  "update": "Update",
   "tableTitle": "Registered Users",
   "fillFields": "The field above must be filled out.",
   "lastActivity": "Last activity:",
@@ -44,5 +46,11 @@
   "ok": "OK",
   "registersManagement": "Registers Management",
   "pinCode": "PinCode",
-  "areYouSure": "Are you sure you want to delete the {{ username }}?"
+  "areYouSure": "Are you sure you want to delete the {{ username }}?",
+  "editingMode": "Editing Mode",
+  "cannotDeleteLastAdmin": "Cannot delete the last administrator of the company",
+  "cannotDemoteLastAdmin": "Cannot demote the last administrator of the company",
+  "cannotChangeUserCompany": "Cannot change user's company after registration",
+  "emailAlreadyExists": "This email is already in use",
+  "leaveBlankToKeep": "Leave blank to keep current password"
 }

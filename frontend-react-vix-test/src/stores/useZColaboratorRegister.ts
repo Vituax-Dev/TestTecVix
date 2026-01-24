@@ -74,6 +74,8 @@ interface IColaboratorRegister extends ColaboratorRegisterInputs {
   totalPage: number;
   selectedMSP: IBrandMasterBasicInfo | null;
   filterCompanyId: number | null;
+  userToDelete: Colaborator | null;
+  isEditingMode: boolean;
 }
 
 const INITIAL_STATE: IColaboratorRegister = {
@@ -86,10 +88,12 @@ const INITIAL_STATE: IColaboratorRegister = {
   currentTabIndex: 0,
   search: "",
   page: 1,
-  limit: 5,
+  limit: 8,
   totalPage: 0,
   selectedMSP: null,
   filterCompanyId: null,
+  userToDelete: null,
+  isEditingMode: false,
 };
 
 interface IColaboratorRegisterState extends IColaboratorRegister {
@@ -120,6 +124,9 @@ interface IColaboratorRegisterState extends IColaboratorRegister {
   setTotalPage: (totalPage: number) => void;
   setSelectedMSP: (selectedMSP: IBrandMasterBasicInfo | null) => void;
   setFilterCompanyId: (filterCompanyId: number | null) => void;
+  setUserToDelete: (userToDelete: Colaborator | null) => void;
+  setIsEditingMode: (isEditingMode: boolean) => void;
+  fillFormForEdit: (user: Colaborator) => void;
 }
 
 export const useZColaboratorRegister = create<IColaboratorRegisterState>(
@@ -169,6 +176,29 @@ export const useZColaboratorRegister = create<IColaboratorRegisterState>(
       set((state) => ({ ...state, selectedMSP: selectedMSP })),
     setFilterCompanyId: (filterCompanyId: number | null) =>
       set((state) => ({ ...state, filterCompanyId: filterCompanyId })),
+    setUserToDelete: (userToDelete: Colaborator | null) =>
+      set((state) => ({ ...state, userToDelete })),
+    setIsEditingMode: (isEditingMode: boolean) =>
+      set((state) => ({ ...state, isEditingMode })),
+    fillFormForEdit: (user: Colaborator) =>
+      set((state) => ({
+        ...state,
+        idUser: user.idUser,
+        colaboratorName: user.fullName || user.name || "",
+        email: user.email,
+        phone: user.phone || "",
+        username: user.username || "",
+        position: user.position || "",
+        department: user.department || "",
+        permission: user.permission,
+        status: user.status,
+        hiringDate: user.hiringDate ? new Date(user.hiringDate).toISOString().split("T")[0] : "",
+        idBrandMaster: user.idBrandMaster || null,
+        selectedMSP: user.idBrandMaster ? { idBrandMaster: user.idBrandMaster, brandName: user.brandName || "" } : null,
+        isEditingMode: true,
+        password: "",
+        confirmPassword: "",
+      })),
 
     resetAll: () => set((state) => ({ ...state, ...INITIAL_STATE })),
   }),

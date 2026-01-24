@@ -6,7 +6,6 @@ import { TextRob14Font1Xs } from "../../../components/Text1Xs";
 import { TextRob12Font2Xs } from "../../../components/Text2Xs";
 import { useTranslation } from "react-i18next";
 import { PencilCicleIcon } from "../../../icons/PencilCicleIcon";
-import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useZUserProfile } from "../../../stores/useZUserProfile";
 import { useZMspRegisterPage } from "../../../stores/useZMspRegisterPage";
@@ -31,9 +30,7 @@ export const MspTable = () => {
     setMSPDomain,
     mspList,
     setMspList,
-    resetAll,
     setIsEditing,
-    isEditing,
     setMspToBeDeleted,
     mspTableFilter,
     setModalOpen,
@@ -63,12 +60,6 @@ export const MspTable = () => {
   const startEditing = (index: number) => {
     setShowAddressFields(true);
     setIsEditing([index]);
-  };
-
-  const saveEdit = () => {
-    setShowAddressFields(false);
-    setIsEditing([]);
-    resetAll();
   };
 
   const handleEdit = (index: number) => {
@@ -279,23 +270,9 @@ export const MspTable = () => {
                 }}
               >
                 <IconButton
-                  onClick={() =>
-                    isEditing.includes(msp.idBrandMaster)
-                      ? saveEdit()
-                      : handleEdit(msp.idBrandMaster)
-                  }
+                  onClick={() => handleEdit(msp.idBrandMaster)}
                 >
-                  {isEditing.includes(msp.idBrandMaster) ? (
-                    <CheckCircleOutlineRoundedIcon
-                      sx={{
-                        color: theme[mode].blueMedium,
-                        width: "24px",
-                        height: "24px",
-                      }}
-                    />
-                  ) : (
-                    <PencilCicleIcon fill={theme[mode].blueMedium} />
-                  )}
+                  <PencilCicleIcon fill={theme[mode].blueMedium} />
                 </IconButton>
                 {role === "admin" && (
                   <IconButton

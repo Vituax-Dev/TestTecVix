@@ -1,5 +1,5 @@
 import { prisma } from "../database/client";
-import { TBrandMaster } from "../types/validations/BrandMaster/createBrandMaster";
+import { TBrandMasterUpdate } from "../types/validations/BrandMaster/createBrandMaster";
 import { TQuery } from "../types/validations/Queries/queryListAll";
 import moment from "moment";
 
@@ -74,11 +74,7 @@ export class BrandMasterModel {
     return { totalCount, result: brands };
   }
 
-  async createNewBrandMaster(data: TBrandMaster) {
-    return prisma.brandMaster.create({ data });
-  }
-
-  async updateBrandMaster(idBrandMaster: number, data: TBrandMaster) {
+  async updateBrandMaster(idBrandMaster: number, data: TBrandMasterUpdate) {
     return prisma.brandMaster.update({
       where: { idBrandMaster },
       data: { ...data, updatedAt: new Date() },

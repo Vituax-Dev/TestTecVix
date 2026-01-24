@@ -82,6 +82,8 @@ interface ICreateNewBrandMaster {
   cityCode?: number;
   district?: string;
   isPoc?: boolean;
+  minConsumption?: number;
+  discountPercentage?: number;
 }
 
 export interface INewMSPResponse {
@@ -241,14 +243,14 @@ export const useBrandMasterResources = () => {
     }
     const auth = await getAuth();
     setIsLoading(true);
-    const response = await api.post<INewMSPResponse>({
+    const response = await api.post<{ brandMaster: INewMSPResponse; admin: unknown }>({
       url: `/brand-master`,
       auth,
       data: {
         brandName: data.companyName,
         isActive: true,
         brandLogo: data.brandLogo,
-        domain: undefined,
+        domain: data.mspDomain || undefined,
         setorName: data.sector,
         fieldName: undefined,
         location: data.locality,
@@ -264,6 +266,15 @@ export const useBrandMasterResources = () => {
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
+        minConsumption: data?.minConsumption ?? 0,
+        discountPercentage: data?.discountPercentage ?? 0,
+        // Admin obrigatório
+        admin: {
+          username: data.admName,
+          email: data.admEmail,
+          password: data.admPassword,
+          phone: data.admPhone,
+        },
       },
     });
 
@@ -273,7 +284,7 @@ export const useBrandMasterResources = () => {
       return;
     }
 
-    return { brandMaster: response.data };
+    return { brandMaster: response.data.brandMaster };
   };
 
   const listAllBrands = async () => {

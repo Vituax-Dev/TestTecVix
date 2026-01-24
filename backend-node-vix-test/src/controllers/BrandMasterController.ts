@@ -23,12 +23,12 @@ export class BrandMasterController {
     return res.status(STATUS_CODE.OK).json(result);
   }
 
+  /**
+   * Cria um novo MSP com admin obrigatório em transação
+   * Se o admin falhar, o MSP não é criado (rollback automático)
+   */
   async createNewBrandMaster(req: CustomRequest<unknown>, res: Response) {
-    const user = req.user as user;
-    const result = await this.brandMasterService.createNewBrandMaster(
-      req.body,
-      user,
-    );
+    const result = await this.brandMasterService.createNewBrandMaster(req.body);
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 

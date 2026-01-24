@@ -40,9 +40,12 @@ interface IMspRegisterPage {
   showAddressFields: boolean;
   isPoc: boolean;
   isPocFilter: boolean;
+  showForm: boolean;
   brandMasterDeleted: IBrandMasterBasicInfo | null;
   vmsToBeDeleted: IVMCreatedResponse[];
   notesBrandMasterDescription: string;
+  minConsumption: string;
+  discountPercentage: string;
 }
 
 const INIT_STATE: IMspRegisterPage = {
@@ -82,9 +85,12 @@ const INIT_STATE: IMspRegisterPage = {
   showAddressFields: false,
   isPoc: false,
   isPocFilter: false,
+  showForm: false,
   brandMasterDeleted: null,
   vmsToBeDeleted: [],
   notesBrandMasterDescription: "",
+  minConsumption: "",
+  discountPercentage: "",
 };
 
 const {
@@ -142,11 +148,14 @@ interface IMspRegisterPageState extends IMspRegisterPage {
   setShowAddressFields: (showAddressFields: boolean) => void;
   setIsPoc: (isPoc: boolean) => void;
   setIsPocFilter: (isPocFilter: boolean) => void;
+  setShowForm: (showForm: boolean) => void;
   setBrandMasterDeleted: (
     brandMasterDeleted: IBrandMasterBasicInfo | null,
   ) => void;
   setVmsToBeDeleted: (vmsToBeDeleted: IVMCreatedResponse[]) => void;
   setNotesBrandMasterDescription: (notesBrandMasterDescription: string) => void;
+  setMinConsumption: (minConsumption: string) => void;
+  setDiscountPercentage: (discountPercentage: string) => void;
 }
 
 export const useZMspRegisterPage = create<IMspRegisterPageState>((set) => ({
@@ -208,6 +217,8 @@ export const useZMspRegisterPage = create<IMspRegisterPageState>((set) => ({
   setIsPoc: (isPoc: boolean) => set((state) => ({ ...state, isPoc })),
   setIsPocFilter: (isPocFilter: boolean) =>
     set((state) => ({ ...state, isPocFilter })),
+  setShowForm: (showForm: boolean) =>
+    set((state) => ({ ...state, showForm })),
   setBrandMasterDeleted: (brandMasterDeleted: IBrandMasterBasicInfo | null) =>
     set((state) => ({ ...state, brandMasterDeleted })),
   setVmsToBeDeleted: (vmsToBeDeleted: IVMCreatedResponse[]) =>
@@ -218,4 +229,8 @@ export const useZMspRegisterPage = create<IMspRegisterPageState>((set) => ({
       notesBrandMasterDescription,
     }));
   },
+  setMinConsumption: (minConsumption: string) =>
+    set((state) => ({ ...state, minConsumption })),
+  setDiscountPercentage: (discountPercentage: string) =>
+    set((state) => ({ ...state, discountPercentage })),
 }));

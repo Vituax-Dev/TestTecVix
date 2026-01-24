@@ -182,6 +182,20 @@
             "null"
           ]
         },
+        "minConsumption": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": 0
+        },
+        "discountPercentage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": 0
+        },
         "vM": {
           "type": "array",
           "items": {

@@ -1,8 +1,17 @@
 import { z } from "zod";
 
+// Schema do admin (obrigatório na criação de MSP)
+const adminSchema = z.object({
+  username: z.string().min(1, "Nome do admin é obrigatório"),
+  email: z.string().email("Email do admin inválido"),
+  password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+  phone: z.string().optional(),
+});
+
+// Schema para criação de MSP (sempre com admin obrigatório)
 export const brandMasterSchema = z.object({
   brandName: z.string().nullable().optional(),
-  isActive: z.boolean().default(false).optional(),
+  isActive: z.boolean().default(true).optional(),
   brandLogo: z.string().nullable().optional(),
   domain: z.string().nullable().optional(),
   contract: z.string().nullable().optional(),
@@ -26,6 +35,14 @@ export const brandMasterSchema = z.object({
   manual: z.string().nullable().optional(),
   termsOfUse: z.string().nullable().optional(),
   privacyPolicy: z.string().nullable().optional(),
+  minConsumption: z.number().nullable().optional(),
+  discountPercentage: z.number().nullable().optional(),
+  // Admin obrigatório na criação
+  admin: adminSchema,
 });
 
 export type TBrandMaster = z.infer<typeof brandMasterSchema>;
+
+// Schema para update (sem admin)
+export const brandMasterUpdateSchema = brandMasterSchema.omit({ admin: true });
+export type TBrandMasterUpdate = z.infer<typeof brandMasterUpdateSchema>;

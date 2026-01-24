@@ -67,5 +67,22 @@
   "vmsFromThisMSP": "VMS de este MSP",
   "mspDeleted": "MSP {{ brandName }} eliminado con éxito!",
   "doYouWantToDeleteThisVMs": "Desea realmente eliminar estas VMS?",
-  "deletedVMs": "VMS eliminadas con éxito!"
+  "deletedVMs": "VMS eliminadas con éxito!",
+  "createNewMsp": "Crear nuevo MSP",
+  "continue": "Continuar",
+  "mspDomainSection": "Dominio del MSP",
+  "adminPhone": "Teléfono",
+  "adminPhonePlaceholder": "(00) 00000-0000",
+  "adminPosition": "Cargo",
+  "adminPositionValue": "Administrador",
+  "adminUsername": "Nombre de usuario",
+  "adminUsernamePlaceholder": "Nombre de usuario",
+  "logoSpecs": "Estándar: 165x50px",
+  "logoSize": "Tamaño: 50mb",
+  "logoFormats": "Formatos: .svg .png .jpg .gif .webp",
+  "changeLogo": "Cambiar logo",
+  "removeLogo": "Eliminar logo",
+  "step1Description": "Complete la información de la empresa MSP",
+  "step2Description": "Configure el administrador y el logotipo de la empresa",
+  "comingSoon": "Próximamente"
 }

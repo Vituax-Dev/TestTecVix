@@ -235,6 +235,18 @@
             "PAUSED"
           ]
         },
+        "pass": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "createdAt": {
           "type": [
             "string",

@@ -6,11 +6,13 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 import { TVMUpdate, vMUpdatedSchema } from "../types/validations/VM/updateVM";
 import { vmListAllSchema } from "../types/validations/VM/vmListAll";
+import { PrismaClient } from "@prisma/client";
 
 export class VMService {
   constructor() {}
 
   private vMModel = new VMModel();
+  private prisma = new PrismaClient();
 
   async getById(idVM: number) {
     return this.vMModel.getById(idVM);
@@ -53,5 +55,47 @@ export class VMService {
     }
     const deletedVm = await this.vMModel.deleteVM(idVM);
     return deletedVm;
+  }
+
+  
+  async startVM(idVM: number, user: user) {
+    const vm = await this.getById(idVM);
+    if (!vm) {
+      throw new AppError(ERROR_MESSAGE.NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
+    const updatedVM = await this.prisma.vM.update({
+      where: { idVM },
+      data: { 
+        status: 'RUNNING',
+        updatedAt: new Date()
+      }
+    });
+    
+    return { 
+      message: 'VM started successfully',
+      data: updatedVM
+    };
+  }
+
+  
+  async stopVM(idVM: number, user: user) {
+    const vm = await this.getById(idVM);
+    if (!vm) {
+      throw new AppError(ERROR_MESSAGE.NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
+    const updatedVM = await this.prisma.vM.update({
+      where: { idVM },
+      data: { 
+        status: 'STOPPED',
+        updatedAt: new Date()
+      }
+    });
+    
+    return { 
+      message: 'VM stopped successfully',
+      data: updatedVM
+    };
   }
 }

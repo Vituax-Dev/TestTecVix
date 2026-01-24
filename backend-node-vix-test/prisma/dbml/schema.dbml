@@ -45,6 +45,8 @@ Table vM {
   hasBackup Boolean [default: false]
   idBrandMaster Int
   status EVMStatus
+  pass String
+  location String
   createdAt DateTime [default: `now()`]
   updatedAt DateTime [default: `now()`]
   deletedAt DateTime

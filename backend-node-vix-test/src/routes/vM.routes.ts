@@ -33,13 +33,20 @@ vMRoutes.get(
 
 // ========= POSTs =========
 vMRoutes.post(
-  BASE_PATH, // authUser,
-  // isManagerOrIsAdmin,
+  `${BASE_PATH}/:idVM/start`,
+  // authUser,
   async (req, res) => {
-    await vMController.createVM(req, res);
+    await vMController.startVM(req, res);
   },
 );
 
+vMRoutes.post(
+  `${BASE_PATH}/:idVM/stop`,
+  // authUser,
+  async (req, res) => {
+    await vMController.stopVM(req, res);
+  },
+);
 // ======== PUTs =========
 
 vMRoutes.put(

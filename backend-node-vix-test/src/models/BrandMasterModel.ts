@@ -67,7 +67,9 @@ export class BrandMasterModel {
       },
       take: limit || undefined,
       skip,
-      ...(orderBy.length ? { orderBy } : { orderBy: [{ updatedAt: "desc" }] }),
+      orderBy: orderBy.length
+        ? orderBy
+        : [{ brandName: "asc" }],
     });
 
     const totalCount = await this.totalCount(query, isIncludeDeleted);

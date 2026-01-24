@@ -282,8 +282,11 @@ export const useBrandMasterResources = () => {
     const response = await api.get<IListAll<INewMSPResponse>>({
       url: "/brand-master",
       auth,
+      params: {
+      limit: 1000,
+      },
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
       toast.error(response.message);

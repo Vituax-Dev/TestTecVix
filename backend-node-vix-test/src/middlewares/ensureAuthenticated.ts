@@ -14,10 +14,20 @@ export const ensureAuthenticated = (
     throw new AppError("Token not provided", STATUS_CODE.UNAUTHORIZED);
   }
 
-  const [, token] = authHeader.split(" ");
+  const parts = authHeader.split(" ");
 
-  if (!token) {
-    throw new AppError("Malformed token", STATUS_CODE.UNAUTHORIZED);
+  if (parts.length !== 2) {
+    throw new AppError("Token error", STATUS_CODE.UNAUTHORIZED);
+  }
+
+  const [scheme, token] = parts;
+
+  if (!/^Bearer$/i.test(scheme)) {
+    throw new AppError("Token malformatted", STATUS_CODE.UNAUTHORIZED);
+  }
+
+  if (!token || token === "undefined" || token === "null") {
+    throw new AppError("Token invalid", STATUS_CODE.UNAUTHORIZED);
   }
 
   try {

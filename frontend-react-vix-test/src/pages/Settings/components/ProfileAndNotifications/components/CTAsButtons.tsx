@@ -3,17 +3,80 @@ import { useTranslation } from "react-i18next";
 import { useZTheme } from "../../../../../stores/useZTheme";
 import { TextRob16FontL } from "../../../../../components/TextL";
 import { toast } from "react-toastify";
+import { useZFormProfileNotifications } from "../../../../../stores/useZFormProfileNotifications";
+import { useZUserProfile } from "../../../../../stores/useZUserProfile";
+import { useUserResources } from "../../../../../hooks/useUserResources";
+import { useBrandMasterResources } from "../../../../../hooks/useBrandMasterResources";
+import { useState } from "react";
 
 export const CTAsButtons = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { companyEmail, companySMS, timeZone, resetAll } =
+    useZFormProfileNotifications();
+  const { objectName, role, idBrand } = useZUserProfile();
+  const { updateUser } = useUserResources();
+  const { updateBrandMasterInfo } = useBrandMasterResources();
+
+  const isAdmin = role === "admin";
+  const isManager = role === "manager";
+  const canEditCompany = (isAdmin || isManager) && idBrand !== null;
+
+  const validateForm = (): boolean => {
+    // Validate company email if user can edit company
+    if (canEditCompany && companyEmail.errorMessage) {
+      return false;
+    }
+    // Validate company SMS if user can edit company
+    if (canEditCompany && companySMS.errorMessage) {
+      return false;
+    }
+    return true;
+  };
 
   const handleSave = async () => {
-    const allValid = true;
-    if (!allValid) return toast.error(t("profileAndNotifications.errorForm"));
-    const r = true;
-    if (r) return toast.success(t("generic.dataSavesuccess"));
-    return;
+    if (!validateForm()) {
+      return toast.error(t("profileAndNotifications.errorForm"));
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Save profile image if there's a new objectName
+      if (objectName) {
+        const userResult = await updateUser({ profileImgUrl: objectName });
+        if (!userResult) {
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Save company notifications (email, SMS, timezone) - only for admin/manager
+      if (canEditCompany) {
+        const brandResult = await updateBrandMasterInfo({
+          emailContact: companyEmail.value || undefined,
+          smsContact: companySMS.value || undefined,
+          timezone: timeZone.value || undefined,
+        });
+        if (!brandResult) {
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      setIsLoading(false);
+      toast.success(t("generic.dataSavesuccess"));
+    } catch {
+      setIsLoading(false);
+      toast.error(t("generic.errorToSaveData"));
+    }
+  };
+
+  const handleReset = () => {
+    resetAll();
+    window.location.reload();
   };
 
   return (
@@ -42,6 +105,7 @@ export const CTAsButtons = () => {
           },
         }}
         onClick={handleSave}
+        disabled={isLoading}
       >
         <TextRob16FontL
           sx={{
@@ -51,7 +115,9 @@ export const CTAsButtons = () => {
             lineHeight: "16px",
           }}
         >
-          {t("profileAndNotifications.saveChanges")}
+          {isLoading
+            ? t("generic.loading")
+            : t("profileAndNotifications.saveChanges")}
         </TextRob16FontL>
       </Button>
       <Button
@@ -69,7 +135,8 @@ export const CTAsButtons = () => {
             maxWidth: "100%",
           },
         }}
-        onClick={() => {}}
+        onClick={handleReset}
+        disabled={isLoading}
       >
         <TextRob16FontL
           sx={{

@@ -60,7 +60,7 @@ interface IBrandMasterResource {
   privacyPolicy?: string;
 }
 
-interface ICreateNewBrandMaster {
+export interface ICreateNewBrandMaster {
   companyName: string;
   cnpj: string;
   phone: string;
@@ -248,7 +248,7 @@ export const useBrandMasterResources = () => {
         brandName: data.companyName,
         isActive: true,
         brandLogo: data.brandLogo,
-        domain: undefined,
+        domain: data.mspDomain,
         setorName: data.sector,
         fieldName: undefined,
         location: data.locality,

@@ -7,6 +7,7 @@ import { routes } from "./routes/_index";
 import { notImplemented } from "./middlewares/notImplemented";
 import { errorHandler } from "./middlewares/errorHandler";
 import { setupSwagger } from "./swagger";
+import path from "path";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(
 
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
+app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 
 app.use(express.static("public"));
 app.use(logs);

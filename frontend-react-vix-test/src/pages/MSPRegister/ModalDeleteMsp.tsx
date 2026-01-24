@@ -13,9 +13,11 @@ import { useZMspRegisterPage } from "../../stores/useZMspRegisterPage";
 export const ModalDeleteMsp = ({
   mspToDelete,
   onClose,
+  onConfirm,
 }: {
   mspToDelete: INewMSPResponse;
   onClose: () => void;
+  onConfirm: () => Promise<void>;
 }) => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
@@ -35,12 +37,17 @@ export const ModalDeleteMsp = ({
 
   const onDelete = async () => {
     const response = await deleteBrandMaster(mspToDelete.idBrandMaster);
-    setIsEditing([]);
-    resetAll();
-    await fetchMsps();
-    setVmsToBeDeleted([]);
-    setBrandMasterDeleted(response?.brandMaster || null);
-    onClose();
+
+    if (response) {
+      await onConfirm();
+
+      setIsEditing([]);
+      resetAll();
+      setVmsToBeDeleted([]);
+      
+      setBrandMasterDeleted(response?.brandMaster || null);
+      onClose();
+    }
   };
 
   return (

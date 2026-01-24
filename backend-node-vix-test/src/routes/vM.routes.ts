@@ -35,6 +35,14 @@ vMRoutes.post(
   },
 );
 
+vMRoutes.post(`${BASE_PATH}/:idVM/start`, async (req, res) => {
+  await vMController.startVM(req, res);
+});
+
+vMRoutes.post(`${BASE_PATH}/:idVM/stop`, async (req, res) => {
+  await vMController.stopVM(req, res);
+});
+
 // ======== PUTs =========
 
 vMRoutes.put(

@@ -1,6 +1,7 @@
 import { user } from "@prisma/client";
 import { VMModel } from "../models/VMModel";
 import { vMCreatedSchema } from "../types/validations/VM/createVM";
+import { TVMUpdate } from "../types/validations/VM/updateVM";
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
@@ -97,5 +98,28 @@ export class VMService {
 
     const deletedVm = await this.vMModel.deleteVM(idVM);
     return deletedVm;
+  }
+
+  async changeStatus(idVM: number, status: "RUNNING" | "STOPPED", user: user) {
+    const oldVM = await this.getById(idVM);
+
+    if (!oldVM) {
+      throw new AppError(ERROR_MESSAGE.NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
+    if (user.role !== "admin" && oldVM.idBrandMaster !== user.idBrandMaster) {
+      throw new AppError(
+        "Unauthorized access to this VM.",
+        STATUS_CODE.FORBIDDEN,
+      );
+    }
+
+    const data: TVMUpdate = {
+      status: status,
+    };
+
+    const updatedVM = await this.vMModel.updateVM(idVM, data);
+
+    return updatedVM;
   }
 }

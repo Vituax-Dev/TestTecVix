@@ -42,6 +42,7 @@ interface IMspRegisterPage {
   showAddressFields: boolean;
   isPoc: boolean;
   isPocFilter: boolean;
+  includeDeletedFilter: boolean;
   showForm: boolean;
   brandMasterDeleted: IBrandMasterBasicInfo | null;
   vmsToBeDeleted: IVMCreatedResponse[];
@@ -89,6 +90,7 @@ const INIT_STATE: IMspRegisterPage = {
   showAddressFields: false,
   isPoc: false,
   isPocFilter: false,
+  includeDeletedFilter: false,
   showForm: false,
   brandMasterDeleted: null,
   vmsToBeDeleted: [],
@@ -154,6 +156,7 @@ interface IMspRegisterPageState extends IMspRegisterPage {
   setShowAddressFields: (showAddressFields: boolean) => void;
   setIsPoc: (isPoc: boolean) => void;
   setIsPocFilter: (isPocFilter: boolean) => void;
+  setIncludeDeletedFilter: (includeDeletedFilter: boolean) => void;
   setShowForm: (showForm: boolean) => void;
   setBrandMasterDeleted: (
     brandMasterDeleted: IBrandMasterBasicInfo | null,
@@ -227,6 +230,8 @@ export const useZMspRegisterPage = create<IMspRegisterPageState>((set) => ({
   setIsPoc: (isPoc: boolean) => set((state) => ({ ...state, isPoc })),
   setIsPocFilter: (isPocFilter: boolean) =>
     set((state) => ({ ...state, isPocFilter })),
+  setIncludeDeletedFilter: (includeDeletedFilter: boolean) =>
+    set((state) => ({ ...state, includeDeletedFilter })),
   setShowForm: (showForm: boolean) =>
     set((state) => ({ ...state, showForm })),
   setBrandMasterDeleted: (brandMasterDeleted: IBrandMasterBasicInfo | null) =>

@@ -291,11 +291,12 @@ export const useBrandMasterResources = () => {
     return { brandMaster: response.data.brandMaster };
   };
 
-  const listAllBrands = async () => {
+  const listAllBrands = async (options?: { includeDeleted?: boolean }) => {
     const auth = await getAuth();
     setIsLoading(true);
+    const queryParams = options?.includeDeleted ? "?includeDeleted=true" : "";
     const response = await api.get<IListAll<INewMSPResponse>>({
-      url: "/brand-master",
+      url: `/brand-master${queryParams}`,
       auth,
     });
     setIsLoading(false);
@@ -308,6 +309,31 @@ export const useBrandMasterResources = () => {
         result: [],
       };
     }
+    return response.data;
+  };
+
+  const reactivateBrandMaster = async (brandMasterId: number | string) => {
+    if (!brandMasterId) return null;
+
+    if (role !== "admin" && role !== "manager") {
+      toast.error(t("generic.errorOlnlyAdmin"));
+      return;
+    }
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.patch<{
+      brandMaster: IBrandMasterBasicInfo;
+    }>({
+      url: `/brand-master/${brandMasterId}/reactivate`,
+      auth,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return;
+    }
+    toast.success(t("mspRegister.reactivateSuccess") || "MSP reativado com sucesso!");
     return response.data;
   };
 
@@ -432,6 +458,7 @@ export const useBrandMasterResources = () => {
     createAnewBrandMaster,
     listAllBrands,
     deleteBrandMaster,
+    reactivateBrandMaster,
     editBrandMaster,
     getSelf,
     getBrandMasterById,

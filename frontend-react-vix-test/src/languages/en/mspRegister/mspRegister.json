@@ -92,5 +92,8 @@
   "state": "State",
   "invalidCep": "Invalid postal code",
   "cepNotFound": "Postal code not found",
-  "cepError": "Error fetching postal code"
+  "cepError": "Error fetching postal code",
+  "showDeleted": "Show deleted",
+  "reactivate": "Reactivate MSP",
+  "reactivateSuccess": "MSP successfully reactivated!"
 }

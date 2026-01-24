@@ -9,8 +9,14 @@ import { CheckboxLabel } from "../../../components/CheckboxLabel";
 export const MspTableFilters = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
-  const { mspTableFilter, setMspTableFilter, isPocFilter, setIsPocFilter } =
-    useZMspRegisterPage();
+  const { 
+    mspTableFilter, 
+    setMspTableFilter, 
+    isPocFilter, 
+    setIsPocFilter,
+    includeDeletedFilter,
+    setIncludeDeletedFilter,
+  } = useZMspRegisterPage();
   return (
     <Box
       sx={{
@@ -31,6 +37,13 @@ export const MspTableFilters = () => {
           label={t("mspRegister.showOnlyPoc")}
           checked={isPocFilter}
           handleChange={() => setIsPocFilter(!isPocFilter)}
+        />
+      </Stack>
+      <Stack sx={{ justifyContent: "center" }}>
+        <CheckboxLabel
+          label={t("mspRegister.showDeleted") || "Mostrar deletados"}
+          checked={includeDeletedFilter}
+          handleChange={() => setIncludeDeletedFilter(!includeDeletedFilter)}
         />
       </Stack>
     </Box>

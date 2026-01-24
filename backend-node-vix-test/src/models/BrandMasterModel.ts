@@ -105,4 +105,17 @@ export class BrandMasterModel {
       data: { updatedAt: new Date(), deletedAt: new Date() },
     });
   }
+
+  async reactivateBrandMaster(idBrandMaster: number) {
+    // Reativa o MSP e todos os seus usuários
+    await prisma.user.updateMany({
+      where: { idBrandMaster },
+      data: { deletedAt: null, updatedAt: new Date() },
+    });
+
+    return prisma.brandMaster.update({
+      where: { idBrandMaster },
+      data: { deletedAt: null, updatedAt: new Date() },
+    });
+  }
 }

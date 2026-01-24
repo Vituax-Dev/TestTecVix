@@ -92,5 +92,8 @@
   "state": "Provincia",
   "invalidCep": "Código postal inválido",
   "cepNotFound": "Código postal no encontrado",
-  "cepError": "Error al buscar código postal"
+  "cepError": "Error al buscar código postal",
+  "showDeleted": "Mostrar eliminados",
+  "reactivate": "Reactivar MSP",
+  "reactivateSuccess": "¡MSP reactivado con éxito!"
 }

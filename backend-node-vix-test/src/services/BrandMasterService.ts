@@ -29,7 +29,7 @@ export class BrandMasterService {
 
   async listAll(query: unknown) {
     const validQuery = querySchema.parse(query);
-    return this.brandMasterModel.listAll(validQuery);
+    return this.brandMasterModel.listAll(validQuery, validQuery.includeDeleted);
   }
 
   /**

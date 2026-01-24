@@ -178,9 +178,28 @@ const post = async <T>({
     tryRefetch,
   });
 
+const patch = async <T>({
+  url = "",
+  data = {},
+  auth = {},
+  timeout = undefined,
+  fullEndpoint = "",
+  tryRefetch = false,
+}) =>
+  app<T>({
+    method: "PATCH",
+    url,
+    data,
+    auth,
+    timeout,
+    fullEndpoint,
+    tryRefetch,
+  });
+
 export const api = {
   get,
   delete: remove,
   put,
   post,
+  patch,
 };

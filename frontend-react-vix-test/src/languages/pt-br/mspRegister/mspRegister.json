@@ -92,5 +92,8 @@
   "state": "Estado",
   "invalidCep": "CEP inválido",
   "cepNotFound": "CEP não encontrado",
-  "cepError": "Erro ao buscar CEP"
+  "cepError": "Erro ao buscar CEP",
+  "showDeleted": "Mostrar deletados",
+  "reactivate": "Reativar MSP",
+  "reactivateSuccess": "MSP reativado com sucesso!"
 }

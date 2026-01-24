@@ -1,12 +1,13 @@
 import { Fragment, useEffect, useState } from "react";
 import { useZTheme } from "../../../stores/useZTheme";
-import { Box, CircularProgress, IconButton, Stack } from "@mui/material";
+import { Box, CircularProgress, IconButton, Stack, Tooltip } from "@mui/material";
 import { ImgFromDB } from "../../../components/ImgFromDB";
 import { TextRob14Font1Xs } from "../../../components/Text1Xs";
 import { TextRob12Font2Xs } from "../../../components/Text2Xs";
 import { useTranslation } from "react-i18next";
 import { PencilCicleIcon } from "../../../icons/PencilCicleIcon";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import RestoreIcon from "@mui/icons-material/Restore";
 import { useZUserProfile } from "../../../stores/useZUserProfile";
 import { useZMspRegisterPage } from "../../../stores/useZMspRegisterPage";
 import { useBrandMasterResources } from "../../../hooks/useBrandMasterResources";
@@ -16,6 +17,7 @@ export const MspTable = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
   const [loadingEdit, setLoadingEdit] = useState<number | null>(null);
+  const [loadingReactivate, setLoadingReactivate] = useState<number | null>(null);
   const {
     setCep,
     setLocality,
@@ -43,6 +45,7 @@ export const MspTable = () => {
     setShowAddressFields,
     setIsPoc,
     isPocFilter,
+    includeDeletedFilter,
     setAdmName,
     setAdmEmail,
     setAdmPhone,
@@ -52,22 +55,31 @@ export const MspTable = () => {
     setBrandLogoPreview,
   } = useZMspRegisterPage();
 
-  const { listAllBrands, getBrandMasterById } = useBrandMasterResources();
+  const { listAllBrands, getBrandMasterById, reactivateBrandMaster } = useBrandMasterResources();
 
   const { role } = useZUserProfile();
 
   useEffect(() => {
     const fetchMsps = async () => {
-      const response = await listAllBrands();
+      const response = await listAllBrands({ includeDeleted: includeDeletedFilter });
       return setMspList(response.result);
     };
 
     fetchMsps();
-  }, []);
+  }, [includeDeletedFilter]);
 
   const startEditing = (index: number) => {
     setShowAddressFields(true);
     setIsEditing([index]);
+  };
+
+  const handleReactivate = async (idBrandMaster: number) => {
+    setLoadingReactivate(idBrandMaster);
+    await reactivateBrandMaster(idBrandMaster);
+    // Recarrega a lista
+    const response = await listAllBrands({ includeDeleted: includeDeletedFilter });
+    setMspList(response.result);
+    setLoadingReactivate(null);
   };
 
   const handleEdit = async (index: number) => {
@@ -155,6 +167,12 @@ export const MspTable = () => {
                   flexDirection: "column",
                   alignItems: "flex-start",
                 },
+                // Estilo para MSPs deletados
+                ...(msp.deletedAt && {
+                  opacity: 0.6,
+                  backgroundColor: theme[mode].dangerLight || "rgba(244, 67, 54, 0.08)",
+                  borderRadius: "8px",
+                }),
               }}
             >
               <Box
@@ -305,17 +323,36 @@ export const MspTable = () => {
                   "@media (max-width: 600px)": { display: "none" },
                 }}
               >
-                <IconButton
-                  onClick={() => handleEdit(msp.idBrandMaster)}
-                  disabled={loadingEdit === msp.idBrandMaster}
-                >
-                  {loadingEdit === msp.idBrandMaster ? (
-                    <CircularProgress size={20} />
-                  ) : (
-                    <PencilCicleIcon fill={theme[mode].blueMedium} />
-                  )}
-                </IconButton>
-                {role === "admin" && (
+                {/* Botão Reativar - apenas para MSPs deletados */}
+                {msp.deletedAt && role === "admin" && (
+                  <Tooltip title={t("mspRegister.reactivate") || "Reativar MSP"}>
+                    <IconButton
+                      onClick={() => handleReactivate(msp.idBrandMaster)}
+                      disabled={loadingReactivate === msp.idBrandMaster}
+                    >
+                      {loadingReactivate === msp.idBrandMaster ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <RestoreIcon sx={{ color: theme[mode].ok }} />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                )}
+                {/* Botão Editar - apenas para MSPs ativos */}
+                {!msp.deletedAt && (
+                  <IconButton
+                    onClick={() => handleEdit(msp.idBrandMaster)}
+                    disabled={loadingEdit === msp.idBrandMaster}
+                  >
+                    {loadingEdit === msp.idBrandMaster ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <PencilCicleIcon fill={theme[mode].blueMedium} />
+                    )}
+                  </IconButton>
+                )}
+                {/* Botão Deletar - apenas para MSPs ativos */}
+                {role === "admin" && !msp.deletedAt && (
                   <IconButton
                     onClick={() => {
                       setMspToBeDeleted(msp);

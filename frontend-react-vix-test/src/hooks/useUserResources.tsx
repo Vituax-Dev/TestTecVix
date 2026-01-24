@@ -124,7 +124,7 @@ export const useUserResources = () => {
 
   const listUsers = async (
     params: IListUsersParams = {}
-  ): Promise<{ users: Colaborator[]; totalPages: number } | null> => {
+  ): Promise<{ users: Colaborator[]; total: number } | null> => {
     if (role !== "admin" && role !== "manager") return null;
 
     const auth = await getAuth();
@@ -166,7 +166,7 @@ export const useUserResources = () => {
       brandName: user.brandMaster?.brandName || "Vituax",
     }));
 
-    return { users, totalPages: response.data.totalPages };
+    return { users, total: response.data.total };
   };
 
   // Map backend error messages to translation keys

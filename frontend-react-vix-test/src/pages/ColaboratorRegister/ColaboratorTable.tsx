@@ -33,7 +33,7 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
   const { 
     users, 
     page, 
-    totalPage, 
+    totalCount, 
     setPage, 
     limit, 
     userToDelete, 
@@ -134,8 +134,6 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
       <Stack
         sx={{
           width: "100%",
-          maxHeight: "400px",
-          overflow: "auto",
           gap: "16px",
         }}
       >
@@ -395,9 +393,9 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
       </Modal>
 
       {/* Pagination */}
-      {totalPage > 1 && (
+      {totalCount > limit && (
         <CustomPagination
-          totalPages={totalPage}
+          totalPages={totalCount}
           currentPage={page}
           onPageChange={setPage}
           limit={limit}

@@ -17,7 +17,7 @@ export const ColaboratorRegisterPage = () => {
   const { isLoading, listUsers } = useUserResources();
   const {
     setUsers,
-    setTotalPage,
+    setTotalCount,
     page,
     limit,
     search,
@@ -33,7 +33,7 @@ export const ColaboratorRegisterPage = () => {
     });
     if (result) {
       setUsers(result.users);
-      setTotalPage(result.totalPages);
+      setTotalCount(result.total);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, limit, search, filterCompanyId]);

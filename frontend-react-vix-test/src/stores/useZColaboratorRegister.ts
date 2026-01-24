@@ -71,7 +71,7 @@ interface IColaboratorRegister extends ColaboratorRegisterInputs {
   search: string;
   page: number;
   limit: number;
-  totalPage: number;
+  totalCount: number;
   selectedMSP: IBrandMasterBasicInfo | null;
   filterCompanyId: number | null;
   userToDelete: Colaborator | null;
@@ -88,8 +88,8 @@ const INITIAL_STATE: IColaboratorRegister = {
   currentTabIndex: 0,
   search: "",
   page: 1,
-  limit: 8,
-  totalPage: 0,
+  limit: 4,
+  totalCount: 0,
   selectedMSP: null,
   filterCompanyId: null,
   userToDelete: null,
@@ -121,7 +121,7 @@ interface IColaboratorRegisterState extends IColaboratorRegister {
   resetAll: () => void;
   setPage: (page: number) => void;
   setSearch: (search: string) => void;
-  setTotalPage: (totalPage: number) => void;
+  setTotalCount: (totalCount: number) => void;
   setSelectedMSP: (selectedMSP: IBrandMasterBasicInfo | null) => void;
   setFilterCompanyId: (filterCompanyId: number | null) => void;
   setUserToDelete: (userToDelete: Colaborator | null) => void;
@@ -170,8 +170,8 @@ export const useZColaboratorRegister = create<IColaboratorRegisterState>(
     setPage: (page: number) => set((state) => ({ ...state, page: page })),
     setSearch: (search: string) =>
       set((state) => ({ ...state, search: search })),
-    setTotalPage: (totalPage: number) =>
-      set((state) => ({ ...state, totalPage: totalPage })),
+    setTotalCount: (totalCount: number) =>
+      set((state) => ({ ...state, totalCount: totalCount })),
     setSelectedMSP: (selectedMSP: IBrandMasterBasicInfo | null) =>
       set((state) => ({ ...state, selectedMSP: selectedMSP })),
     setFilterCompanyId: (filterCompanyId: number | null) =>

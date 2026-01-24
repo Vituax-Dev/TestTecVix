@@ -15,11 +15,29 @@ import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 import { IFormatData } from "../../../../types/socketType";
+import { useEffect } from "react";
 
 export const MainGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
+  const [chartData, setChartData] = useState<IFormatData[]>(() => {
+    return Array.from({ length: 15 }, (_, i) => ({
+      time: `${15 - i}s ago`,
+      value: Math.floor(Math.random() * 50) + 10,
+    }));
+  });
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newPoint = {
+        time: new Date().toLocaleTimeString().split(' ')[0],
+        value: Math.floor(Math.random() * 40) + 20, 
+      };
+      setChartData(prev => [...prev.slice(1), newPoint]);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const lastCpuUsage = chartData[chartData.length - 1]?.value || 0;
 

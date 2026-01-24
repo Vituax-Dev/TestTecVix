@@ -14,14 +14,31 @@ import {
 import { Stack, Typography } from "@mui/material";
 import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
-
+import { useEffect } from "react";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 import { IFormatData } from "../../../../types/socketType";
 
 export const BottomGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
+  const [chartData, setChartData] = useState<IFormatData[]>(() => {
+    return Array.from({ length: 15 }, (_, i) => ({
+      time: `${15 - i}s ago`,
+      value: Math.floor(Math.random() * 20) + 40,
+    }));
+  });
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newPoint = {
+        time: new Date().toLocaleTimeString().split(' ')[0],
+        value: Math.floor(Math.random() * 10) + 45,
+      };
+      setChartData(prev => [...prev.slice(1), newPoint]);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const lastMemoryData =
     Number(chartData[chartData.length - 1]?.value.toFixed(2)) || 0;

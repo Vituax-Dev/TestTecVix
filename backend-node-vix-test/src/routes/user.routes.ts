@@ -7,13 +7,17 @@ const BASE_PATH = API_VERSION.V1 + ROOT_PATH.USERS;
 
 const userRoutes = Router();
 
-userRoutes.use(ensureAuthenticated);
-
 export const makeUserController = () => {
   return new UserController();
 };
 
 const userController = makeUserController();
+
+userRoutes.get(`${BASE_PATH}/token/:id`, async (req, res) => {
+  await userController.listById(req, res);
+});
+
+userRoutes.use(ensureAuthenticated);
 
 userRoutes.get(BASE_PATH, async (req, res) => {
   await userController.list(req, res);

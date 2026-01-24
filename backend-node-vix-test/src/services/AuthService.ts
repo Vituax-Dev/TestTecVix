@@ -31,7 +31,7 @@ class AuthService {
     const token = genToken({
       id: userFound.idUser,
       role: userFound.role,
-      brandId: userFound.idBrandMaster,
+      idBrandMaster: userFound.idBrandMaster,
     });
 
     return {
@@ -41,6 +41,7 @@ class AuthService {
         email: userFound.email,
         role: userFound.role,
         isActive: userFound.isActive ?? false,
+        idBrand: userFound.idBrandMaster,
       },
       token,
     };

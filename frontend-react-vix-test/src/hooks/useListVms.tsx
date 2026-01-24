@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import { api, ApiError } from "../services/api";
 import { toast } from "react-toastify";
-import { useLogin } from "./useLogin";
 import { useZGlobalVar } from "../stores/useZGlobalVar";
 import { useZUserProfile } from "../stores/useZUserProfile";
 import { IVMCreatedResponse } from "../types/VMTypes";
@@ -14,11 +13,14 @@ export const useListVms = () => {
   const [vmList, setVmList] = useState<IVMCreatedResponse[]>([]);
   const [vmTotalCount, setVmTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
   const abortControllerRef = useRef<AbortController | null>(null);
   const filtersRef = useRef<IParams>({ limit: DEFAULT_LIMIT, page: 1 });
-  
+
   const {
     setCurrentIdVM,
     currentIdVM,
@@ -28,7 +30,6 @@ export const useListVms = () => {
   } = useZGlobalVar();
 
   const { idBrand } = useZUserProfile();
-  const { goLogout } = useLogin();
 
   const fetchListVms = useCallback(async (
     params: IParams = {}
@@ -45,17 +46,17 @@ export const useListVms = () => {
     if (params.page) setCurrentPage(params.page);
 
     setIsLoading(true);
+    setError(null);
 
     try {
-      const queryParams = {
+      const queryParams: Record<string, string | number | boolean | null | undefined> = {
         ...finalParams,
-        idBrandMaster: finalParams.idBrandMaster ?? idBrand ?? undefined,
+        idBrandMaster: idBrand,
       };
 
       Object.keys(queryParams).forEach((key) => {
-        const k = key as keyof typeof queryParams;
-        if (queryParams[k] === undefined || queryParams[k] === "") {
-          delete queryParams[k];
+        if (queryParams[key] === undefined || queryParams[key] === "" || queryParams[key] === null) {
+          delete queryParams[key];
         }
       });
 
@@ -75,9 +76,11 @@ export const useListVms = () => {
 
       setVmList(results);
       setVmTotalCount(total);
+
       const limit = finalParams.limit || DEFAULT_LIMIT;
       setTotalPages(limit > 0 ? Math.ceil(total / limit) : 0);
-      setTotalCountVMs(total);
+
+      if (setTotalCountVMs) setTotalCountVMs(total);
 
       if (results.length > 0 && !currentIdVM) {
         const first = results[0];
@@ -95,22 +98,19 @@ export const useListVms = () => {
         return;
       }
 
-      let msg = "Unknown error while searching for VMs.";
+      let msg = "Erro ao buscar VMs.";
 
       if (error instanceof ApiError) {
         msg = error.message;
-        if (error.statusCode === 401 || error.statusCode === 403) {
-          goLogout();
-          return;
-        }
       } else if (error instanceof Error) {
         msg = error.message;
       }
 
-      if (!msg.includes("canceled") && !msg.includes("Network Error")) {
+      if (!msg.includes("canceled")) {
         toast.error(msg);
       }
 
+      setError(msg);
       setVmList([]);
       setVmTotalCount(0);
 
@@ -119,8 +119,14 @@ export const useListVms = () => {
         setIsLoading(false);
       }
     }
-  }, [idBrand, goLogout, currentIdVM, setCurrentIdVM, setCurrentVMName, setCurrentVMOS, setTotalCountVMs]);
-
+  }, [
+    idBrand,
+    currentIdVM,
+    setCurrentIdVM,
+    setCurrentVMName,
+    setCurrentVMOS,
+    setTotalCountVMs
+  ]);
 
   const refreshList = useCallback(() => {
     fetchListVms();
@@ -135,21 +141,24 @@ export const useListVms = () => {
   }, [fetchListVms]);
 
   useEffect(() => {
-    fetchListVms();
+    if (idBrand) {
+      fetchListVms();
+    }
     return () => {
       if (abortControllerRef.current) abortControllerRef.current.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchListVms, idBrand]);
 
   return {
     vmList,
     vmTotalCount,
     isLoading,
+    error,
     currentPage,
     totalPages,
     refreshList,
     changePage,
     handleSearch,
+    fetchListVms, 
   };
 };

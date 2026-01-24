@@ -138,4 +138,7 @@ export interface ICreateVMPayload {
   os: string;
   hasBackup?: boolean;
   idBrandMaster?: number | null;
+  pass: string;
+  networkType?: number; 
 }
+

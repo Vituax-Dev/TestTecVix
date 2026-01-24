@@ -6,7 +6,7 @@ export interface IUserLoginResponse {
     email: string;
     role: "admin" | "manager" | "member";
     isActive: boolean;    
-    idBrandMaster: number | null;
+    idBrand: number | null;
     profileImgUrl: string | null;
     createdAt: string | Date;
     updatedAt: string | Date;

@@ -29,4 +29,11 @@ export interface IBucketService {
     objectName: string;
     url: string;
   }>;
+
+  /**
+   * Deleta um arquivo do bucket.
+   * @param objectName - Nome do objeto a ser deletado.
+   * @returns Uma Promise que resolve para true se deletado, false se não encontrado.
+   */
+  deleteFile(objectName: string): Promise<boolean>;
 }

@@ -12,10 +12,12 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 import { prisma } from "../database/client";
 import bcrypt from "bcryptjs";
+import { BucketLocalService } from "./BucketLocalService";
 
 export class BrandMasterService {
   constructor() {}
   private brandMasterModel = new BrandMasterModel();
+  private bucketService = new BucketLocalService();
 
   async getSelf(domain: string) {
     return await this.brandMasterModel.getSelf(domain);
@@ -115,16 +117,30 @@ export class BrandMasterService {
   private async update({
     validData,
     idBrandMaster,
+    oldBrandMaster,
   }: {
     user: user;
     validData: TBrandMasterUpdate;
     idBrandMaster: number;
     oldBrandMaster: brandMaster;
   }) {
-    return await this.brandMasterModel.updateBrandMaster(
+    // Guarda o logo antigo para deletar APÓS o save
+    const oldLogo = oldBrandMaster.brandLogo;
+    const newLogo = validData.brandLogo;
+    const shouldDeleteOldLogo = newLogo && oldLogo && newLogo !== oldLogo;
+
+    // Primeiro salva no banco
+    const result = await this.brandMasterModel.updateBrandMaster(
       idBrandMaster,
       validData
     );
+
+    // Só deleta a imagem antiga APÓS o save ter sucesso
+    if (shouldDeleteOldLogo) {
+      await this.bucketService.deleteFile(oldLogo);
+    }
+
+    return result;
   }
 
   async updateBrandMaster(idBrandMaster: number, data: unknown, user: user) {

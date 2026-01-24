@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { CustomRequest } from "../types/custom";
-import { UserService } from "../services/UserService";
+import { UserService, ILoggedUser } from "../services/UserService";
 import { STATUS_CODE } from "../constants/statusCode";
 
 export class UserController {
@@ -24,6 +24,17 @@ export class UserController {
 
   async register(req: CustomRequest<unknown>, res: Response) {
     const result = await this.userService.register(req.body);
+    return res.status(STATUS_CODE.CREATED).json(result);
+  }
+
+  async createByManager(req: CustomRequest<ILoggedUser>, res: Response) {
+    const loggedUser = req.user;
+    if (!loggedUser) {
+      return res
+        .status(STATUS_CODE.UNAUTHORIZED)
+        .json({ message: "Unauthorized" });
+    }
+    const result = await this.userService.createByManager(req.body, loggedUser);
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 

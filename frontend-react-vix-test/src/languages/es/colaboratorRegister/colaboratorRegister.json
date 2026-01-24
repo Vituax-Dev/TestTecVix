@@ -5,6 +5,7 @@
   "completeName": "Nombre Completo",
   "completeNamePlaceholder": "Juan Pérez",
   "required": "(Obligatorio)",
+  "optional": "(Opcional)",
   "email": "Correo Electrónico",
   "emailPlaceholder": "juan@email.com",
   "phone": "Teléfono",
@@ -25,6 +26,7 @@
   "back": "Volver",
   "clear": "Limpiar",
   "save": "Guardar",
+  "update": "Actualizar",
   "tableTitle": "Usuarios Registrados",
   "fillFields": "El campo anterior debe completarse.",
   "lastActivity": "Última actividad:",
@@ -44,5 +46,11 @@
   "ok": "OK",
   "registersManagement": "Gestión de registros",
   "pinCode": "PinCode",
-  "areYouSure": "¿Está seguro de que desea eliminar el usuario {{ username }}?"
+  "areYouSure": "¿Está seguro de que desea eliminar el usuario {{ username }}?",
+  "editingMode": "Modo de Edición",
+  "cannotDeleteLastAdmin": "No se puede eliminar el último administrador de la empresa",
+  "cannotDemoteLastAdmin": "No se puede degradar el último administrador de la empresa",
+  "cannotChangeUserCompany": "No se puede cambiar la empresa del usuario después del registro",
+  "emailAlreadyExists": "Este correo electrónico ya está en uso",
+  "leaveBlankToKeep": "Dejar en blanco para mantener la contraseña actual"
 }

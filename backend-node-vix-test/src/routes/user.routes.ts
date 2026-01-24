@@ -10,6 +10,20 @@ const userController = new UserController();
 
 const BASE_PATH = API_VERSION.V1 + ROOT_PATH.USER;
 
+// Create new user - manager or admin only
+userRoutes.post(
+  `${BASE_PATH}/new-user`,
+  authUser,
+  isManagerOrIsAdmin,
+  async (req, res, next) => {
+    try {
+      await userController.createByManager(req, res);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 // List all users - manager or admin only
 userRoutes.get(
   `${BASE_PATH}`,

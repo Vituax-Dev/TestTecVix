@@ -1,9 +1,13 @@
 {
   "save": "Salvar",
+  "saved": "Salvo com sucesso",
   "cancel": "Cancelar",
   "close": "Fechar",
   "confirm": "Confirmar",
   "apply": "Aplicar",
+  "edit": "Editar",
+  "delete": "Excluir",
+  "deleted": "Excluído com sucesso",
   "addDisk": "Adicionar mais disco",
   "resizePlan": "Aumentar plano",
   "prev": "Anterior",

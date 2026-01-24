@@ -5,7 +5,17 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 import { genToken } from "../utils/jwt";
 import { loginUserSchema } from "../types/validations/User/loginUser";
-import { userCreatedSchema } from "../types/validations/User/createUser";
+import {
+  userCreatedSchema,
+  userCreatedByManagerSchema,
+} from "../types/validations/User/createUser";
+
+export interface ILoggedUser {
+  idUser: string;
+  email: string;
+  role: string;
+  idBrandMaster: number | null;
+}
 
 export class UserService {
   private userModel = new UserModel();
@@ -113,6 +123,62 @@ export class UserService {
     };
   }
 
+  async createByManager(data: unknown, loggedUser: ILoggedUser) {
+    const validData = userCreatedByManagerSchema.parse(data);
+
+    // Check if email already exists
+    const existingUser = await this.userModel.findByEmail(validData.email);
+    if (existingUser) {
+      throw new AppError(
+        ERROR_MESSAGE.EMAIL_ALREADY_EXISTS,
+        STATUS_CODE.BAD_REQUEST,
+      );
+    }
+
+    // Business rule: Only Vituax users (idBrandMaster: null) can create Vituax users
+    const isLoggedUserVituax = loggedUser.idBrandMaster === null;
+    const isCreatingVituaxUser =
+      validData.idBrandMaster === null || validData.idBrandMaster === undefined;
+
+    if (isCreatingVituaxUser && !isLoggedUserVituax) {
+      throw new AppError(
+        "Only Vituax users can create Vituax users",
+        STATUS_CODE.FORBIDDEN,
+      );
+    }
+
+    // Business rule: MSP users can only create users in their own company
+    if (!isLoggedUserVituax && validData.idBrandMaster !== loggedUser.idBrandMaster) {
+      throw new AppError(
+        "You can only create users in your own company",
+        STATUS_CODE.FORBIDDEN,
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(validData.password, 10);
+
+    const user = await this.userModel.create({
+      username: validData.username,
+      email: validData.email,
+      password: hashedPassword,
+      phone: validData.phone,
+      profileImgUrl: validData.profileImgUrl,
+      role: validData.role || "member",
+      isActive: validData.isActive ?? true,
+      fullName: validData.fullName,
+      position: validData.position,
+      department: validData.department,
+      hiringDate: validData.hiringDate,
+      ...(validData.idBrandMaster && {
+        brandMaster: { connect: { idBrandMaster: validData.idBrandMaster } },
+      }),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
   async getById(idUser: string) {
     const user = await this.userModel.findById(idUser);
     if (!user) {
@@ -135,10 +201,32 @@ export class UserService {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
 
-    const updateData = data as { password?: string; [key: string]: unknown };
+    const updateData = data as { password?: string; hiringDate?: string | Date; role?: "admin" | "manager" | "member"; idBrandMaster?: number | null; [key: string]: unknown };
+    
+    // Hash password if provided
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
     }
+
+    // Convert hiringDate string to Date object if provided
+    if (updateData.hiringDate && typeof updateData.hiringDate === "string") {
+      updateData.hiringDate = new Date(updateData.hiringDate);
+    }
+
+    // Check if trying to demote the last admin
+    if (user.role === "admin" && updateData.role && updateData.role !== "admin") {
+      const adminCount = await this.userModel.countAdminsByBrandMaster(user.idBrandMaster);
+      if (adminCount <= 1) {
+        throw new AppError(
+          ERROR_MESSAGE.CANNOT_DEMOTE_LAST_ADMIN,
+          STATUS_CODE.BAD_REQUEST,
+        );
+      }
+    }
+
+    // Always remove idBrandMaster from update - company cannot be changed after registration
+    // This ensures the field is never sent to Prisma, so it won't overwrite the existing value
+    delete updateData.idBrandMaster;
 
     return this.userModel.update(idUser, updateData);
   }
@@ -148,6 +236,21 @@ export class UserService {
     if (!user) {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
+
+    // Check if user is an admin
+    if (user.role === "admin") {
+      // Count admins in the same company (idBrandMaster)
+      const adminCount = await this.userModel.countAdminsByBrandMaster(user.idBrandMaster);
+      
+      // If this is the last admin, prevent deletion
+      if (adminCount <= 1) {
+        throw new AppError(
+          ERROR_MESSAGE.CANNOT_DELETE_LAST_ADMIN,
+          STATUS_CODE.BAD_REQUEST,
+        );
+      }
+    }
+
     return this.userModel.hardDelete(idUser);
   }
 

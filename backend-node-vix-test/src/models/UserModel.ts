@@ -32,10 +32,15 @@ export class UserModel {
     });
   }
 
-  async listAll(query: { page?: number; limit?: number; search?: string }) {
+  async listAll(query: { page?: number; limit?: number; search?: string; idBrandMaster?: number | string }) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const skip = (page - 1) * limit;
+
+    // Convert idBrandMaster to number if it's a string
+    const idBrandMaster = query.idBrandMaster !== undefined 
+      ? Number(query.idBrandMaster) 
+      : undefined;
 
     const where: Prisma.userWhereInput = {
       deletedAt: null,
@@ -43,7 +48,11 @@ export class UserModel {
         OR: [
           { username: { contains: query.search } },
           { email: { contains: query.search } },
+          { fullName: { contains: query.search } },
         ],
+      }),
+      ...(idBrandMaster !== undefined && {
+        idBrandMaster: idBrandMaster === 0 ? null : idBrandMaster,
       }),
     };
 
@@ -57,10 +66,16 @@ export class UserModel {
           idUser: true,
           username: true,
           email: true,
+          phone: true,
           role: true,
           isActive: true,
           profileImgUrl: true,
           idBrandMaster: true,
+          fullName: true,
+          position: true,
+          department: true,
+          hiringDate: true,
+          lastLoginDate: true,
           brandMaster: {
             select: {
               idBrandMaster: true,
@@ -74,5 +89,15 @@ export class UserModel {
     ]);
 
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  async countAdminsByBrandMaster(idBrandMaster: number | null) {
+    return prisma.user.count({
+      where: {
+        idBrandMaster,
+        role: "admin",
+        deletedAt: null,
+      },
+    });
   }
 }

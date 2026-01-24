@@ -393,6 +393,31 @@
           ],
           "format": "date-time"
         },
+        "fullName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "position": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "department": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hiringDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
         "brandMaster": {
           "anyOf": [
             {

@@ -15,6 +15,12 @@ export const errorHandler = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction,
 ) => {
+  // Log do erro para debug
+  console.error("=== ERROR HANDLER ===");
+  console.error("Error type:", err?.constructor?.name);
+  console.error("Error:", err);
+  console.error("=====================");
+
   if (err instanceof AppError) {
     const { status, message } = err;
     return res.status(status).json({ message });

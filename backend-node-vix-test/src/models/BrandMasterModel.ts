@@ -1,5 +1,5 @@
 import { prisma } from "../database/client";
-import { TBrandMaster } from "../types/validations/BrandMaster/createBrandMaster";
+import { TBrandMasterUpdate } from "../types/validations/BrandMaster/createBrandMaster";
 import { TQuery } from "../types/validations/Queries/queryListAll";
 import moment from "moment";
 
@@ -34,6 +34,24 @@ export class BrandMasterModel {
   async getById(idBrandMaster: number) {
     return prisma.brandMaster.findUnique({
       where: { idBrandMaster },
+      include: {
+        users: {
+          where: {
+            role: "admin",
+            deletedAt: null,
+          },
+          select: {
+            idUser: true,
+            username: true,
+            email: true,
+            phone: true,
+            profileImgUrl: true,
+            role: true,
+            isActive: true,
+          },
+          take: 1,
+        },
+      },
     });
   }
 
@@ -74,11 +92,7 @@ export class BrandMasterModel {
     return { totalCount, result: brands };
   }
 
-  async createNewBrandMaster(data: TBrandMaster) {
-    return prisma.brandMaster.create({ data });
-  }
-
-  async updateBrandMaster(idBrandMaster: number, data: TBrandMaster) {
+  async updateBrandMaster(idBrandMaster: number, data: TBrandMasterUpdate) {
     return prisma.brandMaster.update({
       where: { idBrandMaster },
       data: { ...data, updatedAt: new Date() },
@@ -89,6 +103,19 @@ export class BrandMasterModel {
     return prisma.brandMaster.update({
       where: { idBrandMaster },
       data: { updatedAt: new Date(), deletedAt: new Date() },
+    });
+  }
+
+  async reactivateBrandMaster(idBrandMaster: number) {
+    // Reativa o MSP e todos os seus usuários
+    await prisma.user.updateMany({
+      where: { idBrandMaster },
+      data: { deletedAt: null, updatedAt: new Date() },
+    });
+
+    return prisma.brandMaster.update({
+      where: { idBrandMaster },
+      data: { deletedAt: null, updatedAt: new Date() },
     });
   }
 }

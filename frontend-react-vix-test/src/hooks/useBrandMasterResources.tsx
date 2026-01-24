@@ -33,6 +33,8 @@ interface IUpdateBrandMaster {
   cityCode?: number;
   district?: string;
   isPoc?: boolean;
+  minConsumption?: number | string;
+  discountPercentage?: number | string;
 
   manual?: string;
   termsOfUse?: string;
@@ -82,6 +84,8 @@ interface ICreateNewBrandMaster {
   cityCode?: number;
   district?: string;
   isPoc?: boolean;
+  minConsumption?: number;
+  discountPercentage?: number;
 }
 
 export interface INewMSPResponse {
@@ -109,6 +113,8 @@ export interface INewMSPResponse {
   cityCode: number | null;
   district: string | null;
   isPoc: boolean;
+  minConsumption: number | null;
+  discountPercentage: number | null;
   manual?: string | null;
   termsOfUse?: string | null;
   privacyPolicy?: string | null;
@@ -241,14 +247,14 @@ export const useBrandMasterResources = () => {
     }
     const auth = await getAuth();
     setIsLoading(true);
-    const response = await api.post<INewMSPResponse>({
+    const response = await api.post<{ brandMaster: INewMSPResponse; admin: unknown }>({
       url: `/brand-master`,
       auth,
       data: {
         brandName: data.companyName,
         isActive: true,
         brandLogo: data.brandLogo,
-        domain: undefined,
+        domain: data.mspDomain || undefined,
         setorName: data.sector,
         fieldName: undefined,
         location: data.locality,
@@ -264,6 +270,15 @@ export const useBrandMasterResources = () => {
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
+        minConsumption: data?.minConsumption ?? 0,
+        discountPercentage: data?.discountPercentage ?? 0,
+        // Admin obrigatório
+        admin: {
+          username: data.admName,
+          email: data.admEmail,
+          password: data.admPassword,
+          phone: data.admPhone,
+        },
       },
     });
 
@@ -273,17 +288,18 @@ export const useBrandMasterResources = () => {
       return;
     }
 
-    return { brandMaster: response.data };
+    return { brandMaster: response.data.brandMaster };
   };
 
-  const listAllBrands = async () => {
+  const listAllBrands = async (options?: { includeDeleted?: boolean }) => {
     const auth = await getAuth();
     setIsLoading(true);
+    const queryParams = options?.includeDeleted ? "?includeDeleted=true" : "";
     const response = await api.get<IListAll<INewMSPResponse>>({
-      url: "/brand-master",
+      url: `/brand-master${queryParams}`,
       auth,
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
       toast.error(response.message);
@@ -293,6 +309,31 @@ export const useBrandMasterResources = () => {
         result: [],
       };
     }
+    return response.data;
+  };
+
+  const reactivateBrandMaster = async (brandMasterId: number | string) => {
+    if (!brandMasterId) return null;
+
+    if (role !== "admin" && role !== "manager") {
+      toast.error(t("generic.errorOlnlyAdmin"));
+      return;
+    }
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.patch<{
+      brandMaster: IBrandMasterBasicInfo;
+    }>({
+      url: `/brand-master/${brandMasterId}/reactivate`,
+      auth,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return;
+    }
+    toast.success(t("mspRegister.reactivateSuccess") || "MSP reativado com sucesso!");
     return response.data;
   };
 
@@ -350,6 +391,8 @@ export const useBrandMasterResources = () => {
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
+        minConsumption: data.minConsumption ? Number(data.minConsumption) : undefined,
+        discountPercentage: data.discountPercentage ? Number(data.discountPercentage) : undefined,
       },
     });
 
@@ -371,7 +414,34 @@ export const useBrandMasterResources = () => {
       url: `/brand-master/${idBrand}`,
       auth,
     });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+    return response.data;
+  };
+
+  const getBrandMasterById = async (brandMasterId: number | string) => {
+    if (!brandMasterId) return null;
+    const auth = await getAuth();
     setIsLoading(true);
+    const response = await api.get<{
+      brandMaster: INewMSPResponse & {
+        users?: Array<{
+          idUser: string;
+          username: string;
+          email: string;
+          phone?: string;
+          role: string;
+        }>;
+      };
+    }>({
+      url: `/brand-master/${brandMasterId}`,
+      auth,
+    });
+    setIsLoading(false);
 
     if (response.error) {
       toast.error(response.message);
@@ -388,7 +458,9 @@ export const useBrandMasterResources = () => {
     createAnewBrandMaster,
     listAllBrands,
     deleteBrandMaster,
+    reactivateBrandMaster,
     editBrandMaster,
     getSelf,
+    getBrandMasterById,
   };
 };

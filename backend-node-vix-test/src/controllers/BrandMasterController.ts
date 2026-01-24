@@ -15,7 +15,7 @@ export class BrandMasterController {
   async getById(req: CustomRequest<unknown>, res: Response) {
     const { idBrandMaster } = req.params;
     const result = await this.brandMasterService.getById(Number(idBrandMaster));
-    return res.status(STATUS_CODE.OK).json(result);
+    return res.status(STATUS_CODE.OK).json({ brandMaster: result });
   }
 
   async listAll(req: CustomRequest<unknown>, res: Response) {
@@ -23,12 +23,12 @@ export class BrandMasterController {
     return res.status(STATUS_CODE.OK).json(result);
   }
 
+  /**
+   * Cria um novo MSP com admin obrigatório em transação
+   * Se o admin falhar, o MSP não é criado (rollback automático)
+   */
   async createNewBrandMaster(req: CustomRequest<unknown>, res: Response) {
-    const user = req.user as user;
-    const result = await this.brandMasterService.createNewBrandMaster(
-      req.body,
-      user,
-    );
+    const result = await this.brandMasterService.createNewBrandMaster(req.body);
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 
@@ -49,6 +49,14 @@ export class BrandMasterController {
     const result = await this.brandMasterService.deleteBrandMaster(
       Number(idBrandMaster),
       user,
+    );
+    return res.status(STATUS_CODE.OK).json(result);
+  }
+
+  async reactivateBrandMaster(req: CustomRequest<unknown>, res: Response) {
+    const { idBrandMaster } = req.params;
+    const result = await this.brandMasterService.reactivateBrandMaster(
+      Number(idBrandMaster),
     );
     return res.status(STATUS_CODE.OK).json(result);
   }

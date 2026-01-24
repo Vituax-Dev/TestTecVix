@@ -74,6 +74,16 @@ export const querySchema = z.object({
           ? false
           : undefined,
     ),
+  includeDeleted: z
+    .union([z.boolean(), z.string()])
+    .optional()
+    .transform((val) =>
+      `${val}`.toLowerCase() === "true"
+        ? true
+        : `${val}`.toLowerCase() === "false"
+          ? false
+          : undefined,
+    ),
 });
 
 export type TQuery = z.infer<typeof querySchema>;

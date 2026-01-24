@@ -49,4 +49,26 @@ export class BucketLocalService implements IBucketService {
   async renewPresignedUrl(objectName: string) {
     return this.getPublicUrl({ objectName });
   }
+
+  async deleteFile(objectName: string): Promise<boolean> {
+    if (!objectName) return false;
+    
+    // Extrai apenas o nome do arquivo se vier URL completa
+    const fileName = objectName.includes("/uploads/")
+      ? objectName.split("/uploads/").pop()
+      : objectName;
+    
+    if (!fileName) return false;
+
+    const filePath = path.resolve(this.bucketPath, "uploads", fileName);
+    
+    try {
+      await fs.access(filePath);
+      await fs.unlink(filePath);
+      return true;
+    } catch {
+      // Arquivo não existe ou erro ao deletar
+      return false;
+    }
+  }
 }

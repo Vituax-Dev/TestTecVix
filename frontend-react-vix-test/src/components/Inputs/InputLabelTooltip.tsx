@@ -131,9 +131,9 @@ export const InputLabelTooltip = ({
           },
           ...sx,
         }}
-        id={`outlined-adornment-${label}`}
+        id={inputName ? `outlined-adornment-${inputName}` : undefined}
         placeholder={placeholder}
-        aria-describedby={`outlined-${label}-helper-text`}
+        aria-describedby={inputName ? `outlined-${inputName}-helper-text` : undefined}
         slotProps={{
           input: {
             endAdornment: endText ? (

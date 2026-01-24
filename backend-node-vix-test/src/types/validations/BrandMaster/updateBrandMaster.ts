@@ -26,6 +26,8 @@ export const brandMasterUpdatedSchema = z.object({
   manual: z.string().nullable().optional(),
   termsOfUse: z.string().nullable().optional(),
   privacyPolicy: z.string().nullable().optional(),
+  minConsumption: z.number().nullable().optional(),
+  discountPercentage: z.number().nullable().optional(),
 });
 
 export type TBrandMasterUpdate = z.infer<typeof brandMasterUpdatedSchema>;

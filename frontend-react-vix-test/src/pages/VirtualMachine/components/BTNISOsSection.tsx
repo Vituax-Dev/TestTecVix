@@ -1,19 +1,23 @@
-import { Button, Stack } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useZTheme } from "../../../stores/useZTheme";
-import { TextRob16FontL } from "../../../components/TextL";
+import { Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { makeEllipsis } from "../../../utils/makeEllipsis";
-import { useZVM } from "../../../stores/useZVM";
+import { DropDowText } from "./DropDowText";
+import { TOptions } from "../../../types/FormType";
+import { EOS } from "../../../stores/useZVMSugestion";
 
 interface IProps {
-  vmNameLabel: string | undefined;
+  value: TOptions | null;
+  onChange: (value: TOptions | null) => void;
 }
 
-export const BTNISOsSection = ({ vmNameLabel }: IProps) => {
-  const { mode, theme } = useZTheme();
+const osOptions: TOptions[] = Object.entries(EOS)
+  .filter(([_key, value]) => value !== "")
+  .map(([_key, value]) => ({
+    value: value,
+    label: value,
+  }));
+
+export const BTNISOsSection = ({ value, onChange }: IProps) => {
   const { t } = useTranslation();
-  const { setIsOpenVMMarketPlace } = useZVM();
 
   return (
     <Stack
@@ -22,54 +26,13 @@ export const BTNISOsSection = ({ vmNameLabel }: IProps) => {
         gap: "12px",
       }}
     >
-      <TextRob16FontL
-        sx={{
-          fontWeight: 400,
-          lineHeight: "16px",
-          color: theme[mode].primary,
-        }}
-      >
-        {t("createVm.operationalSystem")}
-      </TextRob16FontL>
-      <Button
-        sx={{
-          width: "100%",
-          height: "40px",
-          border: "1px solid " + theme[mode].grayLight,
-          backgroundColor: theme[mode].grayLight,
-          display: "flex",
-          gap: "8px",
-          textTransform: "none",
-          justifyContent: "flex-start",
-          borderRadius: "12px",
-          padding: "0 14px",
-          paddingRight: "9px",
-          color: theme[mode].primary,
-          ":hover": {
-            border: "1px solid",
-            borderColor: theme[mode].blueLight,
-          },
-        }}
-        onClick={() => setIsOpenVMMarketPlace(true)}
-      >
-        <TextRob16FontL
-          sx={{
-            fontFamily: "Roboto",
-            fontWeight: "400",
-            fontSize: "14px",
-            ...makeEllipsis(),
-          }}
-        >
-          {vmNameLabel}
-        </TextRob16FontL>
-        <ExpandMoreIcon
-          sx={{
-            minWidth: "24px",
-            color: theme[mode].primary,
-            marginLeft: "auto",
-          }}
-        />
-      </Button>
+      <DropDowText
+        label={t("createVm.operationalSystem")}
+        data={osOptions}
+        value={value}
+        onChange={onChange}
+        placeholder={t("createVm.selectOS")}
+      />
     </Stack>
   );
 };

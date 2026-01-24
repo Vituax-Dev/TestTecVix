@@ -59,7 +59,7 @@ model vM {
   hasBackup     Boolean?     @default(false)
 
   pass          String        @default("vituax@123") 
-  location      ETaskLocation @default(LOCAL)
+  location      String        @default("N/A")
 
   idBrandMaster Int?
   status        EVMStatus?
@@ -101,10 +101,4 @@ enum ERole {
   admin
   manager
   member
-}
-
-enum ETaskLocation {
-  LOCAL
-  REMOTE
-  CLOUD
 }

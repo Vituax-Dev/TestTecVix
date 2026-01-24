@@ -31,5 +31,6 @@
   "placeholderObservations": "Observações sobre este MSP, origem, gerente comercial, acompanhamentos, etc.",
   "saveNotes": "Salvar notas",
   "editNotes": "Editar notas",
-  "createNotes": "Criar notas"
+  "createNotes": "Criar notas",
+  "vituaxCannotEdit": "Usuários Vituax não podem editar as configurações da própria empresa"
 }

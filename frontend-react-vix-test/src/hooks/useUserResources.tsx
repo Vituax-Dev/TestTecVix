@@ -4,12 +4,18 @@ import { useAuth } from "./useAuth";
 import { api } from "../services/api";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { Colaborator } from "../stores/useZColaboratorRegister";
 
 export interface IUserDB {
   idUser: string;
   idBrandMaster: number | null;
   username: string;
   email: string;
+  phone?: string;
+  fullName?: string;
+  position?: string;
+  department?: string;
+  hiringDate?: string | Date | null;
   profileImgUrl: null | string;
   role: "admin" | "manager" | "member";
   isActive: boolean;
@@ -17,6 +23,11 @@ export interface IUserDB {
   createdAt: string | Date;
   updatedAt: string | Date;
   deletedAt: string | Date | null;
+  lastLoginDate?: string | Date | null;
+  brandMaster?: {
+    idBrandMaster: number;
+    brandName: string;
+  } | null;
 }
 
 interface ICreateNewUser {
@@ -24,8 +35,28 @@ interface ICreateNewUser {
   email: string;
   role: TRole;
   password?: string;
-  idBrandMaster?: number;
+  idBrandMaster?: number | null;
   isActive?: boolean;
+  fullName?: string;
+  phone?: string;
+  position?: string;
+  department?: string;
+  hiringDate?: string;
+}
+
+interface IListUsersResponse {
+  data: IUserDB[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+interface IListUsersParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  idBrandMaster?: number;
 }
 
 export const useUserResources = () => {
@@ -34,11 +65,13 @@ export const useUserResources = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
+  const isVituaxUser = idBrand === null;
+
   const updateUser = async (data: Partial<IUserDB>) => {
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put<IUserDB>({
-      url: `/user/${idUser}`,
+      url: `/users/${idUser}`,
       data,
       auth,
     });
@@ -62,20 +95,21 @@ export const useUserResources = () => {
 
   const createUserByManager = async (data: ICreateNewUser) => {
     if (role !== "admin" && role !== "manager") return null;
-    const idBrandMaster = idBrand;
-    if (!idBrandMaster) {
-      toast.error(t("generic.errorToSaveData"));
-      return null;
-    }
+
+    // Vituax users can create Vituax users or MSP users
+    // MSP users can only create users in their own company
+    const finalIdBrandMaster = isVituaxUser
+      ? data.idBrandMaster // Vituax can choose any company or null
+      : idBrand; // MSP users forced to their own company
 
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.post({
-      url: `/user/new-user`,
+      url: `/users/new-user`,
       auth,
       data: {
         ...data,
-        idBrandMaster,
+        idBrandMaster: finalIdBrandMaster,
       },
     });
     setIsLoading(false);
@@ -84,8 +118,103 @@ export const useUserResources = () => {
       return null;
     }
 
+    toast.success(t("colaboratorRegister.userCreated"));
     return response.data;
   };
 
-  return { isLoading, updateUser, createUserByManager };
+  const listUsers = async (
+    params: IListUsersParams = {}
+  ): Promise<{ users: Colaborator[]; totalPages: number } | null> => {
+    if (role !== "admin" && role !== "manager") return null;
+
+    const auth = await getAuth();
+    setIsLoading(true);
+
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", String(params.page));
+    if (params.limit) queryParams.append("limit", String(params.limit));
+    if (params.search) queryParams.append("search", params.search);
+    if (params.idBrandMaster !== undefined)
+      queryParams.append("idBrandMaster", String(params.idBrandMaster));
+
+    const response = await api.get<IListUsersResponse>({
+      url: `/users?${queryParams.toString()}`,
+      auth,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    const users: Colaborator[] = response.data.data.map((user) => ({
+      idUser: user.idUser,
+      name: user.fullName || user.username,
+      fullName: user.fullName || undefined,
+      username: user.username,
+      email: user.email,
+      phone: user.phone || undefined,
+      position: user.position || undefined,
+      department: user.department || undefined,
+      permission: user.role,
+      hiringDate: user.hiringDate || null,
+      status: user.isActive ? "active" : "inactive",
+      lastActivity: user.lastLoginDate || null,
+      profileImgUrl: user.profileImgUrl,
+      idBrandMaster: user.idBrandMaster,
+      brandName: user.brandMaster?.brandName || "Vituax",
+    }));
+
+    return { users, totalPages: response.data.totalPages };
+  };
+
+  const deleteUser = async (userId: string) => {
+    if (role !== "admin") return null;
+
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.del({
+      url: `/users/${userId}`,
+      auth,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    toast.success(t("generic.deleted"));
+    return true;
+  };
+
+  const updateUserById = async (userId: string, data: Partial<IUserDB>) => {
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.put<IUserDB>({
+      url: `/users/${userId}`,
+      data,
+      auth,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    toast.success(t("generic.saved"));
+    return response.data;
+  };
+
+  return {
+    isLoading,
+    isVituaxUser,
+    updateUser,
+    createUserByManager,
+    listUsers,
+    deleteUser,
+    updateUserById,
+  };
 };

@@ -5,7 +5,17 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 import { genToken } from "../utils/jwt";
 import { loginUserSchema } from "../types/validations/User/loginUser";
-import { userCreatedSchema } from "../types/validations/User/createUser";
+import {
+  userCreatedSchema,
+  userCreatedByManagerSchema,
+} from "../types/validations/User/createUser";
+
+export interface ILoggedUser {
+  idUser: string;
+  email: string;
+  role: string;
+  idBrandMaster: number | null;
+}
 
 export class UserService {
   private userModel = new UserModel();
@@ -111,6 +121,62 @@ export class UserService {
         idBrandMaster: user.idBrandMaster,
       },
     };
+  }
+
+  async createByManager(data: unknown, loggedUser: ILoggedUser) {
+    const validData = userCreatedByManagerSchema.parse(data);
+
+    // Check if email already exists
+    const existingUser = await this.userModel.findByEmail(validData.email);
+    if (existingUser) {
+      throw new AppError(
+        ERROR_MESSAGE.EMAIL_ALREADY_EXISTS,
+        STATUS_CODE.BAD_REQUEST,
+      );
+    }
+
+    // Business rule: Only Vituax users (idBrandMaster: null) can create Vituax users
+    const isLoggedUserVituax = loggedUser.idBrandMaster === null;
+    const isCreatingVituaxUser =
+      validData.idBrandMaster === null || validData.idBrandMaster === undefined;
+
+    if (isCreatingVituaxUser && !isLoggedUserVituax) {
+      throw new AppError(
+        "Only Vituax users can create Vituax users",
+        STATUS_CODE.FORBIDDEN,
+      );
+    }
+
+    // Business rule: MSP users can only create users in their own company
+    if (!isLoggedUserVituax && validData.idBrandMaster !== loggedUser.idBrandMaster) {
+      throw new AppError(
+        "You can only create users in your own company",
+        STATUS_CODE.FORBIDDEN,
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(validData.password, 10);
+
+    const user = await this.userModel.create({
+      username: validData.username,
+      email: validData.email,
+      password: hashedPassword,
+      phone: validData.phone,
+      profileImgUrl: validData.profileImgUrl,
+      role: validData.role || "member",
+      isActive: validData.isActive ?? true,
+      fullName: validData.fullName,
+      position: validData.position,
+      department: validData.department,
+      hiringDate: validData.hiringDate,
+      ...(validData.idBrandMaster && {
+        brandMaster: { connect: { idBrandMaster: validData.idBrandMaster } },
+      }),
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async getById(idUser: string) {

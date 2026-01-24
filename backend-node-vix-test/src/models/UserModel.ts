@@ -32,7 +32,7 @@ export class UserModel {
     });
   }
 
-  async listAll(query: { page?: number; limit?: number; search?: string }) {
+  async listAll(query: { page?: number; limit?: number; search?: string; idBrandMaster?: number }) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -43,7 +43,11 @@ export class UserModel {
         OR: [
           { username: { contains: query.search } },
           { email: { contains: query.search } },
+          { fullName: { contains: query.search } },
         ],
+      }),
+      ...(query.idBrandMaster !== undefined && {
+        idBrandMaster: query.idBrandMaster === 0 ? null : query.idBrandMaster,
       }),
     };
 
@@ -57,10 +61,16 @@ export class UserModel {
           idUser: true,
           username: true,
           email: true,
+          phone: true,
           role: true,
           isActive: true,
           profileImgUrl: true,
           idBrandMaster: true,
+          fullName: true,
+          position: true,
+          department: true,
+          hiringDate: true,
+          lastLoginDate: true,
           brandMaster: {
             select: {
               idBrandMaster: true,

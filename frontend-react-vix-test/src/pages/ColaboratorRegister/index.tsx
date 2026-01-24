@@ -9,7 +9,6 @@ import { ColaboratorTable } from "./ColaboratorTable";
 import { useZColaboratorRegister } from "../../stores/useZColaboratorRegister";
 import { useUserResources } from "../../hooks/useUserResources";
 import { useEffect, useCallback } from "react";
-import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 
 export const ColaboratorRegisterPage = () => {
   const { theme, mode } = useZTheme();
@@ -44,7 +43,6 @@ export const ColaboratorRegisterPage = () => {
 
   return (
     <ScreenFullPage
-      isLoading={isLoading}
       title={
         <Stack
           direction="row"
@@ -71,7 +69,6 @@ export const ColaboratorRegisterPage = () => {
         </TextRob16Font1S>
       }
     >
-      <AbsoluteBackDrop open={isLoading} />
       <Stack
         sx={{
           width: "100%",
@@ -85,7 +82,7 @@ export const ColaboratorRegisterPage = () => {
         <ColaboratorForm onSuccess={fetchUsers} />
 
         {/* Table Section */}
-        <ColaboratorTable onRefresh={fetchUsers} />
+        <ColaboratorTable onRefresh={fetchUsers} isLoading={isLoading} />
       </Stack>
     </ScreenFullPage>
   );

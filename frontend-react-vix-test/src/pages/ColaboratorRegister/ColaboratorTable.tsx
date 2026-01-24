@@ -21,9 +21,10 @@ import moment from "moment";
 
 interface IColaboratorTableProps {
   onRefresh: () => void;
+  isLoading?: boolean;
 }
 
-export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
+export const ColaboratorTable = ({ onRefresh, isLoading }: IColaboratorTableProps) => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
   const { deleteUser } = useUserResources();
@@ -135,6 +136,9 @@ export const ColaboratorTable = ({ onRefresh }: IColaboratorTableProps) => {
         sx={{
           width: "100%",
           gap: "16px",
+          opacity: isLoading ? 0.5 : 1,
+          transition: "opacity 0.2s ease-in-out",
+          pointerEvents: isLoading ? "none" : "auto",
         }}
       >
         {users.length === 0 ? (

@@ -18,6 +18,7 @@ import { useVmResource } from "../../hooks/useVmResource";
 import { MspFormStep1, MspFormStep2 } from "./MspForm";
 import { toast } from "react-toastify";
 import AddIcon from "@mui/icons-material/Add";
+import { useUploadFile } from "../../hooks/useUploadFile";
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
@@ -55,6 +56,19 @@ export const MSPRegisterPage = () => {
     setMspList,
     minConsumption,
     discountPercentage,
+    // Address fields
+    cep,
+    street,
+    streetNumber,
+    district,
+    city,
+    countryState,
+    // File upload
+    brandLogoFile,
+    brandLogoPreview,
+    setBrandLogoFile,
+    setBrandLogoPreview,
+    setBrandLogo,
   } = useZMspRegisterPage();
   const { t } = useTranslation();
   const {
@@ -64,6 +78,7 @@ export const MSPRegisterPage = () => {
     listAllBrands,
   } = useBrandMasterResources();
   const { isLoadingDeleteVM, deleteVM } = useVmResource();
+  const { handleUpload } = useUploadFile();
   const [isSaving, setIsSaving] = useState(false);
 
   const isEditingMode = isEditing.length > 0;
@@ -121,6 +136,21 @@ export const MSPRegisterPage = () => {
     setIsSaving(true);
 
     try {
+      // Se há um arquivo de logo para upload, fazer o upload primeiro
+      let finalLogoUrl = brandObjectName || brandLogoUrl;
+      
+      if (brandLogoFile) {
+        const uploadResult = await handleUpload(brandLogoFile);
+        if (uploadResult?.objectName) {
+          finalLogoUrl = uploadResult.objectName;
+          // Atualiza o store com a URL do arquivo enviado
+          setBrandLogo({
+            brandLogoUrl: uploadResult.url || "",
+            brandObjectName: uploadResult.objectName,
+          });
+        }
+      }
+
       if (isEditingMode) {
         // MODO EDIÇÃO (sem alterar admin)
         const editId = isEditing[0];
@@ -131,10 +161,17 @@ export const MSPRegisterPage = () => {
           setorName: sector,
           location: locality,
           smsContact: phone,
-          brandLogo: brandObjectName || brandLogoUrl,
+          brandLogo: finalLogoUrl,
           isPoc,
           minConsumption,
           discountPercentage,
+          // Campos de endereço
+          cep,
+          street,
+          placeNumber: streetNumber,
+          district,
+          city,
+          state: countryState,
         });
 
         if (result?.brandMaster) {
@@ -152,17 +189,18 @@ export const MSPRegisterPage = () => {
           phone,
           sector,
           contactEmail,
-          cep: "",
+          cep,
           locality,
-          countryState: "",
-          city: "",
-          street: "",
-          streetNumber: "",
+          countryState,
+          city,
+          street,
+          streetNumber,
+          district,
           admName,
           admEmail,
           admPhone,
           admPassword,
-          brandLogo: brandObjectName || brandLogoUrl,
+          brandLogo: finalLogoUrl,
           position: "admin",
           mspDomain,
           isPoc,
@@ -177,6 +215,13 @@ export const MSPRegisterPage = () => {
           setModalOpen("createdMsp");
           resetAllStepStates();
         }
+      }
+
+      // Limpa o arquivo e preview após salvar com sucesso
+      setBrandLogoFile(null);
+      if (brandLogoPreview) {
+        URL.revokeObjectURL(brandLogoPreview);
+        setBrandLogoPreview("");
       }
     } catch {
       toast.error(t("mspRegister.editMspError"));

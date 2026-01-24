@@ -48,6 +48,8 @@ export const MspTable = () => {
     setAdmPhone,
     setMinConsumption,
     setDiscountPercentage,
+    setBrandLogoFile,
+    setBrandLogoPreview,
   } = useZMspRegisterPage();
 
   const { listAllBrands, getBrandMasterById } = useBrandMasterResources();
@@ -83,6 +85,10 @@ export const MspTable = () => {
     setEnterOnEditing(true);
     startEditing(index);
     setActiveStep(0);
+    
+    // Limpa arquivo e preview anteriores
+    setBrandLogoFile(null);
+    setBrandLogoPreview("");
     
     // Dados do MSP
     setCompanyName(msp.brandName || "");

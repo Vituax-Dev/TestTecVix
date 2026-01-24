@@ -12,7 +12,7 @@
   "contactEmail": "E-mail de contato",
   "address": "Endereço",
   "cep": "CEP",
-  "location": "Localização",
+  "location": "País",
   "locationPlaceholder": "Brasil",
   "countryState": "Estado",
   "countryStatePlaceholder": "São Paulo",
@@ -84,5 +84,13 @@
   "removeLogo": "Remover logo",
   "step1Description": "Preencha as informações da empresa MSP",
   "step2Description": "Configure o administrador e logo da empresa",
-  "comingSoon": "Em breve"
+  "comingSoon": "Em breve",
+  "addressSection": "Endereço",
+  "streetNumber": "Número",
+  "district": "Bairro",
+  "districtPlaceholder": "Nome do bairro",
+  "state": "Estado",
+  "invalidCep": "CEP inválido",
+  "cepNotFound": "CEP não encontrado",
+  "cepError": "Erro ao buscar CEP"
 }

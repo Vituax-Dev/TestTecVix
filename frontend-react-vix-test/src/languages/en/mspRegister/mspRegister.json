@@ -12,7 +12,7 @@
   "contactEmail": "Contact Email",
   "address": "Address",
   "cep": "Postal Code",
-  "location": "Location",
+  "location": "Country",
   "locationPlaceholder": "United States",
   "countryState": "State",
   "countryStatePlaceholder": "California",
@@ -84,5 +84,13 @@
   "removeLogo": "Remove logo",
   "step1Description": "Fill in the MSP company information",
   "step2Description": "Configure the administrator and company logo",
-  "comingSoon": "Coming soon"
+  "comingSoon": "Coming soon",
+  "addressSection": "Address",
+  "streetNumber": "Number",
+  "district": "Neighborhood",
+  "districtPlaceholder": "Neighborhood name",
+  "state": "State",
+  "invalidCep": "Invalid postal code",
+  "cepNotFound": "Postal code not found",
+  "cepError": "Error fetching postal code"
 }

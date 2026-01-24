@@ -5,11 +5,12 @@ import { useZMspRegisterPage } from "../../../stores/useZMspRegisterPage";
 import { InputLabelTooltip } from "../../../components/Inputs/InputLabelTooltip";
 import { TextRob16Font1S } from "../../../components/Text1S";
 import { TextRob12Font2Xs } from "../../../components/Text2Xs";
-import { InputUploadLabelTooltip } from "../../../components/Inputs/InputUploadLabelTooltip";
 import { ImgFromDB } from "../../../components/ImgFromDB";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useDropzone } from "react-dropzone";
+import { UploadIcon } from "../../../icons/UploadIcon";
 
 interface IMspFormStep2Props {
   onConfirm: () => void;
@@ -41,11 +42,47 @@ export const MspFormStep2 = ({
     setAdmPassword,
     brandLogoUrl,
     setBrandLogo,
+    brandLogoFile,
+    setBrandLogoFile,
+    brandLogoPreview,
+    setBrandLogoPreview,
     showErrorPageTwo,
     setShowErrorPageTwo,
   } = useZMspRegisterPage();
 
   const [showPassword, setShowPassword] = useState(false);
+
+  // Limpar blob URL ao desmontar para evitar memory leak
+  useEffect(() => {
+    return () => {
+      if (brandLogoPreview && brandLogoPreview.startsWith("blob:")) {
+        URL.revokeObjectURL(brandLogoPreview);
+      }
+    };
+  }, [brandLogoPreview]);
+
+  // Configuração do dropzone para seleção local (sem upload)
+  const onDrop = (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
+    const file = acceptedFiles[0];
+    
+    // Revogar URL anterior se existir
+    if (brandLogoPreview && brandLogoPreview.startsWith("blob:")) {
+      URL.revokeObjectURL(brandLogoPreview);
+    }
+    
+    // Criar preview local
+    const previewUrl = URL.createObjectURL(file);
+    setBrandLogoFile(file);
+    setBrandLogoPreview(previewUrl);
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"] },
+    maxSize: 50 * 1024 * 1024,
+    disabled: isLoading,
+  });
 
   const validateAndConfirm = () => {
     // Se está editando, não precisa validar campos de admin
@@ -63,21 +100,21 @@ export const MspFormStep2 = ({
     onConfirm();
   };
 
-  const handleLogoUploaded = ({
-    url,
-    objectName,
-  }: {
-    url: string;
-    objectName: string;
-  }) => {
-    setBrandLogo({ brandLogoUrl: url, brandObjectName: objectName });
-  };
-
   const handleRemoveLogo = () => {
+    // Revogar URL de preview se existir
+    if (brandLogoPreview && brandLogoPreview.startsWith("blob:")) {
+      URL.revokeObjectURL(brandLogoPreview);
+    }
+    setBrandLogoFile(null);
+    setBrandLogoPreview("");
     setBrandLogo({ brandLogoUrl: "", brandObjectName: "" });
   };
 
+  // URL para exibir: preview local ou URL do servidor
+  const displayLogoUrl = brandLogoPreview || brandLogoUrl;
+
   return (
+    <form onSubmit={(e) => e.preventDefault()}>
     <Stack
       sx={{
         width: "100%",
@@ -104,6 +141,7 @@ export const MspFormStep2 = ({
           <InputLabelTooltip
             value={mspDomain}
             onChange={setMSPDomain}
+            inputName="mspDomain"
             label={
               <>
                 {t("mspRegister.domain")}{" "}
@@ -147,6 +185,8 @@ export const MspFormStep2 = ({
           <InputLabelTooltip
             value={admName}
             onChange={setAdmName}
+            inputName="admName"
+            autoComplete="name"
             label={
               <>
                 {t("mspRegister.completeName")}{" "}
@@ -168,6 +208,8 @@ export const MspFormStep2 = ({
           <InputLabelTooltip
             value={admEmail}
             onChange={setAdmEmail}
+            inputName="admEmail"
+            autoComplete="email"
             label={
               <>
                 {t("mspRegister.email")}{" "}
@@ -206,6 +248,8 @@ export const MspFormStep2 = ({
           <InputLabelTooltip
             value={admPhone}
             onChange={setAdmPhone}
+            inputName="admPhone"
+            autoComplete="tel"
             label={t("mspRegister.adminPhone")}
             placeholder={t("mspRegister.adminPhonePlaceholder")}
             disabled={isEditing}
@@ -213,6 +257,7 @@ export const MspFormStep2 = ({
           <InputLabelTooltip
             value={t("mspRegister.adminPositionValue")}
             onChange={() => {}}
+            inputName="admPosition"
             label={t("mspRegister.adminPosition")}
             placeholder={t("mspRegister.positionPlaceholder")}
             disabled
@@ -221,6 +266,8 @@ export const MspFormStep2 = ({
             <InputLabelTooltip
               value={admPassword}
               onChange={setAdmPassword}
+              inputName="admPassword"
+              autoComplete="new-password"
               label={
                 <>
                   {t("mspRegister.initialPassword")}{" "}
@@ -259,6 +306,7 @@ export const MspFormStep2 = ({
           <InputLabelTooltip
             value={admName}
             onChange={() => {}}
+            inputName="adminUsername"
             label={t("mspRegister.adminUsername")}
             placeholder={t("mspRegister.adminUsernamePlaceholder")}
             disabled
@@ -306,16 +354,40 @@ export const MspFormStep2 = ({
             flexWrap: "wrap",
           }}
         >
-          {/* Upload area */}
-          <Box sx={{ width: "200px" }}>
-            <InputUploadLabelTooltip
-              onUploaded={handleLogoUploaded}
-              disabled={isLoading}
-            />
+          {/* Upload area - Seleção local sem upload imediato */}
+          <Box
+            {...getRootProps()}
+            sx={{
+              width: "200px",
+              height: "70px",
+              border: `1px dashed ${theme[mode].grayLight}`,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "16px",
+              borderRadius: "12px",
+              background: isDragActive
+                ? theme[mode].grayLight
+                : theme[mode].mainBackground,
+              cursor: isLoading ? "not-allowed" : "pointer",
+              opacity: isLoading ? 0.5 : 1,
+              "&:hover": {
+                background: theme[mode].grayLight,
+              },
+            }}
+          >
+            <input {...getInputProps()} />
+            <UploadIcon fill={theme[mode].black} />
+            <Stack sx={{ alignItems: "center" }}>
+              <TextRob12Font2Xs sx={{ color: theme[mode].gray, textAlign: "center" }}>
+                {t("mspRegister.companyLogoSubtitle").split(" ").slice(0, 4).join(" ")}
+              </TextRob12Font2Xs>
+            </Stack>
           </Box>
 
           {/* Preview do logo */}
-          {brandLogoUrl && (
+          {displayLogoUrl && (
             <Box
               sx={{
                 display: "flex",
@@ -324,22 +396,36 @@ export const MspFormStep2 = ({
                 gap: "16px",
               }}
             >
-              <ImgFromDB
-                src={brandLogoUrl}
-                alt="Logo preview"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  objectFit: "contain",
-                  borderRadius: "8px",
-                  border: `1px solid ${theme[mode].grayLight}`,
-                }}
-              />
+              {brandLogoPreview ? (
+                // Preview local (blob URL)
+                <img
+                  src={brandLogoPreview}
+                  alt="Logo preview"
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    objectFit: "contain",
+                    borderRadius: "8px",
+                    border: `1px solid ${theme[mode].grayLight}`,
+                  }}
+                />
+              ) : (
+                // URL do servidor
+                <ImgFromDB
+                  src={brandLogoUrl}
+                  alt="Logo preview"
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    objectFit: "contain",
+                    borderRadius: "8px",
+                    border: `1px solid ${theme[mode].grayLight}`,
+                  }}
+                />
+              )}
               <Stack sx={{ gap: "4px" }}>
                 <Button
-                  onClick={() =>
-                    document.querySelector<HTMLInputElement>("input[type=file]")?.click()
-                  }
+                  {...getRootProps()}
                   sx={{
                     color: theme[mode].blue,
                     textTransform: "none",
@@ -469,5 +555,6 @@ export const MspFormStep2 = ({
         </TextRob16Font1S>
       )}
     </Stack>
+    </form>
   );
 };

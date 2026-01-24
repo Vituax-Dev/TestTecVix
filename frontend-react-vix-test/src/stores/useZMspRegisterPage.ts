@@ -31,6 +31,8 @@ interface IMspRegisterPage {
   mspTableFilter: string;
   brandLogoUrl: string;
   brandObjectName: string;
+  brandLogoFile: File | null; // Arquivo para upload após confirm
+  brandLogoPreview: string; // Preview local (blob URL)
   cityCode: string;
   district: string;
   alertMessage: string | null;
@@ -76,6 +78,8 @@ const INIT_STATE: IMspRegisterPage = {
   mspTableFilter: "",
   brandLogoUrl: "",
   brandObjectName: "",
+  brandLogoFile: null,
+  brandLogoPreview: "",
   cityCode: "",
   district: "",
   alertMessage: null,
@@ -139,6 +143,8 @@ interface IMspRegisterPageState extends IMspRegisterPage {
     brandLogoUrl: string;
     brandObjectName: string;
   }) => void;
+  setBrandLogoFile: (file: File | null) => void;
+  setBrandLogoPreview: (preview: string) => void;
   setCityCode: (cityCode: string) => void;
   setDistrict: (district: string) => void;
   setAlertMessage: (alertMessage: string | null) => void;
@@ -202,6 +208,10 @@ export const useZMspRegisterPage = create<IMspRegisterPageState>((set) => ({
     set((state) => ({ ...state, mspTableFilter })),
   setBrandLogo: ({ brandLogoUrl, brandObjectName }) =>
     set((state) => ({ ...state, brandLogoUrl, brandObjectName })),
+  setBrandLogoFile: (brandLogoFile: File | null) =>
+    set((state) => ({ ...state, brandLogoFile })),
+  setBrandLogoPreview: (brandLogoPreview: string) =>
+    set((state) => ({ ...state, brandLogoPreview })),
   setCityCode: (cityCode: string) => set((state) => ({ ...state, cityCode })),
   setDistrict: (district: string) => set((state) => ({ ...state, district })),
   setAlertMessage: (alertMessage: string | null) =>

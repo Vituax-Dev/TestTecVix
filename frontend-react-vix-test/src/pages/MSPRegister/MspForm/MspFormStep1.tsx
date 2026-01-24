@@ -1,10 +1,11 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import { useZTheme } from "../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { useZMspRegisterPage } from "../../../stores/useZMspRegisterPage";
 import { InputLabelTooltip } from "../../../components/Inputs/InputLabelTooltip";
 import { TextRob16Font1S } from "../../../components/Text1S";
 import { CheckboxLabel } from "../../../components/CheckboxLabel";
+import { useViaCep } from "../../../hooks/useViaCep";
 
 interface IMspFormStep1Props {
   onContinue: () => void;
@@ -35,7 +36,38 @@ export const MspFormStep1 = ({ onContinue, onCancel }: IMspFormStep1Props) => {
     setMinConsumption,
     discountPercentage,
     setDiscountPercentage,
+    cep,
+    setCep,
+    countryState,
+    setCountryState,
+    city,
+    setCity,
+    street,
+    setStreet,
+    streetNumber,
+    setStreetNumber,
+    district,
+    setDistrict,
+    cityCode,
+    setCityCode,
   } = useZMspRegisterPage();
+
+  const { fetchAddressByCep, isLoading: isLoadingCep } = useViaCep();
+
+  const handleCepBlur = async () => {
+    if (cep && cep.length >= 8) {
+      const address = await fetchAddressByCep(cep);
+      if (address) {
+        setStreet(address.street);
+        setDistrict(address.district);
+        setCity(address.city);
+        setCountryState(address.state);
+        setCityCode(address.cityCode);
+        // Preenche o país automaticamente como Brasil (CEP brasileiro)
+        setLocality("Brasil");
+      }
+    }
+  };
 
   const validateAndContinue = () => {
     // Validar campos obrigatórios
@@ -206,6 +238,110 @@ export const MspFormStep1 = ({ onContinue, onCancel }: IMspFormStep1Props) => {
               },
             }),
           }}
+        />
+      </Box>
+
+      {/* Seção de Endereço */}
+      <TextRob16Font1S
+        sx={{
+          color: theme[mode].black,
+          fontSize: "16px",
+          fontWeight: 500,
+          lineHeight: "24px",
+          marginTop: "8px",
+        }}
+      >
+        {t("mspRegister.addressSection")}
+      </TextRob16Font1S>
+
+      {/* Linha CEP */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "flex-end",
+          gap: "24px",
+          flexWrap: "wrap",
+        }}
+      >
+        <Box sx={{ width: "200px", position: "relative" }}>
+          <InputLabelTooltip
+            value={cep}
+            onChange={setCep}
+            label={t("mspRegister.cep")}
+            placeholder="00000-000"
+            onBlur={handleCepBlur}
+          />
+          {isLoadingCep && (
+            <CircularProgress 
+              size={16} 
+              sx={{ 
+                position: "absolute", 
+                right: 12, 
+                top: "50%", 
+                marginTop: "4px" 
+              }} 
+            />
+          )}
+        </Box>
+      </Box>
+
+      {/* Linha Rua, Número, Bairro */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr 1fr",
+          gap: "24px",
+          "@media (max-width: 900px)": {
+            gridTemplateColumns: "1fr 1fr",
+          },
+          "@media (max-width: 600px)": {
+            gridTemplateColumns: "1fr",
+          },
+        }}
+      >
+        <InputLabelTooltip
+          value={street}
+          onChange={setStreet}
+          label={t("mspRegister.street")}
+          placeholder={t("mspRegister.streetPlaceholder")}
+        />
+        <InputLabelTooltip
+          value={streetNumber}
+          onChange={setStreetNumber}
+          label={t("mspRegister.streetNumber")}
+          placeholder="123"
+        />
+        <InputLabelTooltip
+          value={district}
+          onChange={setDistrict}
+          label={t("mspRegister.district")}
+          placeholder={t("mspRegister.districtPlaceholder")}
+        />
+      </Box>
+
+      {/* Linha Cidade, Estado */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "24px",
+          "@media (max-width: 600px)": {
+            gridTemplateColumns: "1fr",
+          },
+        }}
+      >
+        <InputLabelTooltip
+          value={city}
+          onChange={setCity}
+          label={t("mspRegister.city")}
+          placeholder={t("mspRegister.cityPlaceholder")}
+        />
+        <InputLabelTooltip
+          value={countryState}
+          onChange={setCountryState}
+          label={t("mspRegister.state")}
+          placeholder="SP"
         />
       </Box>
 

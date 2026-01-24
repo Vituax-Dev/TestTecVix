@@ -119,7 +119,7 @@ export class BrandMasterService {
     idBrandMaster,
     oldBrandMaster,
   }: {
-    user: user;
+    user?: user;
     validData: TBrandMasterUpdate;
     idBrandMaster: number;
     oldBrandMaster: brandMaster;
@@ -143,8 +143,8 @@ export class BrandMasterService {
     return result;
   }
 
-  async updateBrandMaster(idBrandMaster: number, data: unknown, user: user) {
-    if (user.idBrandMaster && user.idBrandMaster !== idBrandMaster) {
+  async updateBrandMaster(idBrandMaster: number, data: unknown, user?: user) {
+    if (user?.idBrandMaster && user.idBrandMaster !== idBrandMaster) {
       throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
     }
     const validData = brandMasterUpdateSchema.parse(data);

@@ -113,6 +113,8 @@ export interface INewMSPResponse {
   cityCode: number | null;
   district: string | null;
   isPoc: boolean;
+  minConsumption: number | null;
+  discountPercentage: number | null;
   manual?: string | null;
   termsOfUse?: string | null;
   privacyPolicy?: string | null;
@@ -296,7 +298,7 @@ export const useBrandMasterResources = () => {
       url: "/brand-master",
       auth,
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
       toast.error(response.message);
@@ -386,7 +388,7 @@ export const useBrandMasterResources = () => {
       url: `/brand-master/${idBrand}`,
       auth,
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
       toast.error(response.message);

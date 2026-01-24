@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useZTheme } from "../../../../../stores/useZTheme";
-import { Stack } from "@mui/material";
+import { Box, Stack, Tooltip } from "@mui/material";
 import { TextRob16FontL } from "../../../../../components/TextL";
 import { InputLabelAndFeedback } from "../../../../../components/Inputs/InputLabelAndFeedback";
 import { EditCirclePencilIcon } from "../../../../../icons/EditCirclePencilIcon";
@@ -13,7 +13,11 @@ import {
 import { useZBrandInfo } from "../../../../../stores/useZBrandStore";
 import { useEffect } from "react";
 
-export const NotificationsContact = () => {
+interface NotificationsContactProps {
+  isVituaxUser?: boolean;
+}
+
+export const NotificationsContact = ({ isVituaxUser = false }: NotificationsContactProps) => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
   const { timeZones } = useGenericResources();
@@ -147,6 +151,18 @@ export const NotificationsContact = () => {
           }}
         >
           {t("profileAndNotifications.notifications")}
+          {isVituaxUser && (
+            <Box
+              component="span"
+              sx={{
+                fontSize: "12px",
+                color: theme[mode].tertiary,
+                marginLeft: "8px",
+              }}
+            >
+              ({t("generic.vituaxCannotEdit")})
+            </Box>
+          )}
         </TextRob16FontL>
       </Stack>
       {/* Inputs */}
@@ -159,53 +175,83 @@ export const NotificationsContact = () => {
           },
         }}
       >
-        <InputLabelAndFeedback
-          label={t("profileAndNotifications.email")}
-          value={companyEmail.value}
-          onChange={(val) => handleChange("companyEmail", val)}
-          errorMessage={companyEmail.errorMessage}
-          onBlur={() => validEmail()}
-          icon={
-            <EditCirclePencilIcon
-              fill={
-                companyEmail.errorMessage
-                  ? theme[mode].danger
-                  : theme[mode].blueMedium
+        <Tooltip
+          title={isVituaxUser ? t("generic.vituaxCannotEdit") : ""}
+          arrow
+          placement="top"
+        >
+          <Box sx={{ width: "100%" }}>
+            <InputLabelAndFeedback
+              label={t("profileAndNotifications.email")}
+              value={companyEmail.value}
+              onChange={(val) => !isVituaxUser && handleChange("companyEmail", val)}
+              errorMessage={companyEmail.errorMessage}
+              onBlur={() => !isVituaxUser && validEmail()}
+              disabled={isVituaxUser}
+              icon={
+                <EditCirclePencilIcon
+                  fill={
+                    isVituaxUser
+                      ? theme[mode].grayLight
+                      : companyEmail.errorMessage
+                        ? theme[mode].danger
+                        : theme[mode].blueMedium
+                  }
+                />
               }
             />
-          }
-        />
-        <InputLabelAndFeedback
-          label={t("profileAndNotifications.sms")}
-          value={companySMS.value}
-          onChange={(val) => handleChange("companySMS", val)}
-          errorMessage={companySMS.errorMessage}
-          onBlur={() => validPhoneNumber()}
-          icon={
-            <EditCirclePencilIcon
-              fill={
-                companySMS.errorMessage
-                  ? theme[mode].danger
-                  : theme[mode].blueMedium
+          </Box>
+        </Tooltip>
+        <Tooltip
+          title={isVituaxUser ? t("generic.vituaxCannotEdit") : ""}
+          arrow
+          placement="top"
+        >
+          <Box sx={{ width: "100%" }}>
+            <InputLabelAndFeedback
+              label={t("profileAndNotifications.sms")}
+              value={companySMS.value}
+              onChange={(val) => !isVituaxUser && handleChange("companySMS", val)}
+              errorMessage={companySMS.errorMessage}
+              onBlur={() => !isVituaxUser && validPhoneNumber()}
+              disabled={isVituaxUser}
+              icon={
+                <EditCirclePencilIcon
+                  fill={
+                    isVituaxUser
+                      ? theme[mode].grayLight
+                      : companySMS.errorMessage
+                        ? theme[mode].danger
+                        : theme[mode].blueMedium
+                  }
+                />
               }
             />
-          }
-        />
-        {
-          <DropDrownLabel
-            label={t("profileAndNotifications.timeZone")}
-            data={timeZones}
-            value={
-              timeZone.value
-                ? { label: timeZone.value, value: timeZone.value }
-                : null
-            }
-            onChange={(val) => {
-              if (!val) return handleChange("timeZone", "");
-              return handleChange("timeZone", val.label);
-            }}
-          />
-        }
+          </Box>
+        </Tooltip>
+        <Tooltip
+          title={isVituaxUser ? t("generic.vituaxCannotEdit") : ""}
+          arrow
+          placement="top"
+        >
+          <Box sx={{ width: "100%" }}>
+            <DropDrownLabel
+              label={t("profileAndNotifications.timeZone")}
+              data={timeZones}
+              value={
+                timeZone.value
+                  ? { label: timeZone.value, value: timeZone.value }
+                  : null
+              }
+              onChange={(val) => {
+                if (isVituaxUser) return;
+                if (!val) return handleChange("timeZone", "");
+                return handleChange("timeZone", val.label);
+              }}
+              disabled={isVituaxUser}
+            />
+          </Box>
+        </Tooltip>
       </Stack>
     </Stack>
   );

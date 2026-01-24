@@ -12,6 +12,7 @@
   "resizePlan": "Aumentar plano",
   "prev": "Anterior",
   "next": "Próximo",
+  "loading": "Salvando...",
   "errorOlnlyAdmin": "Apenas o admin pode fazer essa ação",
   "dataSavesuccess": "Todos os dados foram salvos com sucesso",
   "errorToSaveData": "Erro ao salvar os dados",

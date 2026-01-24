@@ -12,6 +12,7 @@
   "resizePlan": "Cambiar el tamaño del plan",
   "prev": "Anterior",
   "next": "Siguiente",
+  "loading": "Guardando...",
   "errorOlnlyAdmin": "Solo el admin puede hacer esto",
   "dataSavesuccess": "Todos los datos fueron guardados con exito",
   "errorToSaveData": "Error al guardar los datos",

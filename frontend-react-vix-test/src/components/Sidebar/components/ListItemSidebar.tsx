@@ -28,7 +28,7 @@ export const ListItemSidebar = () => {
   const { manual, termsOfUse, privacyPolicy } = useZBrandInfo();
   const lan = t("costsAndFinances.lan") === "pt" ? "pt" : "eng";
   const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:3001";
-  const manualUrl = `${baseUrl}/uploads/dark-user-manual-vituax-${lan}.pdf`;
+  const manualUrl = `${baseUrl}/api/v1/uploads/dark-user-manual-vituax-${lan}.pdf`;
 
   return (
     <Stack

@@ -93,6 +93,55 @@ export const useUserResources = () => {
     return response.data;
   };
 
+  /**
+   * Updates user profile and company settings in a single transaction.
+   * If any part fails, all changes are rolled back.
+   */
+  const updateProfileSettings = async (data: {
+    username?: string;
+    fullName?: string;
+    email?: string;
+    phone?: string;
+    password?: string;
+    profileImgUrl?: string;
+    companyData?: {
+      emailContact?: string;
+      smsContact?: string;
+      timezone?: string;
+    };
+  }) => {
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.put<{
+      user: IUserDB;
+      brandMaster: {
+        emailContact?: string;
+        smsContact?: string;
+        timezone?: string;
+      } | null;
+    }>({
+      url: `/users/profile-settings`,
+      data,
+      auth,
+    });
+    setIsLoading(false);
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    // Update local state with new user data
+    setUser({
+      profileImgUrl: response.data.user.profileImgUrl,
+      username: response.data.user.username,
+      userEmail: response.data.user.email,
+      idBrand: response.data.user.idBrandMaster,
+      role: response.data.user.role,
+    });
+
+    return response.data;
+  };
+
   const createUserByManager = async (data: ICreateNewUser) => {
     if (role !== "admin" && role !== "manager") return null;
 
@@ -222,6 +271,7 @@ export const useUserResources = () => {
     isLoading,
     isVituaxUser,
     updateUser,
+    updateProfileSettings,
     createUserByManager,
     listUsers,
     deleteUser,

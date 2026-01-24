@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useZFormProfileNotifications } from "../../../../../stores/useZFormProfileNotifications";
 import { useZUserProfile } from "../../../../../stores/useZUserProfile";
 import { useUserResources } from "../../../../../hooks/useUserResources";
-import { useBrandMasterResources } from "../../../../../hooks/useBrandMasterResources";
+import { useZBrandInfo } from "../../../../../stores/useZBrandStore";
 import { useState } from "react";
 
 export const CTAsButtons = () => {
@@ -14,17 +14,35 @@ export const CTAsButtons = () => {
   const { theme, mode } = useZTheme();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { companyEmail, companySMS, timeZone, resetAll } =
-    useZFormProfileNotifications();
-  const { objectName, role, idBrand } = useZUserProfile();
-  const { updateUser } = useUserResources();
-  const { updateBrandMasterInfo } = useBrandMasterResources();
+  const {
+    companyEmail,
+    companySMS,
+    timeZone,
+    resetAll,
+    fullNameForm,
+    userName,
+    userEmail,
+    userPhone,
+    password,
+    confirmPassword,
+  } = useZFormProfileNotifications();
+  const { objectName, role, idBrand, setUser } = useZUserProfile();
+  const { updateProfileSettings } = useUserResources();
+  const { setBrandInfo } = useZBrandInfo();
 
   const isAdmin = role === "admin";
   const isManager = role === "manager";
   const canEditCompany = (isAdmin || isManager) && idBrand !== null;
 
   const validateForm = (): boolean => {
+    // Validate personal info fields
+    if (fullNameForm.errorMessage || userName.errorMessage || userEmail.errorMessage || userPhone.errorMessage) {
+      return false;
+    }
+    // Validate password match
+    if (password.value && password.value !== confirmPassword.value) {
+      return false;
+    }
     // Validate company email if user can edit company
     if (canEditCompany && companyEmail.errorMessage) {
       return false;
@@ -44,26 +62,77 @@ export const CTAsButtons = () => {
     setIsLoading(true);
 
     try {
-      // Save profile image if there's a new objectName
+      // Build request data for unified endpoint
+      const requestData: {
+        profileImgUrl?: string;
+        username?: string;
+        fullName?: string;
+        email?: string;
+        phone?: string;
+        password?: string;
+        companyData?: {
+          emailContact?: string;
+          smsContact?: string;
+          timezone?: string;
+        };
+      } = {};
+
+      // Add profile image if changed
       if (objectName) {
-        const userResult = await updateUser({ profileImgUrl: objectName });
-        if (!userResult) {
-          setIsLoading(false);
-          return;
-        }
+        requestData.profileImgUrl = objectName;
       }
 
-      // Save company notifications (email, SMS, timezone) - only for admin/manager
+      // Add personal info if provided
+      if (userName.value) {
+        requestData.username = userName.value;
+      }
+      if (fullNameForm.value) {
+        requestData.fullName = fullNameForm.value;
+      }
+      if (userEmail.value) {
+        requestData.email = userEmail.value;
+      }
+      if (userPhone.value) {
+        requestData.phone = userPhone.value;
+      }
+
+      // Add password if provided and matches confirmation
+      if (password.value && password.value === confirmPassword.value) {
+        requestData.password = password.value;
+      }
+
+      // Add company data if user can edit company
       if (canEditCompany) {
-        const brandResult = await updateBrandMasterInfo({
+        requestData.companyData = {
           emailContact: companyEmail.value || undefined,
           smsContact: companySMS.value || undefined,
           timezone: timeZone.value || undefined,
+        };
+      }
+
+      // Single request with transaction - if any fails, all rolled back
+      const result = await updateProfileSettings(requestData);
+      if (!result) {
+        setIsLoading(false);
+        return;
+      }
+
+      // Update user info in store
+      if (result.user) {
+        setUser({
+          profileImgUrl: result.user.profileImgUrl || null,
+          username: result.user.username || null,
+          userEmail: result.user.email || null,
         });
-        if (!brandResult) {
-          setIsLoading(false);
-          return;
-        }
+      }
+
+      // Update brand info in store if company data was updated
+      if (result.brandMaster) {
+        setBrandInfo({
+          emailContact: result.brandMaster.emailContact || "",
+          smsContact: result.brandMaster.smsContact || "",
+          timezone: result.brandMaster.timezone || "",
+        });
       }
 
       setIsLoading(false);

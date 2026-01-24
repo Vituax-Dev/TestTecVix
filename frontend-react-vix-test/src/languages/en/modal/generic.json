@@ -12,6 +12,7 @@
   "resizePlan": "Increase plan",
   "prev": "Previous",
   "next": "Next",
+  "loading": "Saving...",
   "errorOlnlyAdmin": "Only admin can do this action",
   "dataSavesuccess": "All data saved successfully",
   "errorToSaveData": "Error to save data",

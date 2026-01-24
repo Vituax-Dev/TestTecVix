@@ -5,7 +5,7 @@ import { TextRob14Font1Xs } from "../../../../../components/Text1Xs";
 import { useDropzone } from "react-dropzone";
 import { useUploadFile } from "../../../../../hooks/useUploadFile";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadFileIcon } from "../../../../../icons/UploadFileIcon";
 import { TextRob12Font2Xs } from "../../../../../components/Text2Xs";
 import { CircleIcon } from "../../../../../icons/CircleIcon";
@@ -14,9 +14,36 @@ import { useZUserProfile } from "../../../../../stores/useZUserProfile";
 export const PerfilPhotoUpload = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
-  const { handleUpload, isUploading } = useUploadFile();
+  const { handleUpload, isUploading, getFileByObjectName } = useUploadFile();
   const [uploadedFile, setUploadedFile] = useState<string | null>("");
-  const { setImage } = useZUserProfile();
+  const { setImage, profileImgUrl } = useZUserProfile();
+
+  // Carrega a imagem existente do usuário quando o componente monta
+  useEffect(() => {
+    const loadExistingImage = async () => {
+      if (profileImgUrl && !uploadedFile) {
+        // Se profileImgUrl já é uma URL completa, usa diretamente
+        if (profileImgUrl.startsWith("http")) {
+          setUploadedFile(profileImgUrl);
+          setImage({
+            imageUrl: profileImgUrl,
+            objectName: profileImgUrl.split("/").pop() || "",
+          });
+        } else {
+          // Se é apenas o objectName, busca a URL completa
+          const response = await getFileByObjectName(profileImgUrl);
+          if (response && response.url) {
+            setUploadedFile(response.url);
+            setImage({
+              imageUrl: response.url,
+              objectName: profileImgUrl,
+            });
+          }
+        }
+      }
+    };
+    loadExistingImage();
+  }, [profileImgUrl]);
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;

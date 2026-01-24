@@ -26,7 +26,7 @@ export class BucketController {
   async getFileUrl(req: CustomRequest<unknown>, res: Response) {
     const { objectName } = req.params;
     const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const url = `${baseUrl}/api/v1/uploads/raw/${objectName}`;
+    const url = `${baseUrl}/api/v1/uploads/${objectName}`;
     return res.status(STATUS_CODE.OK).json({ url });
   }
 

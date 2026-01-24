@@ -34,7 +34,7 @@ uploadsRoutes.get(`${BASE_PATH}/file/:objectName`, async (req, res) => {
 });
 
 // Serve o arquivo diretamente (para uso como src de imagem)
-uploadsRoutes.get(`${BASE_PATH}/raw/:objectName`, async (req, res) => {
+uploadsRoutes.get(`${BASE_PATH}/:objectName`, async (req, res) => {
   await uploadsController.getFileInBucketByObjectName(req, res);
 });
 

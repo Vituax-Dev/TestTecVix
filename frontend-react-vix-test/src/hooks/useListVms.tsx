@@ -9,7 +9,7 @@ import { IListAll, IParams } from "../types/ListAllTypes";
 
 const DEFAULT_LIMIT = 20;
 
-export const useListVms = () => {
+export const useListVms = (initialParams: IParams = {}) => {
   const [vmList, setVmList] = useState<IVMCreatedResponse[]>([]);
   const [vmTotalCount, setVmTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,22 +18,18 @@ export const useListVms = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [onlyMyVms, setOnlyMyVms] = useState(false);
+
   const abortControllerRef = useRef<AbortController | null>(null);
-  const filtersRef = useRef<IParams>({ limit: DEFAULT_LIMIT, page: 1 });
+  const filtersRef = useRef<IParams>({ limit: DEFAULT_LIMIT, page: 1, ...initialParams });
 
-  const {
-    setCurrentIdVM,
-    currentIdVM,
-    setCurrentVMName,
-    setCurrentVMOS,
-    setTotalCountVMs,
-  } = useZGlobalVar();
+  const { setTotalCountVMs } = useZGlobalVar();
 
-  const { idBrand } = useZUserProfile();
+  const { idBrand, role } = useZUserProfile();
 
-  const fetchListVms = useCallback(async (
-    params: IParams = {}
-  ) => {
+  const fetchListVms = useCallback(async (params: IParams = {}) => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -49,9 +45,18 @@ export const useListVms = () => {
     setError(null);
 
     try {
+      let targetBrand = params.idBrandMaster !== undefined ? params.idBrandMaster : idBrand;
+
+      if (onlyMyVms && idBrand) {
+        targetBrand = idBrand;
+      }
+
       const queryParams: Record<string, string | number | boolean | null | undefined> = {
-        ...finalParams,
-        idBrandMaster: idBrand,
+        limit: finalParams.limit,
+        page: finalParams.page,
+        search: finalParams.search || search,
+        status: finalParams.status || statusFilter,
+        idBrandMaster: targetBrand,
       };
 
       Object.keys(queryParams).forEach((key) => {
@@ -82,63 +87,67 @@ export const useListVms = () => {
 
       if (setTotalCountVMs) setTotalCountVMs(total);
 
-      if (results.length > 0 && !currentIdVM) {
-        const first = results[0];
-        setCurrentIdVM(first.idVM);
-        setCurrentVMName(first.vmName);
-        setCurrentVMOS(first.os);
-      } else if (results.length === 0) {
-        setCurrentIdVM(null);
-        setCurrentVMName(null);
-        setCurrentVMOS(null);
-      }
-
     } catch (error: unknown) {
-      if (axios.isCancel(error) || (error instanceof Error && error.name === "AbortError")) {
-        return;
-      }
+      if (axios.isCancel(error) || (error instanceof Error && error.name === "AbortError")) return;
 
       let msg = "Erro ao buscar VMs.";
-
-      if (error instanceof ApiError) {
-        msg = error.message;
-      } else if (error instanceof Error) {
-        msg = error.message;
-      }
-
-      if (!msg.includes("canceled")) {
-        toast.error(msg);
-      }
+      if (error instanceof ApiError) msg = error.message;
+      else if (error instanceof Error) msg = error.message;
 
       setError(msg);
-      setVmList([]);
-      setVmTotalCount(0);
-
+      if (!msg.includes("canceled")) {
+        setVmList([]);
+        setVmTotalCount(0);
+      }
     } finally {
       if (abortControllerRef.current === controller) {
         setIsLoading(false);
       }
     }
-  }, [
-    idBrand,
-    currentIdVM,
-    setCurrentIdVM,
-    setCurrentVMName,
-    setCurrentVMOS,
-    setTotalCountVMs
-  ]);
+  }, [idBrand, search, statusFilter, onlyMyVms, setTotalCountVMs]);
 
-  const refreshList = useCallback(() => {
-    fetchListVms();
-  }, [fetchListVms]);
+  const onToggleStatusVM = async (vm: IVMCreatedResponse) => {
+    try {
+      setIsLoading(true);
+      const action = vm.status === "RUNNING" ? "stop" : "start";
+      const response = await api.post({ url: `/vm/${vm.idVM}/${action}` });
 
-  const changePage = useCallback((newPage: number) => {
-    fetchListVms({ page: newPage });
-  }, [fetchListVms]);
+      if (response.error) throw new Error(response.message);
 
-  const handleSearch = useCallback((term: string) => {
-    fetchListVms({ search: term, page: 1 });
-  }, [fetchListVms]);
+      toast.success(`VM ${action === "start" ? "iniciada" : "parada"} com sucesso!`);
+      fetchListVms({ page: currentPage }); 
+    } catch (error) {
+      toast.error(error.message || "Erro ao alterar status da VM");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onDeleteVM = async (idVM: number) => {
+    try {
+      if (role !== "admin") {
+        toast.error("Apenas administradores podem deletar VMs.");
+        return;
+      }
+
+      setIsLoading(true);
+      const response = await api.delete({ url: `/vm/${idVM}` });
+
+      if (response.error) throw new Error(response.message);
+
+      toast.success("VM deletada com sucesso!");
+      const newPage = vmList.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage;
+      fetchListVms({ page: newPage });
+
+    } catch (error){
+      toast.error(error.message || "Erro ao deletar VM");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const refreshList = useCallback(() => { fetchListVms(); }, [fetchListVms]);
+  const changePage = useCallback((newPage: number) => { fetchListVms({ page: newPage }); }, [fetchListVms]);
 
   useEffect(() => {
     if (idBrand) {
@@ -147,7 +156,7 @@ export const useListVms = () => {
     return () => {
       if (abortControllerRef.current) abortControllerRef.current.abort();
     };
-  }, [fetchListVms, idBrand]);
+  }, [fetchListVms, idBrand]); 
 
   return {
     vmList,
@@ -158,7 +167,11 @@ export const useListVms = () => {
     totalPages,
     refreshList,
     changePage,
-    handleSearch,
-    fetchListVms, 
+    fetchListVms,
+    search, setSearch,
+    statusFilter, setStatusFilter,
+    onlyMyVms, setOnlyMyVms,
+    onToggleStatusVM,
+    onDeleteVM
   };
 };

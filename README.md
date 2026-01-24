@@ -111,11 +111,11 @@ Antes de enviar, certifique-se de que:
 - [x] O código está no **seu repositório pessoal** do GitHub
 - [x] O repositório está configurado como **público** (não privado)
 - [x] A branch `main` contém o projeto original
-- [ ] A branch `release` contém todas as suas modificações
+- [x] A branch `release` contém todas as suas modificações
 - [ ] Existe um Pull Request da `release` para a `main` **no seu repositório**
-- [ ] O README está atualizado com suas modificações
-- [ ] O projeto está funcionando corretamente
-- [ ] As credenciais de teste estão documentadas
+- [x] O README está atualizado com suas modificações
+- [x] O projeto está funcionando corretamente
+- [x] As credenciais de teste estão documentadas
 
 > **🎯 LEMBRE-SE**: O link que você enviará deve ser do formato:
 > `https://github.com/SEU-USUARIO/TestTecVix`
@@ -395,21 +395,25 @@ O sistema possui três níveis de permissão:
 
 > **Importante**: Após implementar o sistema de autenticação, adicione aqui as credenciais de usuários de teste para cada tipo de permissão.
 
-Exemplo:
+### 🚀 Administrador (Vituax Global / BrandMaster 2)
+- **E-mail:** `test.admin@vituax.com`
+- **Senha:** `Admin@123`
+- **Role:** `admin` 
 
-```
-Admin:
-  Email: admin@vituax.com
-  Senha: Admin@123
+### 💼 Gerente (BrandMaster 1 - UPIX)
+- **E-mail:** `manager@vituax.com`
+- **Senha:** `Manager@123`
+- **Role:** `manager`
 
-Manager:
-  Email: manager@vituax.com
-  Senha: Manager@123
+### 👤 Membro (BrandMaster 1 - UPIX)
+- **E-mail:** `member@vituax.com`
+- **Senha:** `Member@123`
+- **Role:** `member` 
 
-Member:
-  Email: member@vituax.com
-  Senha: Member@123
-```
+### 🚫 Usuário Inativo (Teste de Bloqueio)
+- **E-mail:** `inactive@test.com`
+- **Senha:** `User@123`
+- **Status:** `isActive: false`
 
 ---
 
@@ -469,7 +473,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 🔐 Autenticação e Autorização
 
-- [ ] Implementar as rotas de CRUD para usuários
+- [x] Implementar as rotas de CRUD para usuários
 - [x] Implementar rota de login do usuário
 - [x] Implementar tela de login `/login`
 - [x] Implementar rota de register do usuário

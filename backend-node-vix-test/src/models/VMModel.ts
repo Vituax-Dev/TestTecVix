@@ -73,10 +73,21 @@ export class VMModel {
     return { totalCount, result: vms };
   }
 
-  async createNewVM(data: TVMCreate) {
+  async createNewVM(data: any) {
     return await prisma.vM.create({
-      data: { ...data },
-    });
+    data: {
+      vmName: data.vmName,
+      vCPU: data.vCPU,
+      ram: data.ram,
+      disk: data.disk,
+      hasBackup: data.hasBackup,
+      pass: data.pass,
+      location: data.location, 
+      os: data.os,
+      idBrandMaster: data.idBrandMaster,
+      status: "RUNNING",
+    },
+  });
   }
 
   async updateVM(idVM: number, data: TVMUpdate) {

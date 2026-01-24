@@ -22,7 +22,7 @@ import { BTNISOsSection } from "./BTNISOsSection";
 import { useZVM } from "../../../stores/useZVM";
 
 export const FormVM = () => {
-  const { t } = useTranslation(); // createVm
+  const { t } = useTranslation();
   const { mode, theme } = useZTheme();
   const {
     vmSO,
@@ -54,6 +54,7 @@ export const FormVM = () => {
     localizationOptions,
     networkTypeOptions,
     isLoadingCreateVM,
+    osOptions
   } = useVmResource();
 
   const {
@@ -81,25 +82,10 @@ export const FormVM = () => {
   };
 
   const handleCreateVm = async () => {
-    const vm = {
-      hasBackup,
-      vmPassword,
-      vmName,
-      vmNetwork,
-      vmSO,
-      vmvCpu,
-      vmMemory,
-      vmDisk,
-      vmStorageType,
-      vmLocalization,
-    };
-
     const isValidPass = validPassword(vmPassword);
     if (!isValidPass) return;
 
     await createVm({
-      ...vm,
-      networkType: vmNetwork?.value,
       vmName: vmName,
       vCPU: vmvCpu,
       ram: vmMemory,
@@ -107,6 +93,9 @@ export const FormVM = () => {
       hasBackup: hasBackup,
       os: String(vmSO?.value) || "",
       pass: vmPassword,
+      networkType: vmNetwork?.value,
+      vmLocalization: String(vmLocalization?.value || "N/A"),
+      storageType: vmStorageType.value,
     });
   };
 
@@ -225,7 +214,12 @@ export const FormVM = () => {
             value={vmLocalization}
             onChange={setVmLocalization}
           />
-          <BTNISOsSection vmNameLabel={vmSO?.label} />
+          <DropDowText
+            label={t("createVm.operationalSystem")}
+            data={osOptions} 
+            value={vmSO}
+            onChange={setVmSO}
+          />
         </Stack>
         {/* Sliders */}
         <Stack

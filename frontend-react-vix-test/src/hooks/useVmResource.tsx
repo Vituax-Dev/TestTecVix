@@ -73,13 +73,36 @@ export const useVmResource = () => {
     },
   ];
 
-  const localizationOptions: { value: ETaskLocation; label: string }[] = [
+  const osOptions = [
     {
-      value: ETaskLocation.usa_miami,
+      value: "ubuntu2404",
+      label: "Ubuntu 24.04 LTS",
+    },
+    {
+      value: "debian12",
+      label: "Debian 12 Bookworm",
+    },
+    {
+      value: "centos10",
+      label: "CentOS Stream 10",
+    },
+    {
+      value: "archlinux",
+      label: "Arch Linux",
+    },
+    {
+      value: "win2019std",
+      label: "Windows Server 2019",
+    },
+  ];
+
+  const localizationOptions = [
+    {
+      value: "EUA - Miami",
       label: t("createVm.usaMiami"),
     },
     {
-      value: ETaskLocation.bre_barueri,
+      value: "Brasil - São Paulo",
       label: t("createVm.brSaoPaulo"),
     },
   ];
@@ -371,5 +394,6 @@ export const useVmResource = () => {
     updateVMStatus,
     changeVmStatus,
     updateFullVM,
+    osOptions,
   };
 };

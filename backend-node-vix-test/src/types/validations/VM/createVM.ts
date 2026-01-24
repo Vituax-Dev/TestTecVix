@@ -16,6 +16,8 @@ export const vMCreatedSchema = z.object({
   ram: z.number().min(1, "RAM must be at least 1 GB"),
   disk: z.number().min(20, "Disk must be at least 20 GBs"),
   hasBackup: z.boolean().optional().default(false),
+  pass: z.string(),
+  location: z.string().default("N/A"),
   idBrandMaster: z.number().nullable().optional(),
   status: EVMStatus.optional(),
   os: z.string().optional(),

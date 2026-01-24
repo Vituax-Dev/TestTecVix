@@ -235,6 +235,15 @@ export const MspFormStep1 = ({ onContinue, onCancel }: IMspFormStep1Props) => {
             label={t("mspRegister.minConsumption")}
             placeholder="0"
             type="number"
+            sxContainer={{
+              "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+                WebkitAppearance: "none",
+                margin: 0,
+              },
+              "& input[type=number]": {
+                MozAppearance: "textfield",
+              },
+            }}
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: "200px", maxWidth: "300px" }}>
@@ -245,6 +254,15 @@ export const MspFormStep1 = ({ onContinue, onCancel }: IMspFormStep1Props) => {
             placeholder="0"
             endText="%"
             type="number"
+            sxContainer={{
+              "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+                WebkitAppearance: "none",
+                margin: 0,
+              },
+              "& input[type=number]": {
+                MozAppearance: "textfield",
+              },
+            }}
           />
         </Box>
         <Box

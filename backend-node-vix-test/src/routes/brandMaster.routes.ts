@@ -62,4 +62,14 @@ brandMasterRoutes.delete(
   },
 );
 
+// Reativar MSP e todos os usuários vinculados
+brandMasterRoutes.patch(
+  `${BASE_PATH}/:idBrandMaster/reactivate`,
+  // authUser,
+  // isAdmin,
+  async (req, res) => {
+    await brandMasterController.reactivateBrandMaster(req, res);
+  },
+);
+
 export { brandMasterRoutes };

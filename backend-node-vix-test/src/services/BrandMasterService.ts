@@ -173,11 +173,88 @@ export class BrandMasterService {
       );
     }
 
-    const deletedBrand =
-      await this.brandMasterModel.deleteBrandMaster(idBrandMaster);
+    // Soft delete do BrandMaster e de todos os usuários vinculados em transação
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Soft delete de todos os usuários vinculados ao MSP
+      await tx.user.updateMany({
+        where: {
+          idBrandMaster,
+          deletedAt: null,
+        },
+        data: {
+          deletedAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      // 2. Soft delete do BrandMaster
+      const deletedBrand = await tx.brandMaster.update({
+        where: { idBrandMaster },
+        data: {
+          deletedAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+
+      return deletedBrand;
+    });
 
     return {
-      brandMaster: deletedBrand,
+      brandMaster: result,
+    };
+  }
+
+  /**
+   * Reativa um MSP e todos os usuários vinculados (que foram soft deleted junto)
+   */
+  async reactivateBrandMaster(idBrandMaster: number) {
+    // Busca o MSP mesmo se deletado
+    const oldBrandMaster = await prisma.brandMaster.findUnique({
+      where: { idBrandMaster },
+    });
+
+    if (!oldBrandMaster) {
+      throw new AppError(
+        ERROR_MESSAGE.BRAND_MASTER_NOT_FOUND,
+        STATUS_CODE.NOT_FOUND
+      );
+    }
+
+    if (!oldBrandMaster.deletedAt) {
+      throw new AppError(
+        "MSP já está ativo",
+        STATUS_CODE.BAD_REQUEST
+      );
+    }
+
+    // Reativar MSP e usuários em transação
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Reativar todos os usuários vinculados ao MSP
+      await tx.user.updateMany({
+        where: {
+          idBrandMaster,
+          deletedAt: { not: null },
+        },
+        data: {
+          deletedAt: null,
+          updatedAt: new Date(),
+        },
+      });
+
+      // 2. Reativar o BrandMaster
+      const reactivatedBrand = await tx.brandMaster.update({
+        where: { idBrandMaster },
+        data: {
+          deletedAt: null,
+          updatedAt: new Date(),
+        },
+      });
+
+      return reactivatedBrand;
+    });
+
+    return {
+      brandMaster: result,
     };
   }
 }

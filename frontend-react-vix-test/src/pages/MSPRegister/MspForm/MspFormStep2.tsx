@@ -134,8 +134,11 @@ export const MspFormStep2 = ({
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
+            gridTemplateColumns: "repeat(4, 1fr)",
             gap: "24px",
+            "@media (max-width: 1100px)": {
+              gridTemplateColumns: "repeat(2, 1fr)",
+            },
             "@media (max-width: 600px)": {
               gridTemplateColumns: "1fr",
             },

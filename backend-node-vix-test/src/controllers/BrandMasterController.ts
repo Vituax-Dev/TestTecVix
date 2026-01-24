@@ -52,4 +52,12 @@ export class BrandMasterController {
     );
     return res.status(STATUS_CODE.OK).json(result);
   }
+
+  async reactivateBrandMaster(req: CustomRequest<unknown>, res: Response) {
+    const { idBrandMaster } = req.params;
+    const result = await this.brandMasterService.reactivateBrandMaster(
+      Number(idBrandMaster),
+    );
+    return res.status(STATUS_CODE.OK).json(result);
+  }
 }

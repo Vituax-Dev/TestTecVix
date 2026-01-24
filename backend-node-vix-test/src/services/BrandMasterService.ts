@@ -99,6 +99,7 @@ export class BrandMasterService {
           username: adminData.username,
           email: adminData.email,
           password: hashedPassword,
+          phone: adminData.phone,
           role: "admin",
           idBrandMaster: newBrandMaster.idBrandMaster,
           isActive: true,

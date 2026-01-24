@@ -1,6 +1,6 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useZTheme } from "../../../stores/useZTheme";
-import { Box, IconButton, Stack } from "@mui/material";
+import { Box, CircularProgress, IconButton, Stack } from "@mui/material";
 import { ImgFromDB } from "../../../components/ImgFromDB";
 import { TextRob14Font1Xs } from "../../../components/Text1Xs";
 import { TextRob12Font2Xs } from "../../../components/Text2Xs";
@@ -15,6 +15,7 @@ import moment from "moment";
 export const MspTable = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const [loadingEdit, setLoadingEdit] = useState<number | null>(null);
   const {
     setCep,
     setLocality,
@@ -42,9 +43,14 @@ export const MspTable = () => {
     setShowAddressFields,
     setIsPoc,
     isPocFilter,
+    setAdmName,
+    setAdmEmail,
+    setAdmPhone,
+    setMinConsumption,
+    setDiscountPercentage,
   } = useZMspRegisterPage();
 
-  const { listAllBrands } = useBrandMasterResources();
+  const { listAllBrands, getBrandMasterById } = useBrandMasterResources();
 
   const { role } = useZUserProfile();
 
@@ -62,30 +68,54 @@ export const MspTable = () => {
     setIsEditing([index]);
   };
 
-  const handleEdit = (index: number) => {
+  const handleEdit = async (index: number) => {
+    setLoadingEdit(index);
+    
+    // Busca os dados completos do MSP incluindo o admin
+    const response = await getBrandMasterById(index);
+    const msp = response?.brandMaster;
+    
+    if (!msp) {
+      setLoadingEdit(null);
+      return;
+    }
+
     setEnterOnEditing(true);
     startEditing(index);
     setActiveStep(0);
-    const msp = mspList.find((c) => c.idBrandMaster === index);
-    setCompanyName(msp?.brandName || "");
-    setCnpj(msp?.cnpj || "");
-    setPhone(msp?.smsContact || "");
-    setContactEmail(msp?.emailContact || "");
-    setCep(msp?.cep || "");
-    setLocality(msp?.location || "");
-    setCountryState(msp?.state || "");
-    setCity(msp?.city || "");
-    setStreet(msp?.street || "");
-    setStreetNumber(msp?.placeNumber || "");
-    setSector(msp?.setorName || "");
-    setMSPDomain(msp?.domain || "");
+    
+    // Dados do MSP
+    setCompanyName(msp.brandName || "");
+    setCnpj(msp.cnpj || "");
+    setPhone(msp.smsContact || "");
+    setContactEmail(msp.emailContact || "");
+    setCep(msp.cep || "");
+    setLocality(msp.location || "");
+    setCountryState(msp.state || "");
+    setCity(msp.city || "");
+    setStreet(msp.street || "");
+    setStreetNumber(msp.placeNumber || "");
+    setSector(msp.setorName || "");
+    setMSPDomain(msp.domain || "");
     setBrandLogo({
-      brandLogoUrl: msp?.brandLogo,
-      brandObjectName: msp?.brandLogo,
+      brandLogoUrl: msp.brandLogo || "",
+      brandObjectName: msp.brandLogo || "",
     });
-    setCityCode(msp?.cityCode ? `${msp.cityCode}` : "");
-    setDistrict(msp?.district || "");
-    setIsPoc(Boolean(msp?.isPoc));
+    setCityCode(msp.cityCode ? `${msp.cityCode}` : "");
+    setDistrict(msp.district || "");
+    setIsPoc(Boolean(msp.isPoc));
+    setMinConsumption(msp.minConsumption ? `${msp.minConsumption}` : "");
+    setDiscountPercentage(msp.discountPercentage ? `${msp.discountPercentage}` : "");
+
+    // Dados do Admin (primeiro usuário admin)
+    const admin = msp.users?.find((u) => u.role === "admin");
+    if (admin) {
+      setAdmName(admin.username || "");
+      setAdmEmail(admin.email || "");
+      setAdmPhone(admin.phone || "");
+    }
+
+    setLoadingEdit(null);
   };
 
   return (
@@ -271,8 +301,13 @@ export const MspTable = () => {
               >
                 <IconButton
                   onClick={() => handleEdit(msp.idBrandMaster)}
+                  disabled={loadingEdit === msp.idBrandMaster}
                 >
-                  <PencilCicleIcon fill={theme[mode].blueMedium} />
+                  {loadingEdit === msp.idBrandMaster ? (
+                    <CircularProgress size={20} />
+                  ) : (
+                    <PencilCicleIcon fill={theme[mode].blueMedium} />
+                  )}
                 </IconButton>
                 {role === "admin" && (
                   <IconButton

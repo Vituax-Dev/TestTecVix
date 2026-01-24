@@ -15,7 +15,7 @@ export class BrandMasterController {
   async getById(req: CustomRequest<unknown>, res: Response) {
     const { idBrandMaster } = req.params;
     const result = await this.brandMasterService.getById(Number(idBrandMaster));
-    return res.status(STATUS_CODE.OK).json(result);
+    return res.status(STATUS_CODE.OK).json({ brandMaster: result });
   }
 
   async listAll(req: CustomRequest<unknown>, res: Response) {

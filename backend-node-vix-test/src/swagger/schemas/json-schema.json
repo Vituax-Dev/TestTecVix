@@ -337,6 +337,12 @@
         "email": {
           "type": "string"
         },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "profileImgUrl": {
           "type": [
             "string",

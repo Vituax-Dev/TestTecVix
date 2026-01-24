@@ -34,6 +34,24 @@ export class BrandMasterModel {
   async getById(idBrandMaster: number) {
     return prisma.brandMaster.findUnique({
       where: { idBrandMaster },
+      include: {
+        users: {
+          where: {
+            role: "admin",
+            deletedAt: null,
+          },
+          select: {
+            idUser: true,
+            username: true,
+            email: true,
+            phone: true,
+            profileImgUrl: true,
+            role: true,
+            isActive: true,
+          },
+          take: 1,
+        },
+      },
     });
   }
 

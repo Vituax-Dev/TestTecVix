@@ -63,6 +63,7 @@ Table user {
   username String [not null]
   password String [not null]
   email String [unique, not null]
+  phone String
   profileImgUrl String
   role ERole [not null, default: 'member']
   idBrandMaster Int

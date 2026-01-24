@@ -133,6 +133,8 @@ export const MSPRegisterPage = () => {
           smsContact: phone,
           brandLogo: brandObjectName || brandLogoUrl,
           isPoc,
+          minConsumption,
+          discountPercentage,
         });
 
         if (result?.brandMaster) {

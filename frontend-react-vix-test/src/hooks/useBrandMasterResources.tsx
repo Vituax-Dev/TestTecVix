@@ -33,6 +33,8 @@ interface IUpdateBrandMaster {
   cityCode?: number;
   district?: string;
   isPoc?: boolean;
+  minConsumption?: number | string;
+  discountPercentage?: number | string;
 
   manual?: string;
   termsOfUse?: string;
@@ -361,6 +363,8 @@ export const useBrandMasterResources = () => {
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
+        minConsumption: data.minConsumption ? Number(data.minConsumption) : undefined,
+        discountPercentage: data.discountPercentage ? Number(data.discountPercentage) : undefined,
       },
     });
 
@@ -391,6 +395,33 @@ export const useBrandMasterResources = () => {
     return response.data;
   };
 
+  const getBrandMasterById = async (brandMasterId: number | string) => {
+    if (!brandMasterId) return null;
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.get<{
+      brandMaster: INewMSPResponse & {
+        users?: Array<{
+          idUser: string;
+          username: string;
+          email: string;
+          phone?: string;
+          role: string;
+        }>;
+      };
+    }>({
+      url: `/brand-master/${brandMasterId}`,
+      auth,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+    return response.data;
+  };
+
   return {
     isLoading,
     updateBrandMaster,
@@ -401,5 +432,6 @@ export const useBrandMasterResources = () => {
     deleteBrandMaster,
     editBrandMaster,
     getSelf,
+    getBrandMasterById,
   };
 };

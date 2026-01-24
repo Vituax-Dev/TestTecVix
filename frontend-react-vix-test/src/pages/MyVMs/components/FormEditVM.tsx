@@ -105,11 +105,10 @@ export const FormEditVM = ({ onClose }: IProps) => {
     if (!isValidPass) return;
     await updateVM(
       {
-        ...vm,
         vmName: vmName,
-        vCPU: vmvCpu,
-        ram: vmMemory,
-        disk: vmDisk,
+        vCPU: Number(vmvCpu),
+        ram: Number(vmMemory),
+        disk: Number(vmDisk),
         hasBackup: hasBackup,
         os: String(vmSO?.value) || "",
         pass: vmPassword,
@@ -128,7 +127,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
   };
 
   const handleStopVM = async () => {
-    setStatus("STOPPED");
+    setVmIDToStop(0);
     onClose(true);
   };
 
@@ -203,12 +202,11 @@ export const FormEditVM = ({ onClose }: IProps) => {
             }}
           >
             <LabelInputVM
-              onChange={() => {}}
+              onChange={setVmPassword}
               value={vmPassword}
               label={t("createVm.password")}
               placeholder={t("createVm.userPassword")}
               type="password"
-              disabled
             />
             <PasswordValidations vmPassword={vmPassword} />
           </Stack>

@@ -264,6 +264,19 @@ export const useVmResource = () => {
     return;
   };
 
+  const updateFullVM = async (idVM: number, data: any) => {
+    try {
+      const response = await api.put({
+        url: `/vm/${idVM}`,
+        data: data,
+      });
+      return response;
+    } catch (error) {
+      console.error("Erro ao atualizar VM", error);
+      return { error: true };
+    }
+  };
+
   const deleteVM = async (idVM: number) => {
     if (role !== "admin") return toast.error(t("generic.errorOlnlyAdmin"));
     if (!idVM) return;
@@ -356,6 +369,7 @@ export const useVmResource = () => {
     getOSDeletedLabel,
     monitoringVMStatus,
     updateVMStatus,
-    changeVmStatus
+    changeVmStatus,
+    updateFullVM,
   };
 };

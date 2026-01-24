@@ -8,6 +8,7 @@ import {
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
+import { brandMasterUpdatedSchema } from "../types/validations/BrandMaster/updateBrandMaster";
 
 export class BrandMasterService {
   constructor() { }
@@ -48,7 +49,7 @@ export class BrandMasterService {
     idBrandMaster,
   }: {
     user: user;
-    validData: TBrandMaster;
+    validData: any;
     idBrandMaster: number;
     oldBrandMaster: brandMaster;
   }) {
@@ -59,10 +60,9 @@ export class BrandMasterService {
   }
 
   async updateBrandMaster(idBrandMaster: number, data: unknown, user: user) {
-    if (user.idBrandMaster && user.idBrandMaster !== idBrandMaster) {
-      throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
-    }
-    const validData = brandMasterSchema.parse(data);
+
+    const validData = brandMasterUpdatedSchema.parse(data);
+
     const oldBrandMaster = await this.brandMasterModel.getById(idBrandMaster);
     if (!oldBrandMaster) {
       throw new AppError(
@@ -89,7 +89,7 @@ export class BrandMasterService {
 
     return this.update({
       user,
-      validData,
+      validData: validData as any,
       idBrandMaster,
       oldBrandMaster,
     });

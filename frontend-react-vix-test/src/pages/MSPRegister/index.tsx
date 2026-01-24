@@ -12,7 +12,6 @@ import { MspModal } from "./MspModal";
 import { ModalDeleteMsp } from "./ModalDeleteMsp";
 import { useEffect, useState } from "react";
 import { ModalUSerNotCreated } from "./ModalUSerNotCreated";
-import { ModalDeleteVMsFromMSP } from "./ModalDeleteVMsFromMSP";
 import { useBrandMasterResources } from "../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { useVmResource } from "../../hooks/useVmResource";
@@ -32,6 +31,19 @@ export const MSPRegisterPage = () => {
     setIsEditing,
     vmsToBeDeleted,
     setVmsToBeDeleted,
+    setCompanyName,
+    setCnpj,
+    setLocality,
+    setContactEmail,
+    setMSPDomain,
+    setCep,
+    setCity,
+    setCountryState,
+    setStreet,
+    setStreetNumber,
+    setIsPoc,
+    setPhone,
+    setSector,
   } = useZMspRegisterPage();
   const { t } = useTranslation();
   const { isLoading, listAllBrands } = useBrandMasterResources();
@@ -43,6 +55,23 @@ export const MSPRegisterPage = () => {
     setIsEditing([]);
     setActiveStep(0);
     resetAll();
+  };
+
+  const handleEditAction = (msp: any) => {
+    setCompanyName(msp.companyName);
+    setCnpj(msp.cnpj);
+    setLocality(msp.location);
+    setContactEmail(msp.emailContact);
+    setMSPDomain(msp.brandName); 
+    setCep(msp.cep);
+    setCity(msp.city);
+    setCountryState(msp.state);
+    setStreet(msp.street);
+    setStreetNumber(msp.placeNumber);
+    setIsPoc(msp.isPoc);
+
+    setIsEditing([msp.idBrandMaster]);
+    setActiveStep(0); 
   };
 
   const handleRefreshTable = async () => {
@@ -165,7 +194,7 @@ export const MSPRegisterPage = () => {
               </TextRob16Font1S>
               <MspTableFilters />
             </Box>
-            <MspTable key={refreshKey} />
+            <MspTable key={refreshKey}/>
           </Stack>
         </Stack>
       </Stack>

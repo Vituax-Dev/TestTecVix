@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const brandMasterUpdatedSchema = z.object({
+  idBrandMaster: z.number().optional(),
   brandName: z.string().nullable().optional(),
   isActive: z.boolean().default(false).optional(),
   brandLogo: z.string().nullable().optional(),
@@ -26,6 +27,6 @@ export const brandMasterUpdatedSchema = z.object({
   manual: z.string().nullable().optional(),
   termsOfUse: z.string().nullable().optional(),
   privacyPolicy: z.string().nullable().optional(),
-});
+}).passthrough();
 
 export type TBrandMasterUpdate = z.infer<typeof brandMasterUpdatedSchema>;

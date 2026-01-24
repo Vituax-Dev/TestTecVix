@@ -24,7 +24,8 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { createAnewBrandMaster, isLoading } = useBrandMasterResources();
+  const { createAnewBrandMaster, editBrandMaster, isLoading } =
+    useBrandMasterResources();
   const { handleUpload, isUploading: isUploadingFile } = useUploadFile();
 
   const {
@@ -45,6 +46,7 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
     setActiveStep,
     setModalOpen,
     resetAll,
+    isEditing,
     companyName,
     cnpj,
     phone,
@@ -102,23 +104,23 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
     }
 
     const payload: ICreateNewBrandMaster = {
-      companyName : companyName,
+      companyName: companyName,
       cnpj: cnpj,
       phone: phone,
       sector: sector,
       contactEmail: contactEmail,
-      cep,
+      cep: cep,
       locality: locality,
-      countryState,
-      city,
-      street,
-      streetNumber,
+      countryState: countryState,
+      city: city,
+      street: street,
+      streetNumber: streetNumber,
       district,
       admName: admName,
       admEmail: admEmail,
       admPhone: admPhone,
       admPassword: admPassword,
-      mspDomain : mspDomain,
+      mspDomain: mspDomain,
       cityCode: cityCode ? Number(cityCode) : undefined,
       isPoc: Boolean(isPoc),
       position: "admin",
@@ -127,14 +129,38 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
         : brandLogoUrl || "https://cataas.com/cat/gif",
     };
 
-    const response = await createAnewBrandMaster(payload);
+    if (isEditing.length > 0) {
+      const mspId = isEditing[0];
 
-    if (response) {
-      if (onRefresh) {
-        await onRefresh();
+      const response = await editBrandMaster(mspId, {
+        idBrandMaster: mspId,
+        brandName: companyName, 
+        emailContact: contactEmail,
+        domain: mspDomain, 
+        cnpj: cnpj,
+        setorName: sector,
+        location: locality,
+        state: countryState,
+        city: city,
+        cep: cep,
+        street: street,
+        placeNumber: streetNumber,
+        smsContact: phone,
+        brandLogo: brandLogoUrl,
+        isPoc: Boolean(isPoc),
+      });
+
+      if (response) {
+        if (onRefresh) await onRefresh();
+        setModalOpen("editedMsp");
+        return
       }
-
-      setModalOpen("createdMsp");
+    } else {
+      const response = await createAnewBrandMaster(payload);
+      if (response) {
+        if (onRefresh) await onRefresh();
+        setModalOpen("createdMsp");
+      }
     }
   };
 
@@ -429,7 +455,7 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
             <TextRob16Font1S
               sx={{ color: "#FFF", fontWeight: "600", fontSize: "16px" }}
             >
-              Confirmar cadastro
+              {isEditing.length > 0 ? "Salvar alterações" : "Confirmar cadastro"}
             </TextRob16Font1S>
           </Btn>
           <Btn

@@ -547,7 +547,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 - [x] Implementar componente para **cadastro de MSP em 2 etapas**
 - [x] Possibilitar **criar um novo MSP**
-- [ ] Possibilitar **editar um MSP já existente**
+- [x] Possibilitar **editar um MSP já existente**
 - [x] Adicionar campos de **endereço** (ou puxar pelo CEP e/ou CNPJ)
 - [x] Implementar filtros de **search**
 - [x] Implementar flag de **"Mostrar somente os que estão em POC"**

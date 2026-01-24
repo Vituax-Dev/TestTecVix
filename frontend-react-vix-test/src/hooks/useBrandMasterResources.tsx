@@ -9,8 +9,8 @@ import { useZBrandInfo } from "../stores/useZBrandStore";
 import { useUploadFile } from "./useUploadFile";
 import { IBrandMasterBasicInfo } from "../types/BrandMasterTypes";
 
-
 interface IUpdateBrandMaster {
+  idBrandMaster: number;
   brandName?: string;
   isActive?: boolean;
   brandLogo?: string;
@@ -127,75 +127,7 @@ export const useBrandMasterResources = () => {
   } = useZBrandInfo();
   const { getFileByObjectName } = useUploadFile();
 
-  const updateBrandMaster = async ({
-    brandName,
-    brandLogo,
-    domain,
-  }: IUpdateBrandMaster) => {
-    if (!role || (role !== "admin" && role !== "manager")) return;
-    const auth = await getAuth();
-    setIsLoading(true);
-    const response = await api.put({
-      url: `/brand-master/${idBrand}`,
-      auth,
-      data: {
-        brandName,
-        brandLogo,
-        domain,
-      },
-    });
-    setIsLoading(false);
-    if (response.error) {
-      toast.error(response.message);
-      return;
-    }
-    toast.success(t("whiteLabel.dnsSaved"));
-    return response.data;
-  };
 
-  const updateBrandMasterInfo = async (data: Partial<IBrandMasterResource>) => {
-    if (data.brandName && brandName !== data.brandName && role !== "admin") {
-      toast.error(t("generic.errorOlnlyAdmin"));
-      return;
-    }
-
-    if (data.domain && domain !== data.domain && role !== "admin") {
-      toast.error(t("generic.errorOlnlyAdmin"));
-      return;
-    }
-
-    const auth = await getAuth();
-    setIsLoading(true);
-    const response = await api.put<IBrandMasterResource>({
-      url: `/brand-master/${idBrand}`,
-      auth,
-      data,
-    });
-    setIsLoading(false);
-    if (response.error) {
-      toast.error(response.message);
-      return;
-    }
-    const dataResponse = response.data;
-    const { url } = await getFileByObjectName(dataResponse.brandLogo);
-    setBrandInfo({
-      brandName: dataResponse.brandName,
-      brandLogo: url || "",
-      domain: dataResponse.domain || "",
-      setorName: dataResponse.setorName || "",
-      fieldName: dataResponse.fieldName || "",
-      location: dataResponse.location || "",
-      city: dataResponse.city || "",
-      emailContact: dataResponse.emailContact || "",
-      smsContact: dataResponse.smsContact || "",
-      timezone: dataResponse.timezone || "",
-      manual: dataResponse?.manual || null,
-      termsOfUse: dataResponse?.termsOfUse || null,
-      privacyPolicy: dataResponse?.privacyPolicy || null,
-    });
-
-    return response.data;
-  };
 
   const updateDomain = async (domain: string) => {
     if (role !== "admin" && role !== "manager") {
@@ -248,7 +180,7 @@ export const useBrandMasterResources = () => {
         brandName: data.companyName,
         isActive: true,
         brandLogo: data.brandLogo,
-        domain: data.mspDomain,
+        domain: undefined,
         setorName: data.sector,
         fieldName: undefined,
         location: data.locality,
@@ -283,7 +215,7 @@ export const useBrandMasterResources = () => {
       url: "/brand-master",
       auth,
       params: {
-      limit: 1000,
+        limit: 1000,
       },
     });
     setIsLoading(false);
@@ -328,31 +260,14 @@ export const useBrandMasterResources = () => {
     data: IUpdateBrandMaster,
   ) => {
     if (!brandMasterId) return null;
-    if (!data) return null;
-    if (role !== "admin" && role !== "manager") {
-      toast.error(t("generic.errorOlnlyAdmin"));
-      return;
-    }
     const auth = await getAuth();
+
     const response = await api.put<INewMSPResponse>({
       url: `/brand-master/${brandMasterId}`,
       auth,
       data: {
-        brandName: data.brandName,
-        emailContact: data.emailContact,
-        cnpj: data.cnpj,
-        setorName: data.setorName,
-        location: data.location,
-        state: data.state,
-        city: data.city,
-        cep: data.cep,
-        street: data.street,
-        placeNumber: data.placeNumber,
-        smsContact: data.smsContact,
-        brandLogo: data.brandLogo,
-        cityCode: data?.cityCode ? data.cityCode : undefined,
-        district: data?.district ? data.district : undefined,
-        isPoc: Boolean(data?.isPoc),
+        ...data,
+        idBrandMaster: Number(brandMasterId),
       },
     });
 
@@ -361,9 +276,7 @@ export const useBrandMasterResources = () => {
       return;
     }
 
-    return {
-      brandMaster: response.data,
-    };
+    return response.data;
   };
 
   const getSelf = async () => {
@@ -385,8 +298,6 @@ export const useBrandMasterResources = () => {
 
   return {
     isLoading,
-    updateBrandMaster,
-    updateBrandMasterInfo,
     updateDomain,
     createAnewBrandMaster,
     listAllBrands,

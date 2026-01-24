@@ -5,7 +5,7 @@ import { user } from "@prisma/client";
 import { STATUS_CODE } from "../constants/statusCode";
 
 export class BrandMasterController {
-  constructor() {}
+  constructor() { }
   private brandMasterService = new BrandMasterService();
 
   async getSelf(req: CustomRequest<unknown>, res: Response) {
@@ -33,6 +33,7 @@ export class BrandMasterController {
   }
 
   async updateBrandMaster(req: CustomRequest<unknown>, res: Response) {
+    try {
     const user = req.user as user;
     const { idBrandMaster } = req.params;
     const result = await this.brandMasterService.updateBrandMaster(
@@ -41,6 +42,13 @@ export class BrandMasterController {
       user,
     );
     return res.status(STATUS_CODE.OK).json(result);
+  } catch (error: any) {
+    console.error("Zod Validation Error:", error.errors || error.message);
+    return res.status(STATUS_CODE.BAD_REQUEST).json({
+      message: "Dados inválidos para atualização",
+      details: error.errors 
+    });
+  }
   }
 
   async deleteBrandMaster(req: CustomRequest<unknown>, res: Response) {

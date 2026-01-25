@@ -44,6 +44,12 @@ export const MspTable = () => {
     setEnterOnEditing,
     setShowAddressFields,
     setIsPoc,
+    setMinConsumption,
+    setDiscountPercent,
+    setAdmName,
+    setAdmEmail,
+    setAdmUsername,
+    setAdmPhone,
     isPocFilter,
   } = useZMspRegisterPage();
 
@@ -95,6 +101,15 @@ export const MspTable = () => {
     setCityCode(msp?.cityCode ? `${msp.cityCode}` : "");
     setDistrict(msp?.district || "");
     setIsPoc(Boolean(msp?.isPoc));
+    setMinConsumption(msp?.minConsumption ? `${msp.minConsumption}` : "0");
+    setDiscountPercent(msp?.discountPercent ? `${msp.discountPercent}` : "0");
+    const adminUser = msp?.users?.[0];
+    if (adminUser) {
+      setAdmName(adminUser.fullName || "");
+      setAdmEmail(adminUser.email || "");
+      setAdmUsername(adminUser.username || "");
+      setAdmPhone(adminUser.phone || "");
+    }
   };
 
   return (

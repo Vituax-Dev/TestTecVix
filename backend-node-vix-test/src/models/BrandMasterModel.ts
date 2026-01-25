@@ -1,5 +1,5 @@
 import { prisma } from "../database/client";
-import { TBrandMaster } from "../types/validations/BrandMaster/createBrandMaster";
+import { TBrandMaster, TUpdateBrandMaster } from "../types/validations/BrandMaster/createBrandMaster";
 import { TQuery } from "../types/validations/Queries/queryListAll";
 import moment from "moment";
 
@@ -78,6 +78,21 @@ export class BrandMasterModel {
           contains: query.search,
         },
       },
+      include: {
+        users: {
+          where: {
+            role: "admin",
+            deletedAt: null,
+          },
+          take: 1,
+          select: {
+            idUser: true,
+            username: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
       take: limit || undefined,
       skip,
       orderBy: orderBy.length ? orderBy : [{ updatedAt: "desc" }],
@@ -95,7 +110,7 @@ export class BrandMasterModel {
     return prisma.brandMaster.create({ data });
   }
 
-  async updateBrandMaster(idBrandMaster: number, data: TBrandMaster) {
+  async updateBrandMaster(idBrandMaster: number, data: TUpdateBrandMaster) {
     return prisma.brandMaster.update({
       where: { idBrandMaster },
       data: { ...data, updatedAt: new Date() },

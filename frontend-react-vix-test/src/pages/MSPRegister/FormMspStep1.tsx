@@ -14,6 +14,8 @@ import { LOCATION_OPTIONS, SECTOR_OPTIONS } from "../../configs/contants";
 import { maskCNPJ } from "../../utils/maskCNPJ";
 import { maskPhone } from "../../utils/maskPhone";
 import { maskCEP } from "../../utils/maskCEP";
+import { maskPercent } from "../../utils/maskPercent";
+import { maskMoney } from "../../utils/maskMoney";
 import { fetchAddressByCep } from "../../services/viaCepService";
 
 interface FormMspStep1Props {
@@ -498,7 +500,7 @@ export const FormMspStep1 = ({ onContinue, onCancel }: FormMspStep1Props) => {
         }}
       >
         <LabelInputVM
-          onChange={setMinConsumption}
+          onChange={(val) => setMinConsumption(maskMoney(val))}
           value={minConsumption}
           label={t("mspRegister.minConsumption")}
           placeholder="0"
@@ -519,7 +521,7 @@ export const FormMspStep1 = ({ onContinue, onCancel }: FormMspStep1Props) => {
           }}
         >
           <LabelInputVM
-            onChange={setDiscountPercent}
+            onChange={(val) => setDiscountPercent(maskPercent(val))}
             value={discountPercent}
             label={t("mspRegister.discountPercentage")}
             placeholder="0"

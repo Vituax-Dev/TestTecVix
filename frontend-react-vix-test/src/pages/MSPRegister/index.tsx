@@ -118,7 +118,7 @@ export const MSPRegisterPage = () => {
             lineHeight: "40px",
           }}
         >
-          {t("mspRegister.title")}
+          {isEditing.length > 0 ? t("mspRegister.editTitle") : t("mspRegister.title")}
         </TextRob20Font1MB>
       }
       sxTitleSubTitle={{

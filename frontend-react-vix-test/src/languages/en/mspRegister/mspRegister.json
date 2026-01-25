@@ -1,5 +1,6 @@
 {
   "title": "MSP Registration",
+  "editTitle": "MSP Editing",
   "stepOneTitle": "MSP Company Information",
   "stepTwoTitle": "Primary MSP Administrator",
   "companyInfos": "MSP Company Information",

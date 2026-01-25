@@ -1,9 +1,13 @@
-import { brandMaster, user } from "@prisma/client";
+import { brandMaster, user, ERole } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import { BrandMasterModel } from "../models/BrandMasterModel";
+import { UserModel } from "../models/UserModel";
 import { querySchema } from "../types/validations/Queries/queryListAll";
 import {
-  brandMasterSchema,
-  TBrandMaster,
+  createBrandMasterSchema,
+  updateBrandMasterSchema,
+  TCreateBrandMaster,
+  TUpdateBrandMaster,
 } from "../types/validations/BrandMaster/createBrandMaster";
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
@@ -12,6 +16,7 @@ import { STATUS_CODE } from "../constants/statusCode";
 export class BrandMasterService {
   constructor() {}
   private brandMasterModel = new BrandMasterModel();
+  private userModel = new UserModel();
 
   async getSelf(domain: string) {
     return await this.brandMasterModel.getSelf(domain);
@@ -36,21 +41,49 @@ export class BrandMasterService {
     return this.brandMasterModel.listAll(validQuery, user.idBrandMaster);
   }
 
-  async createNewBrandMaster(data: TBrandMaster, user: user) {
-    const validData = brandMasterSchema.parse(data);
+  async createNewBrandMaster(data: TCreateBrandMaster, user: user) {
+    const validData = createBrandMasterSchema.parse(data);
 
-    if (validData.contract) {
-      validData.contractAt = new Date();
+    const {
+      admName,
+      admEmail,
+      admPhone,
+      admPassword,
+      admUsername,
+      ...brandMasterData
+    } = validData;
+
+    if (brandMasterData.contract) {
+      brandMasterData.contractAt = new Date();
     }
 
-    if (validData.isPoc) {
-      validData.pocOpenedAt = new Date();
+    if (brandMasterData.isPoc) {
+      brandMasterData.pocOpenedAt = new Date();
     }
 
     const newBrandMaster =
-      await this.brandMasterModel.createNewBrandMaster(validData);
+      await this.brandMasterModel.createNewBrandMaster(brandMasterData);
 
-    return newBrandMaster;
+    let adminUser = null;
+    if (admEmail && admPassword && admUsername) {
+      try {
+        const hashedPassword = await bcrypt.hash(admPassword, 10);
+        adminUser = await this.userModel.createActiveUser({
+          username: admUsername,
+          email: admEmail,
+          password: hashedPassword,
+          role: ERole.admin,
+          idBrandMaster: newBrandMaster.idBrandMaster,
+          profileImgUrl: null,
+          fullName: admName || null,
+          phone: admPhone || null,
+        });
+      } catch (error) {
+        console.error("Failed to create admin user:", error);
+      }
+    }
+
+    return { ...newBrandMaster, adminUser };
   }
 
   private async update({
@@ -58,7 +91,7 @@ export class BrandMasterService {
     idBrandMaster,
   }: {
     user: user;
-    validData: TBrandMaster;
+    validData: TUpdateBrandMaster;
     idBrandMaster: number;
     oldBrandMaster: brandMaster;
   }) {
@@ -81,7 +114,7 @@ export class BrandMasterService {
       );
     }
 
-    const validData = brandMasterSchema.parse(data);
+    const validData = updateBrandMasterSchema.parse(data);
 
     if (
       !oldBrandMaster.contract &&

@@ -77,6 +77,7 @@ interface ICreateNewBrandMaster {
   admEmail: string;
   admPhone: string;
   admPassword: string;
+  admUsername: string;
   brandLogo: string;
   position: "admin";
   mspDomain: string;
@@ -112,9 +113,19 @@ export interface INewMSPResponse {
   cityCode: number | null;
   district: string | null;
   isPoc: boolean;
+  minConsumption: number | null;
+  discountPercent: number | null;
   manual?: string | null;
   termsOfUse?: string | null;
   privacyPolicy?: string | null;
+  users?: Array<{
+    idUser: string;
+    username: string;
+    email: string;
+    fullName: string | null;
+    phone: string | null;
+    role: string;
+  }>;
 }
 
 export const useBrandMasterResources = () => {
@@ -260,6 +271,11 @@ export const useBrandMasterResources = () => {
         isPoc: Boolean(data?.isPoc),
         minConsumption: data?.minConsumption ? data.minConsumption : undefined,
         discountPercent: data?.discountPercent ? data.discountPercent : undefined,
+        admName: data.admName,
+        admEmail: data.admEmail,
+        admPhone: data.admPhone,
+        admPassword: data.admPassword,
+        admUsername: data.admUsername,
       },
     });
 
@@ -340,9 +356,12 @@ export const useBrandMasterResources = () => {
         placeNumber: data.placeNumber,
         smsContact: data.smsContact,
         brandLogo: data.brandLogo,
+        domain: data.domain,
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
+        minConsumption: data?.minConsumption ? data.minConsumption : undefined,
+        discountPercent: data?.discountPercent ? data.discountPercent : undefined,
       },
     });
 

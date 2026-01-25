@@ -134,18 +134,18 @@ export const StepOneMsp = () => {
   };
 
   return (
-    <Stack sx={{ gap: "30px" }}>
+    <Stack sx={{ gap: "20px" }}>
       <TextRob16Font1S
-        sx={{ color: theme[mode].primary, fontWeight: "600", fontSize: "20px" }}
+        sx={{ color: theme[mode].primary, fontWeight: "600", fontSize: "22px" }}
       >
-        Informações da empresa MSP
+        {t("mspRegister.stepOneTitle")}
       </TextRob16Font1S>
 
       <Box
         sx={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr 1fr",
-          gap: "24px",
+          gap: "18px",
           "@media (max-width: 900px)": { gridTemplateColumns: "1fr" },
         }}
       >
@@ -193,7 +193,7 @@ export const StepOneMsp = () => {
             required: true,
           },
           {
-            label: "CEP",
+            label: t("mspRegister.cep"),
             val: cep,
             set: (v: string) => setCep(maskCEP(v)),
             ph: "00000-000",
@@ -201,40 +201,40 @@ export const StepOneMsp = () => {
             onBlur: handleCEPBlur,
           },
           {
-            label: "Estado",
+            label: t("mspRegister.state"),
             val: countryState,
             set: setCountryState,
             ph: "Ex: Paraíba",
             required: true,
           },
           {
-            label: "Cidade",
+            label: t("mspRegister.city"),
             val: city,
             set: setCity,
             ph: "Ex: Campina Grande",
             required: true,
           },
           {
-            label: "Rua",
+            label: t("mspRegister.street"),
             val: street,
             set: setStreet,
             ph: "Logradouro...",
             required: false,
           },
           {
-            label: "Número",
+            label: t("mspRegister.number"),
             val: streetNumber,
             set: setStreetNumber,
             ph: "Ex: 123",
             required: false,
           },
         ].map((field, idx) => (
-          <Stack key={idx} sx={{ gap: "4px" }}>
+          <Stack key={idx} sx={{ gap: "2px" }}>
             <Stack direction="row" spacing={0.5} alignItems="baseline">
               <TextRob16Font1S
                 sx={{
                   color: theme[mode].primary,
-                  fontSize: "14px",
+                  fontSize: "16px",
                   fontWeight: "400",
                 }}
               >
@@ -244,12 +244,12 @@ export const StepOneMsp = () => {
                 <TextRob16Font1S
                   sx={{
                     color: theme[mode].primary,
-                    fontSize: "12px",
+                    fontSize: "14px",
                     fontWeight: "400",
                     opacity: 0.6,
                   }}
                 >
-                  (obrigatório)
+                  ({t("mspRegister.required")})
                 </TextRob16Font1S>
               )}
             </Stack>
@@ -283,7 +283,7 @@ export const StepOneMsp = () => {
               fontWeight: "400",
             }}
           >
-            Consumo mínimo para o MSP (em R$)
+             {t("mspRegister.minConsumption")}
           </TextRob16Font1S>
           <SimpleInput
             placeholder="R$ 0,00"
@@ -301,7 +301,7 @@ export const StepOneMsp = () => {
               fontWeight: "500",
             }}
           >
-            Porcentagem de desconto para o MSP
+            {t("mspRegister.discountPercent")}
           </TextRob16Font1S>
           <SimpleInput
             placeholder="0%"
@@ -313,7 +313,7 @@ export const StepOneMsp = () => {
 
         <Stack sx={{ justifyContent: "center", pt: 2.5 }}>
           <CheckboxLabel
-            label="MSP em fase de POC"
+            label={t("mspRegister.isPoc")}
             checked={isPoc}
             handleChange={() => setIsPoc(!isPoc)}
           />
@@ -337,7 +337,7 @@ export const StepOneMsp = () => {
               fontWeight: "500",
             }}
           >
-            Continuar
+            {t("generic.continue")}
           </TextRob16Font1S>
         </Btn>
 
@@ -358,7 +358,7 @@ export const StepOneMsp = () => {
               fontWeight: "500",
             }}
           >
-            Cancelar
+            {t("generic.cancel")}
           </TextRob16Font1S>
         </Btn>
       </Stack>

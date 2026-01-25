@@ -4,7 +4,7 @@
   "stepTwoTitle": "Primary MSP Administrator",
   "companyInfos": "MSP Company Information",
   "companyName": "MSP Company Name",
-  "required": "(Required)",
+  "required": "Required",
   "cnpj": "Tax ID",
   "phone": "Phone",
   "sector": "Business Sector",
@@ -67,5 +67,7 @@
   "vmsFromThisMSP": "VMS from this MSP",
   "mspDeleted": "MSP {{ brandName }} deleted successfully!",
   "doYouWantToDeleteThisVMs": "Do you really want to delete these VMs?",
-  "deletedVMs": "VMs deleted successfully!"
+  "deletedVMs": "VMs deleted successfully!",
+  "state": "State",
+  "discountPercent": "Percentage discount for MSP"
 }

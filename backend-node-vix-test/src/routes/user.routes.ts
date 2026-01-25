@@ -28,4 +28,7 @@ userRoutes.get(`${BASE_PATH}/token/:idUser`, async (req, res) => {
   await userController.refreshToken(req, res);
 });
 
+userRoutes.put(`${BASE_PATH}/:idUser`, async (req, res) => {
+  await userController.update(req, res);
+});
 export { userRoutes };

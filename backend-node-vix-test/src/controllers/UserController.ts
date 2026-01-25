@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserServices";
 import { STATUS_CODE } from "../constants/statusCode";
+import { prisma } from "../database/client";
 
 export class UserController {
   private userService = new UserService();
@@ -34,6 +35,29 @@ export class UserController {
       return res.status(STATUS_CODE.BAD_REQUEST).json({
         message: "Erro ao atualizar token de acesso."
       });
+    }
+  }
+
+  async update(req: Request, res: Response) {
+    const { idUser } = req.params;
+    const data = req.body;
+
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { idUser: String(idUser) },
+        data: {
+          fullName: data.fullName,
+          username: data.username,
+          email: data.email,
+          phone: data.phone,
+          profileImgUrl: data.profileImgUrl,
+          ...(data.password && { password: data.password }),
+        },
+      });
+
+      return res.status(200).json({ data: updatedUser });
+    } catch (error) {
+      return res.status(400).json({ message: "Erro ao atualizar usuário", error });
     }
   }
 }

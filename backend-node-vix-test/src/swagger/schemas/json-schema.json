@@ -288,6 +288,10 @@
         "idUser": {
           "type": "string"
         },
+        "fullName": {
+          "type": "string",
+          "default": ""
+        },
         "username": {
           "type": "string"
         },
@@ -296,6 +300,10 @@
         },
         "email": {
           "type": "string"
+        },
+        "phone": {
+          "type": "string",
+          "default": ""
         },
         "profileImgUrl": {
           "type": [

@@ -56,9 +56,11 @@ Table vM {
 
 Table user {
   idUser String [pk]
+  fullName String [not null, default: '']
   username String [not null]
   password String [not null]
   email String [not null]
+  phone String [not null, default: '']
   profileImgUrl String
   role ERole [not null, default: 'member']
   idBrandMaster Int

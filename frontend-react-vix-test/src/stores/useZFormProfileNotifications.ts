@@ -6,7 +6,7 @@ type FormValueTypes = {
 };
 
 export interface IFormProfileNotificationsVar {
-  fullNameForm: FormValueTypes;
+  fullName: FormValueTypes;
   userName: FormValueTypes;
   password: FormValueTypes;
   confirmPassword: FormValueTypes;
@@ -24,10 +24,11 @@ export interface IFormProfileNotificationsVar {
   manual: FormValueTypes;
   termsOfUse: FormValueTypes;
   privacyPolicy: FormValueTypes;
+  profileImgUrl: FormValueTypes;
 }
 
 const INIT_STATE: IFormProfileNotificationsVar = {
-  fullNameForm: {
+  fullName: {
     value: "",
     errorMessage: "",
   },
@@ -99,6 +100,7 @@ const INIT_STATE: IFormProfileNotificationsVar = {
     value: "",
     errorMessage: "",
   },
+  profileImgUrl: { value: "", errorMessage: "" }
 };
 
 interface IFormProfileNotifications extends IFormProfileNotificationsVar {

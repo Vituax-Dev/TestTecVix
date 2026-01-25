@@ -74,9 +74,11 @@ model vM {
 
 model user {
   idUser        String    @id @default(uuid())
+  fullName      String    @default("")
   username      String
   password      String
   email         String
+  phone         String    @default("")
   profileImgUrl String?
   role          ERole     @default(member)
   idBrandMaster Int?

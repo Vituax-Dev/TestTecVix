@@ -38,8 +38,11 @@ export class UserService {
     return {
       user: {
         idUser: user.idUser,
+        fullName: user.fullName,
         username: user.username,
         email: user.email,
+        phone: user.phone,
+        profileImgUrl: user.profileImgUrl,
         role: user.role,
         isActive: user.isActive,
       },

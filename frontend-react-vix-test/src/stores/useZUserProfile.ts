@@ -9,6 +9,8 @@ export interface IUserProfile {
   objectName?: string;
   imageUrl?: string;
   username: string | null;
+  fullName: string; 
+  phone: string;
   isActive?: boolean;
   lastLoginDate?: string | Date;
   userEmail: string | null;
@@ -22,6 +24,8 @@ const INIT_STATE: IUserProfile = {
   objectName: "",
   imageUrl: "",
   username: null,
+  fullName: "", 
+  phone: "",
   userEmail: null,
   token: null,
   idBrand: null,

@@ -10,13 +10,20 @@ import { UploadFileIcon } from "../../../../../icons/UploadFileIcon";
 import { TextRob12Font2Xs } from "../../../../../components/Text2Xs";
 import { CircleIcon } from "../../../../../icons/CircleIcon";
 import { useZUserProfile } from "../../../../../stores/useZUserProfile";
+import { useEffect } from "react";
+import { useZFormProfileNotifications } from "../../../../../stores/useZFormProfileNotifications";
 
 export const PerfilPhotoUpload = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
   const { handleUpload, isUploading } = useUploadFile();
-  const [uploadedFile, setUploadedFile] = useState<string | null>("");
   const { setImage } = useZUserProfile();
+  const { profileImgUrl, setFormProfileNotifications } =
+    useZFormProfileNotifications();
+
+  const [uploadedFile, setUploadedFile] = useState<string | null>(
+    profileImgUrl.value,
+  );
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -34,11 +41,16 @@ export const PerfilPhotoUpload = () => {
   };
 
   const handleRemoveLogo = () => {
+    setUploadedFile("");
+
     setImage({
       imageUrl: "",
       objectName: "",
     });
-    setUploadedFile("");
+
+    setFormProfileNotifications({
+      profileImgUrl: { value: "", errorMessage: "" },
+    });
   };
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
@@ -46,6 +58,12 @@ export const PerfilPhotoUpload = () => {
     accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif", ".svg"] },
     maxSize: 50 * 1024 * 1024, // Limita para 50MB
   });
+
+  useEffect(() => {
+    if (profileImgUrl.value) {
+      setUploadedFile(profileImgUrl.value);
+    }
+  }, [profileImgUrl.value]);
 
   return (
     <Stack sx={{ gap: "24px", width: "100%" }}>

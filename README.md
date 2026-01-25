@@ -573,9 +573,9 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 👤 Configuração de Perfil e Notificações
 
-- [ ] Permitir a edição das **informações de contato**
-- [ ] Permitir a edição da **senha**
-- [ ] Permitir a edição da **imagem de perfil** do usuário logado
+- [x] Permitir a edição das **informações de contato**
+- [x] Permitir a edição da **senha**
+- [x] Permitir a edição da **imagem de perfil** do usuário logado
 
 ---
 
@@ -750,7 +750,7 @@ Verifique se:
 
 ### 🔐 Variáveis de Ambiente
 
-- [ ] **Caso você crie novas chaves no `.env`**, lembre-se de incluí-las também no `.env.example` (tanto do backend quanto do frontend)
+- [x] **Caso você crie novas chaves no `.env`**, lembre-se de incluí-las também no `.env.example` (tanto do backend quanto do frontend)
 
 ---
 

@@ -15,14 +15,18 @@ import { PerfilPhotoUpload } from "./PerfilPhotoUpload";
 export const PersonalInformation = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
-  const { username, userEmail } = useZUserProfile();
+  const {
+    username,
+    userEmail,
+    profileImgUrl: profileImgStore,
+  } = useZUserProfile();
   const {
     userEmail: userEmailForm,
     userName,
     userPhone,
     password,
     confirmPassword,
-    fullNameForm,
+    fullName,
     setFormProfileNotifications,
   } = useZFormProfileNotifications();
 
@@ -43,28 +47,41 @@ export const PersonalInformation = () => {
   const sxLabel = {};
   const sxSideLabel = {};
 
+  const formatPhoneNumber = (value: string) => {
+    if (!value) return "";
+
+    const phoneNumber = value.replace(/\D/g, "");
+    const phoneNumberLength = phoneNumber.length;
+
+    if (phoneNumberLength < 3) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2)}`;
+    }
+    return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7, 11)}`;
+  };
+
   const validFullName = () => {
-    if (!fullNameForm.value) {
+    if (!fullName.value) {
       setFormProfileNotifications({
-        fullNameForm: {
-          ...fullNameForm,
+        fullName: {
+          ...fullName,
           errorMessage: t("profileAndNotifications.requiredField"),
         },
       });
       return;
     }
-    if (fullNameForm.value.length < 4 || fullNameForm.value.length > 100) {
+    if (fullName.value.length < 4 || fullName.value.length > 100) {
       setFormProfileNotifications({
-        fullNameForm: {
-          ...fullNameForm,
+        fullName: {
+          ...fullName,
           errorMessage: t("profileAndNotifications.invalidData"),
         },
       });
       return;
     }
     setFormProfileNotifications({
-      fullNameForm: {
-        ...fullNameForm,
+      fullName: {
+        ...fullName,
         errorMessage: "",
       },
     });
@@ -155,32 +172,28 @@ export const PersonalInformation = () => {
   };
 
   const validPhoneNumber = () => {
-    const phoneRegex = /^\d{10,11}$/; // Regex para validar telefone com 10 ou 11 dígitos
+    const digitsOnly = userPhone.value.replace(/\D/g, "");
+    const phoneRegex = /^\d{10,11}$/;
 
-    if (!userPhone.value) {
-      return setFormProfileNotifications({
-        userPhone: {
-          ...userPhone,
-          errorMessage: "",
-        },
+    if (!digitsOnly) {
+      setFormProfileNotifications({
+        userPhone: { ...userPhone, errorMessage: "" },
       });
+      return;
     }
 
-    if (!phoneRegex.test(userPhone.value) || userPhone.value.length > 20) {
-      return setFormProfileNotifications({
+    if (!phoneRegex.test(digitsOnly)) {
+      setFormProfileNotifications({
         userPhone: {
           ...userPhone,
           errorMessage: t("profileAndNotifications.invalidData"),
         },
       });
+      return;
     }
 
-    // Se o telefone for válido
-    return setFormProfileNotifications({
-      userPhone: {
-        ...userPhone,
-        errorMessage: "",
-      },
+    setFormProfileNotifications({
+      userPhone: { ...userPhone, errorMessage: "" },
     });
   };
 
@@ -188,36 +201,27 @@ export const PersonalInformation = () => {
     key: keyof IFormProfileNotificationsVar,
     val: string,
   ) => {
+    let valueToSave = val;
+
+    if (key === "userPhone") {
+      valueToSave = formatPhoneNumber(val);
+    }
+
     setFormProfileNotifications({
       [key]: {
-        ...[key],
-        value: val,
+        value: valueToSave,
+        errorMessage: "",
       },
     });
   };
 
   useEffect(() => {
     setFormProfileNotifications({
-      fullNameForm: {
-        ...fullNameForm,
-        value: "",
-        errorMessage: "",
-      },
-      userName: {
-        ...userName,
-        value: username || "",
-        errorMessage: "",
-      },
-      userEmail: {
-        ...userEmailForm,
-        value: userEmail || "",
-        errorMessage: "",
-      },
-      userPhone: {
-        ...userPhone,
-        value: "",
-        errorMessage: "",
-      },
+      fullName: { value: fullName.value, errorMessage: "" },
+      userName: { value: username || "", errorMessage: "" },
+      userEmail: { value: userEmail || "", errorMessage: "" },
+      userPhone: { value: userPhone.value, errorMessage: "" },
+      profileImgUrl: { value: profileImgStore || "", errorMessage: "" },
     });
   }, []);
 
@@ -255,13 +259,13 @@ export const PersonalInformation = () => {
       >
         <InputLabelAndFeedback
           label={t("profileAndNotifications.completeName")}
-          value={fullNameForm.value}
-          onChange={(val) => handleChange("fullNameForm", val)}
-          errorMessage={fullNameForm.errorMessage}
+          value={fullName.value}
+          onChange={(val) => handleChange("fullName", val)}
+          errorMessage={fullName.errorMessage}
           icon={
             <EditCirclePencilIcon
               fill={
-                fullNameForm.errorMessage
+                fullName.errorMessage
                   ? theme[mode].danger
                   : theme[mode].blueMedium
               }

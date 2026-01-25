@@ -38,9 +38,15 @@ export class UserController {
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 
-  async getById(req: CustomRequest<unknown>, res: Response) {
+  async getById(req: CustomRequest<ILoggedUser>, res: Response) {
     const { idUser } = req.params;
-    const result = await this.userService.getById(String(idUser));
+    const requestingUser = req.user;
+    if (!requestingUser) {
+      return res
+        .status(STATUS_CODE.UNAUTHORIZED)
+        .json({ message: "Unauthorized" });
+    }
+    const result = await this.userService.getById(String(idUser), requestingUser);
     return res.status(STATUS_CODE.OK).json(result);
   }
 
@@ -49,15 +55,27 @@ export class UserController {
     return res.status(STATUS_CODE.OK).json(result);
   }
 
-  async update(req: CustomRequest<unknown>, res: Response) {
+  async update(req: CustomRequest<ILoggedUser>, res: Response) {
     const { idUser } = req.params;
-    const result = await this.userService.update(String(idUser), req.body);
+    const requestingUser = req.user;
+    if (!requestingUser) {
+      return res
+        .status(STATUS_CODE.UNAUTHORIZED)
+        .json({ message: "Unauthorized" });
+    }
+    const result = await this.userService.update(String(idUser), req.body, requestingUser);
     return res.status(STATUS_CODE.OK).json(result);
   }
 
-  async delete(req: CustomRequest<unknown>, res: Response) {
+  async delete(req: CustomRequest<ILoggedUser>, res: Response) {
     const { idUser } = req.params;
-    await this.userService.delete(String(idUser));
+    const requestingUser = req.user;
+    if (!requestingUser) {
+      return res
+        .status(STATUS_CODE.UNAUTHORIZED)
+        .json({ message: "Unauthorized" });
+    }
+    await this.userService.delete(String(idUser), requestingUser);
     return res.status(STATUS_CODE.NO_CONTENT).send();
   }
 

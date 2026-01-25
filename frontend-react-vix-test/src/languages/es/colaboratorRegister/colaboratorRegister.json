@@ -38,8 +38,8 @@
   "cnpjAlertMessage": "Por favor, introduzca un NIF válido",
   "companyName": "Nombre de la Empresa",
   "username": "Nombre de Usuario",
-  "password": "Contraseño",
-  "confirmPassword": "Confirmar contraseño",
+  "password": "Contraseña",
+  "confirmPassword": "Confirmar contraseña",
   "dontMatch": "Las contraseñas no coinciden",
   "userCreated": "Usuario creado con éxito",
   "userEdited": "Usuario editado con éxito",
@@ -52,5 +52,7 @@
   "cannotDemoteLastAdmin": "No se puede degradar el último administrador de la empresa",
   "cannotChangeUserCompany": "No se puede cambiar la empresa del usuario después del registro",
   "emailAlreadyExists": "Este correo electrónico ya está en uso",
-  "leaveBlankToKeep": "Dejar en blanco para mantener la contraseña actual"
+  "leaveBlankToKeep": "Dejar en blanco para mantener la contraseña actual",
+  "cannotEditUser": "No tiene permiso para editar este usuario",
+  "cannotDeleteUser": "No tiene permiso para eliminar este usuario"
 }

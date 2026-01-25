@@ -393,19 +393,28 @@ O sistema possui três níveis de permissão:
 
 ## 🔑 Credenciais de Teste
 
-```
-Admin:
-  Email: admin@vituax.com
-  Senha: Admin@123
+### Vituax (Empresa Principal - idBrandMaster: null)
+| Perfil | Email | Senha |
+|--------|-------|-------|
+| Admin | admin@vituax.com | Admin@123 |
+| Manager | manager@vituax.com | Manager@123 |
+| Member | member@vituax.com | Member@123 |
 
-Manager:
-  Email: manager@vituax.com
-  Senha: Manager@123
+### UPIX (MSP - idBrandMaster: 1)
+| Perfil | Email | Senha |
+|--------|-------|-------|
+| Admin | admin@upix.com | Admin@123 |
+| Manager | manager@upix.com | Manager@123 |
+| Member | member@upix.com | Member@123 |
 
-Member:
-  Email: member@vituax.com
-  Senha: Member@123
-```
+### MSP Test (MSP - idBrandMaster: 2)
+| Perfil | Email | Senha |
+|--------|-------|-------|
+| Admin | admin@msptest.com | Admin@123 |
+| Manager | manager@msptest.com | Manager@123 |
+| Member | member@msptest.com | Member@123 |
+
+> **Nota:** Usuários Vituax podem visualizar e gerenciar todas as empresas. Usuários de MSPs só podem gerenciar sua própria empresa.
 
 ---
 

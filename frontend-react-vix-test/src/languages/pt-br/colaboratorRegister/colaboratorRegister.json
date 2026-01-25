@@ -52,5 +52,7 @@
   "cannotDemoteLastAdmin": "Não é possível rebaixar o último administrador da empresa",
   "cannotChangeUserCompany": "Não é possível alterar a empresa do funcionário após o cadastro",
   "emailAlreadyExists": "Este e-mail já está em uso",
-  "leaveBlankToKeep": "Deixe em branco para manter a senha atual"
+  "leaveBlankToKeep": "Deixe em branco para manter a senha atual",
+  "cannotEditUser": "Você não tem permissão para editar este usuário",
+  "cannotDeleteUser": "Você não tem permissão para excluir este usuário"
 }

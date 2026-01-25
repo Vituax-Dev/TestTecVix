@@ -9,6 +9,7 @@ import {
   userCreatedSchema,
   userCreatedByManagerSchema,
 } from "../types/validations/User/createUser";
+import { userUpdatedSchema } from "../types/validations/User/updateUser";
 import { prisma } from "../database/client";
 import { BucketLocalService } from "./BucketLocalService";
 
@@ -181,11 +182,27 @@ export class UserService {
     return userWithoutPassword;
   }
 
-  async getById(idUser: string) {
+  async getById(idUser: string, requestingUser: ILoggedUser) {
     const user = await this.userModel.findById(idUser);
     if (!user) {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
+
+    // Authorization checks:
+    // 1. User can view their own profile
+    // 2. Vituax admin (idBrandMaster: null) can view anyone
+    // 3. Admin/Manager can view users from the same company
+    const isSelf = requestingUser.idUser === idUser;
+    const isVituaxAdmin = requestingUser.idBrandMaster === null && requestingUser.role === "admin";
+    const isSameCompanyAdminOrManager = 
+      (requestingUser.role === "admin" || requestingUser.role === "manager") &&
+      requestingUser.idBrandMaster === user.idBrandMaster;
+
+    if (!isSelf && !isVituaxAdmin && !isSameCompanyAdminOrManager) {
+      // Return 404 to not reveal user existence
+      throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
@@ -197,22 +214,38 @@ export class UserService {
     );
   }
 
-  async update(idUser: string, data: unknown) {
+  async update(idUser: string, data: unknown, requestingUser: ILoggedUser) {
     const user = await this.userModel.findById(idUser);
     if (!user) {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
 
-    const updateData = data as { password?: string; hiringDate?: string | Date; role?: "admin" | "manager" | "member"; idBrandMaster?: number | null; [key: string]: unknown };
+    // Authorization checks:
+    // 1. User can edit their own profile
+    // 2. Vituax admin/manager (idBrandMaster: null) can edit anyone
+    // 3. Admin/Manager can edit users from the same company
+    const isSelf = requestingUser.idUser === idUser;
+    const isVituaxAdminOrManager = requestingUser.idBrandMaster === null && 
+      (requestingUser.role === "admin" || requestingUser.role === "manager");
+    const isSameCompanyAdminOrManager = 
+      (requestingUser.role === "admin" || requestingUser.role === "manager") &&
+      requestingUser.idBrandMaster === user.idBrandMaster;
+
+    if (!isSelf && !isVituaxAdminOrManager && !isSameCompanyAdminOrManager) {
+      // Return 404 to not reveal user existence
+      throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
+    // Validate input data with Zod schema
+    const validData = userUpdatedSchema.parse(data);
+    
+    // Create update object, excluding idBrandMaster (company cannot be changed)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { idBrandMaster, ...updateData } = validData;
     
     // Hash password if provided
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
-    }
-
-    // Convert hiringDate string to Date object if provided
-    if (updateData.hiringDate && typeof updateData.hiringDate === "string") {
-      updateData.hiringDate = new Date(updateData.hiringDate);
     }
 
     // Check if trying to demote the last admin
@@ -226,16 +259,30 @@ export class UserService {
       }
     }
 
-    // Always remove idBrandMaster from update - company cannot be changed after registration
-    // This ensures the field is never sent to Prisma, so it won't overwrite the existing value
-    delete updateData.idBrandMaster;
-
-    return this.userModel.update(idUser, updateData);
+    const updatedUser = await this.userModel.update(idUser, updateData);
+    
+    // Filter password from response
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword;
   }
 
-  async delete(idUser: string) {
+  async delete(idUser: string, requestingUser: ILoggedUser) {
     const user = await this.userModel.findById(idUser);
     if (!user) {
+      throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
+    // Authorization checks:
+    // 1. Vituax admin (idBrandMaster: null) can delete anyone
+    // 2. Admin can delete users from the same company only
+    const isVituaxAdmin = requestingUser.idBrandMaster === null && requestingUser.role === "admin";
+    const isSameCompanyAdmin = 
+      requestingUser.role === "admin" &&
+      requestingUser.idBrandMaster === user.idBrandMaster;
+
+    if (!isVituaxAdmin && !isSameCompanyAdmin) {
+      // Return 404 to not reveal user existence
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
 

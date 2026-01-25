@@ -55,19 +55,8 @@ const INPUTS_INITIAL_STATE: ColaboratorRegisterInputs = {
   confirmPassword: "",
 };
 
-type editingInfos = {
-  index: number;
-  permission: "admin" | "manager" | "member";
-  status: "active" | "inactive";
-};
-
 interface IColaboratorRegister extends ColaboratorRegisterInputs {
   users: Colaborator[];
-  isEditing: number[];
-  editInfos: editingInfos[];
-  colaboratorNameFilter: string;
-  companyNameFilter: string;
-  currentTabIndex: number;
   search: string;
   page: number;
   limit: number;
@@ -81,11 +70,6 @@ interface IColaboratorRegister extends ColaboratorRegisterInputs {
 const INITIAL_STATE: IColaboratorRegister = {
   ...INPUTS_INITIAL_STATE,
   users: [],
-  isEditing: [],
-  editInfos: [],
-  colaboratorNameFilter: "",
-  companyNameFilter: "",
-  currentTabIndex: 0,
   search: "",
   page: 1,
   limit: 4,
@@ -108,16 +92,11 @@ interface IColaboratorRegisterState extends IColaboratorRegister {
   setHiringDate: (hiringDate: string) => void;
   setStatus: (status: string) => void;
   setUsers: (users: Colaborator[]) => void;
-  setIsEditing: (index: number[]) => void;
-  setEditInfos: (editingInfos: editingInfos[]) => void;
-  setColaboratorNameFilter: (colaboratorNameFilter: string) => void;
-  setCompanyNameFilter: (companyNameFilter: string) => void;
   setErrorMessage: (errorMessage: boolean) => void;
   setIdBrandMaster: (idBrandMaster: number | null) => void;
   setUsername: (username: string) => void;
   setPassword: (password: string) => void;
   setConfirmPassword: (confirmPassword: string) => void;
-  setCurrentTabIndex: (currentTabIndex: number) => void;
   resetAll: () => void;
   setPage: (page: number) => void;
   setSearch: (search: string) => void;
@@ -146,14 +125,6 @@ export const useZColaboratorRegister = create<IColaboratorRegisterState>(
       set((state) => ({ ...state, hiringDate })),
     setStatus: (status: string) => set((state) => ({ ...state, status })),
     setUsers: (users: Colaborator[]) => set((state) => ({ ...state, users })),
-    setIsEditing: (newEditing: number[]) =>
-      set((state) => ({ ...state, isEditing: [...newEditing] })),
-    setEditInfos: (editingInfos: editingInfos[]) =>
-      set((state) => ({ ...state, editInfos: [...editingInfos] })),
-    setColaboratorNameFilter: (colaboratorNameFilter: string) =>
-      set((state) => ({ ...state, colaboratorNameFilter })),
-    setCompanyNameFilter: (companyNameFilter: string) =>
-      set((state) => ({ ...state, companyNameFilter })),
     setIdUser: (id: string) => set((state) => ({ ...state, idUser: id })),
     setErrorMessage: (errorMessage: boolean) =>
       set((state) => ({ ...state, errorMessage })),
@@ -165,8 +136,6 @@ export const useZColaboratorRegister = create<IColaboratorRegisterState>(
       set((state) => ({ ...state, password: password })),
     setConfirmPassword: (confirmPassword: string) =>
       set((state) => ({ ...state, confirmPassword: confirmPassword })),
-    setCurrentTabIndex: (currentTabIndex: number) =>
-      set((state) => ({ ...state, currentTabIndex: currentTabIndex })),
     setPage: (page: number) => set((state) => ({ ...state, page: page })),
     setSearch: (search: string) =>
       set((state) => ({ ...state, search: search })),

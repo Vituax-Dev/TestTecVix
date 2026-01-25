@@ -28,7 +28,7 @@ export const ColaboratorTable = ({ onRefresh, isLoading }: IColaboratorTableProp
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
   const { deleteUser } = useUserResources();
-  const { role } = useZUserProfile();
+  const { role, idUser: loggedUserId, idBrand: loggedUserBrandId } = useZUserProfile();
   const [loadingDelete, setLoadingDelete] = useState<string | null>(null);
 
   const { 
@@ -44,8 +44,38 @@ export const ColaboratorTable = ({ onRefresh, isLoading }: IColaboratorTableProp
     isEditingMode,
   } = useZColaboratorRegister();
 
+  // Check if logged user can edit a target user
+  // Rules: Can edit if self, or admin/manager of same company, or admin/manager of Vituax
+  const canEditUser = (targetUser: Colaborator): boolean => {
+    if (!loggedUserId || !role) return false;
+    
+    // Self can always edit
+    if (loggedUserId === targetUser.idUser) return true;
+    
+    // Members cannot edit others
+    if (role === "member") return false;
+    
+    // Vituax admin/manager (idBrand: null) can edit anyone
+    if (loggedUserBrandId === null) return true;
+    
+    // Admin/Manager can only edit users from the same company
+    return loggedUserBrandId === targetUser.idBrandMaster;
+  };
+
+  // Check if logged user can delete a target user
+  // Rules: Only admins can delete, and only from same company or Vituax
+  const canDeleteUser = (targetUser: Colaborator): boolean => {
+    if (!loggedUserId || role !== "admin") return false;
+    
+    // Vituax admin (idBrand: null) can delete anyone
+    if (loggedUserBrandId === null) return true;
+    
+    // Admin can only delete users from the same company
+    return loggedUserBrandId === targetUser.idBrandMaster;
+  };
+
   const handleOpenDeleteModal = (user: Colaborator) => {
-    if (role !== "admin") return;
+    if (!canDeleteUser(user)) return;
     setUserToDelete(user);
   };
 
@@ -66,6 +96,7 @@ export const ColaboratorTable = ({ onRefresh, isLoading }: IColaboratorTableProp
   };
 
   const handleEdit = (user: Colaborator) => {
+    if (!canEditUser(user)) return;
     // Fill form with user data for editing
     fillFormForEdit(user);
     // Scroll to form
@@ -335,36 +366,49 @@ export const ColaboratorTable = ({ onRefresh, isLoading }: IColaboratorTableProp
                     alignItems: "center",
                   }}
                 >
-                  <Tooltip title={t("generic.edit")}>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleEdit(user)}
-                      sx={{
-                        color: theme[mode].primary,
-                        "&:hover": {
-                          backgroundColor: theme[mode].primary + "20",
-                        },
-                      }}
-                    >
-                      <PencilCicleIcon fill={theme[mode].primary} />
-                    </IconButton>
-                  </Tooltip>
-
-                  {role === "admin" && (
-                    <Tooltip title={t("generic.delete")}>
+                  <Tooltip title={canEditUser(user) ? t("generic.edit") : t("colaboratorRegister.cannotEditUser")}>
+                    <span>
                       <IconButton
                         size="small"
-                        onClick={() => handleOpenDeleteModal(user)}
-                        disabled={loadingDelete === user.idUser}
+                        onClick={() => handleEdit(user)}
+                        disabled={!canEditUser(user)}
                         sx={{
-                          color: theme[mode].danger,
+                          color: canEditUser(user) ? theme[mode].primary : theme[mode].gray,
+                          opacity: canEditUser(user) ? 1 : 0.5,
                           "&:hover": {
-                            backgroundColor: theme[mode].danger + "20",
+                            backgroundColor: canEditUser(user) ? theme[mode].primary + "20" : "transparent",
+                          },
+                          "&.Mui-disabled": {
+                            color: theme[mode].gray,
                           },
                         }}
                       >
-                        <DeleteForeverIcon />
+                        <PencilCicleIcon fill={canEditUser(user) ? theme[mode].primary : theme[mode].gray} />
                       </IconButton>
+                    </span>
+                  </Tooltip>
+
+                  {role === "admin" && (
+                    <Tooltip title={canDeleteUser(user) ? t("generic.delete") : t("colaboratorRegister.cannotDeleteUser")}>
+                      <span>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleOpenDeleteModal(user)}
+                          disabled={loadingDelete === user.idUser || !canDeleteUser(user)}
+                          sx={{
+                            color: canDeleteUser(user) ? theme[mode].danger : theme[mode].gray,
+                            opacity: canDeleteUser(user) ? 1 : 0.5,
+                            "&:hover": {
+                              backgroundColor: canDeleteUser(user) ? theme[mode].danger + "20" : "transparent",
+                            },
+                            "&.Mui-disabled": {
+                              color: theme[mode].gray,
+                            },
+                          }}
+                        >
+                          <DeleteForeverIcon />
+                        </IconButton>
+                      </span>
                     </Tooltip>
                   )}
                 </Box>

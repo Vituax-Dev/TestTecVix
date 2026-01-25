@@ -28,4 +28,8 @@ export const brandMasterSchema = z.object({
   privacyPolicy: z.string().nullable().optional(),
 });
 
+export const idBrandMasterParamsSchema = z.object({
+  idBrandMaster: z.coerce.number().int().positive(),
+});
+
 export type TBrandMaster = z.infer<typeof brandMasterSchema>;

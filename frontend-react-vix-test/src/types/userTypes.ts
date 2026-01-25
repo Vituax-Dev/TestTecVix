@@ -1,3 +1,9 @@
+export enum ERole {
+  ADMIN = "admin",
+  MANAGER = "manager",
+  MEMBER = "member",
+}
+
 export interface IUserResponse {
   idUser: string;
   idBrandMaster: 1;
@@ -7,7 +13,7 @@ export interface IUserResponse {
   isActive: boolean;
   lastLoginDate: string | Date;
   profileImgUrl: string | null;
-  role: "admin" | "manager" | "member";
+  role: ERole;
   socketId: null | string;
   updatedAt: string | Date;
   username: string;

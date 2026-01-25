@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { ERole } from "@prisma/client";
+
+// Array de roles para validação Zod
+const ROLES = Object.values(ERole) as [ERole, ...ERole[]];
 
 export const userCreatedSchema = z.object({
   username: z
@@ -17,7 +21,7 @@ export const userCreatedSchema = z.object({
     .string({ required_error: "Email is required" })
     .email("Invalid email"),
   profileImgUrl: z.string().nullable().optional(),
-  role: z.enum(["admin", "member", "manager"]).optional(),
+  role: z.enum(ROLES).optional(),
   idBrandMaster: z.number().optional(),
   isActive: z.boolean().optional().default(true),
 });

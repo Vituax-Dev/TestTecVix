@@ -29,4 +29,8 @@ export const vMCreatedSchema = z.object({
   os: z.string().optional(),
 });
 
+export const idVMParamsSchema = z.object({
+  idVM: z.coerce.number().int().positive(),
+});
+
 export type TVMCreate = z.infer<typeof vMCreatedSchema>;

@@ -15,9 +15,11 @@ import { ItemListed } from "./ItemListed";
 import { useZBrandInfo } from "../../../stores/useZBrandStore";
 import { UserCheckDone } from "../../../icons/UserCheckDone";
 import { CloudIcon } from "../../../icons/CloudIcon";
+import { useAuth } from "../../../auth/PrivatePage";
 
 export const ListItemSidebar = () => {
   const { mode, theme } = useZTheme();
+  const { isManagerOrAdmin } = useAuth();
   const shadow =
     mode === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(217, 217, 217, 0.4)";
 
@@ -67,41 +69,45 @@ export const ListItemSidebar = () => {
           handleSelect={(val) => handleSelect(val, "/")}
           selected={selected}
         />
-        <Item
-          icon={(props) => <PlusIcon {...props} />}
-          text={t("sidebar.newVM")}
-          handleSelect={(val) => handleSelect(val, "/virtual-machine")}
-          selected={selected}
-        />
+        {isManagerOrAdmin && (
+          <Item
+            icon={(props) => <PlusIcon {...props} />}
+            text={t("sidebar.newVM")}
+            handleSelect={(val) => handleSelect(val, "/virtual-machine")}
+            selected={selected}
+          />
+        )}
         <Item
           icon={(props) => <CloudIcon {...props} />}
           text={t("sidebar.myVMs")}
           handleSelect={(val) => handleSelect(val, "/my-virtual-machines")}
           selected={selected}
         />
-        <ItemListed
-          icon={(props) => <NetworkIcon {...props} />}
-          text={t("sidebar.registers")}
-          handleSelect={handleSelect}
-          selected={selected}
-          listItems={[
-            {
-              text: t("sidebar.mspRegister"),
-              path: "/msp-register",
-              isSelected: pathname === "/msp-register",
-              icon: (props) => <UserCheckDone {...props} />,
-            },
-            {
-              text: t("sidebar.colaboratorRegister"),
-              path: "/colaborator-register",
-              isSelected: pathname === "/colaborator-register",
-              icon: (props) => <UserCheckDone {...props} />,
-            },
-          ]}
-          hadleSelectItem={(val) =>
-            handleSelect(t("sidebar.registers"), val.path)
-          }
-        />
+        {isManagerOrAdmin && (
+          <ItemListed
+            icon={(props) => <NetworkIcon {...props} />}
+            text={t("sidebar.registers")}
+            handleSelect={handleSelect}
+            selected={selected}
+            listItems={[
+              {
+                text: t("sidebar.mspRegister"),
+                path: "/msp-register",
+                isSelected: pathname === "/msp-register",
+                icon: (props) => <UserCheckDone {...props} />,
+              },
+              {
+                text: t("sidebar.colaboratorRegister"),
+                path: "/colaborator-register",
+                isSelected: pathname === "/colaborator-register",
+                icon: (props) => <UserCheckDone {...props} />,
+              },
+            ]}
+            hadleSelectItem={(val) =>
+              handleSelect(t("sidebar.registers"), val.path)
+            }
+          />
+        )}
       </List>
       <Stack
         sx={{

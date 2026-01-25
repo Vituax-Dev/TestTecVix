@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { TRole, useZUserProfile } from "../stores/useZUserProfile";
+import { useZUserProfile } from "../stores/useZUserProfile";
 import { api } from "../services/api";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { ERole } from "../types/userTypes";
 
 export interface IUserDB {
   idUser: string;
@@ -10,7 +11,7 @@ export interface IUserDB {
   username: string;
   email: string;
   profileImgUrl: null | string;
-  role: "admin" | "manager" | "member";
+  role: ERole;
   isActive: boolean;
   socketId: string | null;
   createdAt: string | Date;
@@ -21,7 +22,7 @@ export interface IUserDB {
 interface ICreateNewUser {
   username: string;
   email: string;
-  role: TRole;
+  role: ERole;
   password?: string;
   idBrandMaster?: number;
   isActive?: boolean;

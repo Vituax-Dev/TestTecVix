@@ -7,13 +7,13 @@ import { TextRob20Font1MC } from "../../../../components/Text1MC";
 import { shadow } from "../../../../utils/shadow";
 import { useNavigate } from "react-router-dom";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
-import { useZUserProfile } from "../../../../stores/useZUserProfile";
+import { useAuth } from "../../../../auth/PrivatePage";
 
 export const HeaderVMList = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
   const { setCurrentSidebarSelected } = useZGlobalVar();
-  const { role } = useZUserProfile();
+  const { isManagerOrAdmin } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -36,7 +36,7 @@ export const HeaderVMList = () => {
       >
         {t("home.vmRecents")}
       </TextRob32Font1L>
-      {Boolean(role === "admin" || role === "manager") && (
+      {isManagerOrAdmin && (
         <IconButton
           onClick={() => {
             setCurrentSidebarSelected({

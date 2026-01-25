@@ -1,49 +1,51 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNavigate } from "react-router-dom";
 import { useZResetAllStates } from "../stores/useZResetAllStates";
 import { FullPage } from "../components/Skeletons/FullPage";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useZUserProfile } from "../stores/useZUserProfile";
+import { ERole } from "../types/userTypes";
+
+interface IAuthContext {
+  isAdmin: boolean;
+  isManagerOrAdmin: boolean;
+}
+
+const AuthContext = createContext<IAuthContext>({
+  isAdmin: false,
+  isManagerOrAdmin: false,
+});
+
+export const useAuth = () => useContext(AuthContext);
 
 interface IProps {
   children: React.ReactNode;
-  onlyManagerOrAdmin?: boolean;
-  onlyAdmin?: boolean;
-  skeleton?: boolean;
 }
 
-export const PrivatePage = ({
-  children,
-  onlyAdmin = false,
-  onlyManagerOrAdmin = false,
-}: IProps) => {
+export const PrivatePage = ({ children }: IProps) => {
   const [isChecking, setIsChecking] = useState(true);
   const { resetAllStates } = useZResetAllStates();
+  const { idUser, role } = useZUserProfile();
   const navigate = useNavigate();
 
+  const authValue = useMemo(() => ({
+    isAdmin: role === ERole.ADMIN,
+    isManagerOrAdmin: role === ERole.ADMIN || role === ERole.MANAGER,
+  }), [role]);
+
   useEffect(() => {
-    switch (true) {
-      // case !idUser:
-      //   resetAllStates();
-      //   navigate("/login");
-      //   break;
-      // case onlyAdmin && role !== "admin":
-      //   navigate(-1);
-      //   break;
-      // case onlyManagerOrAdmin && role !== "admin" && role !== "manager":
-      //   navigate(-1);
-      //   break;
-
-      default:
-        setIsChecking(false);
-        break;
+    if (!idUser) {
+      resetAllStates();
+      navigate("/login");
+    } else {
+      setIsChecking(false);
     }
-  }, []);
+  }, [idUser, navigate, resetAllStates]);
 
-  // if (!idUser) return <FullPage />;
+  if (!idUser || isChecking) return <FullPage />;
 
-  if (isChecking) {
-    return <FullPage />;
-  }
-
-  return <>{children}</>;
+  return (
+    <AuthContext.Provider value={authValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

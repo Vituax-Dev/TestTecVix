@@ -5,22 +5,21 @@ import { IListAllVM } from "../types/IListAll";
 import moment from "moment";
 
 export class VMModel {
-  async getById(idVM: number) {
-    return await prisma.vM.findUnique({
-      where: { idVM },
+  async getById(idVM: number, idBrandMaster?: number | null) {
+    return prisma.vM.findFirst({
+      where: {
+        idVM,
+        idBrandMaster: idBrandMaster ?? undefined,
+      },
     });
   }
 
   async totalCount({ query, idBrandMaster }: IListAllVM) {
-    const { status, idBrandMaster: idBrandMasterParams } = query;
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
-
     return prisma.vM.count({
       where: {
         deletedAt: null,
-        idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
-        status,
+        idBrandMaster: idBrandMaster ?? undefined,
+        status: query.status,
         vmName: {
           contains: query.search,
         },
@@ -31,31 +30,23 @@ export class VMModel {
   async listAll({ query, idBrandMaster }: IListAllVM) {
     const limit = query.limit || 0;
     const skip = query.page ? query.page * limit : query.offset || 0;
-    const { status, idBrandMaster: idBrandMasterParams } = query;
     const orderBy =
       query.orderBy?.map(({ field, direction }) => ({
         [field]: direction,
       })) || [];
 
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
-
     const vms = await prisma.vM.findMany({
       where: {
         deletedAt: null,
-        idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
-        status,
+        idBrandMaster: idBrandMaster ?? undefined,
+        status: query.status,
         vmName: {
           contains: query.search,
         },
       },
       skip,
       take: limit || undefined,
-      orderBy: orderBy.length
-        ? orderBy
-        : {
-            updatedAt: "desc",
-          },
+      orderBy: orderBy.length ? orderBy : { updatedAt: "desc" },
       include: {
         brandMaster: {
           select: {

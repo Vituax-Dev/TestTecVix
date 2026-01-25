@@ -8,10 +8,10 @@ import { useTranslation } from "react-i18next";
 import { PencilCicleIcon } from "../../../icons/PencilCicleIcon";
 import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useZUserProfile } from "../../../stores/useZUserProfile";
 import { useZMspRegisterPage } from "../../../stores/useZMspRegisterPage";
 import { useBrandMasterResources } from "../../../hooks/useBrandMasterResources";
 import moment from "moment";
+import { useAuth } from "../../../auth/PrivatePage";
 
 export const MspTable = () => {
   const { theme, mode } = useZTheme();
@@ -49,7 +49,7 @@ export const MspTable = () => {
 
   const { listAllBrands } = useBrandMasterResources();
 
-  const { role } = useZUserProfile();
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const fetchMsps = async () => {
@@ -297,7 +297,7 @@ export const MspTable = () => {
                     <PencilCicleIcon fill={theme[mode].blueMedium} />
                   )}
                 </IconButton>
-                {role === "admin" && (
+                {isAdmin && (
                   <IconButton
                     onClick={() => {
                       setMspToBeDeleted(msp);

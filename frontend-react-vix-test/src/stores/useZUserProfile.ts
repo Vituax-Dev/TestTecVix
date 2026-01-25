@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { middlewareLocalStorage } from "./middlewareLocalStorage";
-
-export type TRole = "admin" | "manager" | "member";
+import { ERole } from "../types/userTypes";
 
 export interface IUserProfile {
   idUser: string | null;
@@ -14,7 +13,7 @@ export interface IUserProfile {
   userEmail: string | null;
   token: string | null;
   idBrand: number | null;
-  role: TRole | null;
+  role: ERole | null;
 }
 const INIT_STATE: IUserProfile = {
   idUser: null,

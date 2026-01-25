@@ -1,11 +1,12 @@
 import { Colaborator } from "../stores/useZColaboratorRegister";
+import { ERole } from "../types/userTypes";
 
 interface IUser {
   idUser?: string;
   username: string;
   email: string | null;
   profileImgUrl: string | null;
-  role: "admin" | "manager" | "member";
+  role: ERole;
   isActive: boolean;
   lastLoginDate: string | Date | null;
   brandMaster?: { brandName: string } | null;

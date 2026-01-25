@@ -3,11 +3,11 @@ import { useZTheme } from "../../../../stores/useZTheme";
 import { PersonalInformation } from "./components/PersonalInformation";
 import { NotificationsContact } from "./components/NotificationsContact";
 import { CTAsButtons } from "./components/CTAsButtons";
-import { useZUserProfile } from "../../../../stores/useZUserProfile";
+import { useAuth } from "../../../../auth/PrivatePage";
 
 export const ProfileAndNotifications = () => {
   const { mode, theme } = useZTheme();
-  const { role } = useZUserProfile();
+  const { isManagerOrAdmin } = useAuth();
   return (
     <Stack
       sx={{
@@ -26,7 +26,7 @@ export const ProfileAndNotifications = () => {
           background: theme[mode].grayLight,
         }}
       />
-      {Boolean(role === "admin" || role === "manager") && (
+      {isManagerOrAdmin && (
         <>
           {/* Notifications */}
           <NotificationsContact />

@@ -10,20 +10,30 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 
 export class BrandMasterService {
-  constructor() { }
+  constructor() {}
   private brandMasterModel = new BrandMasterModel();
 
   async getSelf(domain: string) {
     return await this.brandMasterModel.getSelf(domain);
   }
 
-  async getById(idBrandMaster: number) {
-    return this.brandMasterModel.getById(idBrandMaster);
+  async getById(idBrandMaster: number, userIdBrandMaster: number | null) {
+    const brandMaster = await this.brandMasterModel.getById(
+      idBrandMaster,
+      userIdBrandMaster,
+    );
+    if (!brandMaster) {
+      throw new AppError(
+        ERROR_MESSAGE.BRAND_MASTER_NOT_FOUND,
+        STATUS_CODE.NOT_FOUND,
+      );
+    }
+    return brandMaster;
   }
 
-  async listAll(query: unknown) {
+  async listAll(query: unknown, user: user) {
     const validQuery = querySchema.parse(query);
-    return this.brandMasterModel.listAll(validQuery);
+    return this.brandMasterModel.listAll(validQuery, user.idBrandMaster);
   }
 
   async createNewBrandMaster(data: TBrandMaster, user: user) {
@@ -59,17 +69,19 @@ export class BrandMasterService {
   }
 
   async updateBrandMaster(idBrandMaster: number, data: unknown, user: user) {
-    if (user.idBrandMaster && user.idBrandMaster !== idBrandMaster) {
-      throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
-    }
-    const validData = brandMasterSchema.parse(data);
-    const oldBrandMaster = await this.brandMasterModel.getById(idBrandMaster);
+    const oldBrandMaster = await this.getById(
+      idBrandMaster,
+      user.idBrandMaster,
+    );
+
     if (!oldBrandMaster) {
       throw new AppError(
         ERROR_MESSAGE.BRAND_MASTER_NOT_FOUND,
         STATUS_CODE.NOT_FOUND,
       );
     }
+
+    const validData = brandMasterSchema.parse(data);
 
     if (
       !oldBrandMaster.contract &&
@@ -96,7 +108,11 @@ export class BrandMasterService {
   }
 
   async deleteBrandMaster(idBrandMaster: number, user: user) {
-    const oldBrandMaster = await this.brandMasterModel.getById(idBrandMaster);
+    const oldBrandMaster = await this.getById(
+      idBrandMaster,
+      user.idBrandMaster,
+    );
+
     if (!oldBrandMaster) {
       throw new AppError(
         ERROR_MESSAGE.BRAND_MASTER_NOT_FOUND,

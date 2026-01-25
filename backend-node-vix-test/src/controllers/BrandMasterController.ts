@@ -3,6 +3,7 @@ import { CustomRequest } from "../types/custom";
 import { BrandMasterService } from "../services/BrandMasterService";
 import { user } from "@prisma/client";
 import { STATUS_CODE } from "../constants/statusCode";
+import { idBrandMasterParamsSchema } from "../types/validations/BrandMaster/createBrandMaster";
 
 export class BrandMasterController {
   constructor() {}
@@ -13,13 +14,18 @@ export class BrandMasterController {
   }
 
   async getById(req: CustomRequest<unknown>, res: Response) {
-    const { idBrandMaster } = req.params;
-    const result = await this.brandMasterService.getById(Number(idBrandMaster));
+    const { idBrandMaster } = idBrandMasterParamsSchema.parse(req.params);
+    const user = req.user as user;
+    const result = await this.brandMasterService.getById(
+      idBrandMaster,
+      user.idBrandMaster,
+    );
     return res.status(STATUS_CODE.OK).json(result);
   }
 
   async listAll(req: CustomRequest<unknown>, res: Response) {
-    const result = await this.brandMasterService.listAll(req.query);
+    const user = req.user as user;
+    const result = await this.brandMasterService.listAll(req.query, user);
     return res.status(STATUS_CODE.OK).json(result);
   }
 
@@ -34,9 +40,9 @@ export class BrandMasterController {
 
   async updateBrandMaster(req: CustomRequest<unknown>, res: Response) {
     const user = req.user as user;
-    const { idBrandMaster } = req.params;
+    const { idBrandMaster } = idBrandMasterParamsSchema.parse(req.params);
     const result = await this.brandMasterService.updateBrandMaster(
-      Number(idBrandMaster),
+      idBrandMaster,
       req.body,
       user,
     );
@@ -45,9 +51,9 @@ export class BrandMasterController {
 
   async deleteBrandMaster(req: CustomRequest<unknown>, res: Response) {
     const user = req.user as user;
-    const { idBrandMaster } = req.params;
+    const { idBrandMaster } = idBrandMasterParamsSchema.parse(req.params);
     const result = await this.brandMasterService.deleteBrandMaster(
-      Number(idBrandMaster),
+      idBrandMaster,
       user,
     );
     return res.status(STATUS_CODE.OK).json(result);

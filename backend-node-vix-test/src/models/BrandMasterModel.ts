@@ -31,16 +31,24 @@ export class BrandMasterModel {
     });
   }
 
-  async getById(idBrandMaster: number) {
-    return prisma.brandMaster.findUnique({
-      where: { idBrandMaster },
+  async getById(idBrandMaster: number, userIdBrandMaster?: number | null) {
+    return prisma.brandMaster.findFirst({
+      where: {
+        idBrandMaster,
+        ...(userIdBrandMaster && { idBrandMaster: userIdBrandMaster }),
+      },
     });
   }
 
-  async totalCount(query: TQuery, isIncludeDeleted?: boolean) {
+  async totalCount(
+    query: TQuery,
+    idBrandMaster?: number | null,
+    isIncludeDeleted?: boolean,
+  ) {
     return prisma.brandMaster.count({
       where: {
-        ...(!isIncludeDeleted && { deletedAt: null }),
+        deletedAt: isIncludeDeleted ? undefined : null,
+        idBrandMaster: idBrandMaster ?? undefined,
         isPoc: query.isPoc,
         brandName: {
           contains: query.search,
@@ -49,7 +57,11 @@ export class BrandMasterModel {
     });
   }
 
-  async listAll(query: TQuery, isIncludeDeleted?: boolean) {
+  async listAll(
+    query: TQuery,
+    idBrandMaster?: number | null,
+    isIncludeDeleted?: boolean,
+  ) {
     const limit = query.limit || 0;
     const skip = query.page ? query.page * limit : query.offset || 0;
     const orderBy =
@@ -59,7 +71,8 @@ export class BrandMasterModel {
 
     const brands = await prisma.brandMaster.findMany({
       where: {
-        ...(!isIncludeDeleted && { deletedAt: null }),
+        deletedAt: isIncludeDeleted ? undefined : null,
+        idBrandMaster: idBrandMaster ?? undefined,
         isPoc: query.isPoc,
         brandName: {
           contains: query.search,
@@ -67,10 +80,14 @@ export class BrandMasterModel {
       },
       take: limit || undefined,
       skip,
-      ...(orderBy.length ? { orderBy } : { orderBy: [{ updatedAt: "desc" }] }),
+      orderBy: orderBy.length ? orderBy : [{ updatedAt: "desc" }],
     });
 
-    const totalCount = await this.totalCount(query, isIncludeDeleted);
+    const totalCount = await this.totalCount(
+      query,
+      idBrandMaster,
+      isIncludeDeleted,
+    );
     return { totalCount, result: brands };
   }
 

@@ -2,8 +2,7 @@ import { Divider, Stack } from "@mui/material";
 import { themeColors, useZTheme } from "../../../../stores/useZTheme";
 import { LeftCardLogo } from "./LeftCardLogo";
 import { LeftCardDomain } from "./LeftCardDomain";
-import { useZUserProfile } from "../../../../stores/useZUserProfile";
-import { useZBrandInfo } from "../../../../stores/useZBrandStore";
+import { usePermissions } from "../../../../hooks/usePermissions";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -13,10 +12,8 @@ interface IWhiteLabelChildProps {
 }
 export const LeftCard = ({ theme }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
-  const { role } = useZUserProfile();
-  const { idBrand } = useZBrandInfo();
-  const isVituaxUser = idBrand === null;
-  const isAdmin = role === "admin" && !isVituaxUser;
+  const { isVituaxUser, canEditWhiteLabel } = usePermissions();
+  const isAdmin = canEditWhiteLabel();
   return (
     <Stack
       sx={{

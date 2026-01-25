@@ -14,9 +14,9 @@ import { useTranslation } from "react-i18next";
 import { PencilCicleIcon } from "../../../icons/PencilCicleIcon";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import RestoreIcon from "@mui/icons-material/Restore";
-import { useZUserProfile } from "../../../stores/useZUserProfile";
 import { useZMspRegisterPage } from "../../../stores/useZMspRegisterPage";
 import { useBrandMasterResources } from "../../../hooks/useBrandMasterResources";
+import { usePermissions } from "../../../hooks/usePermissions";
 import moment from "moment";
 
 export const MspTable = () => {
@@ -66,7 +66,7 @@ export const MspTable = () => {
   const { listAllBrands, getBrandMasterById, reactivateBrandMaster } =
     useBrandMasterResources();
 
-  const { role } = useZUserProfile();
+  const { canEditMSP, canDeleteMSP, isVituaxUser, isAdmin } = usePermissions();
 
   useEffect(() => {
     const fetchMsps = async () => {
@@ -344,8 +344,8 @@ export const MspTable = () => {
               >
                 {/* Placeholder invisível para manter alinhamento quando deletado */}
                 {msp.deletedAt && <Box sx={{ width: 40, height: 40 }} />}
-                {/* Botão Reativar - apenas para MSPs deletados */}
-                {msp.deletedAt && role === "admin" && (
+                {/* Botão Reativar - apenas para MSPs deletados e Vituax Admin */}
+                {msp.deletedAt && isVituaxUser && isAdmin && (
                   <Tooltip
                     title={t("mspRegister.reactivate") || "Reativar MSP"}
                   >
@@ -362,21 +362,30 @@ export const MspTable = () => {
                   </Tooltip>
                 )}
 
-                {/* Botão Editar - apenas para MSPs ativos */}
+                {/* Botão Editar - apenas para MSPs ativos e se tem permissão */}
                 {!msp.deletedAt && (
-                  <IconButton
-                    onClick={() => handleEdit(msp.idBrandMaster)}
-                    disabled={loadingEdit === msp.idBrandMaster}
+                  <Tooltip
+                    title={!canEditMSP(msp) ? t("permissions.cannotEditMSP") : ""}
                   >
-                    {loadingEdit === msp.idBrandMaster ? (
-                      <CircularProgress size={20} />
-                    ) : (
-                      <PencilCicleIcon fill={theme[mode].blueMedium} />
-                    )}
-                  </IconButton>
+                    <span>
+                      <IconButton
+                        onClick={() => canEditMSP(msp) && handleEdit(msp.idBrandMaster)}
+                        disabled={!canEditMSP(msp) || loadingEdit === msp.idBrandMaster}
+                        sx={{
+                          opacity: !canEditMSP(msp) ? 0.5 : 1,
+                        }}
+                      >
+                        {loadingEdit === msp.idBrandMaster ? (
+                          <CircularProgress size={20} />
+                        ) : (
+                          <PencilCicleIcon fill={canEditMSP(msp) ? theme[mode].blueMedium : theme[mode].tertiary} />
+                        )}
+                      </IconButton>
+                    </span>
+                  </Tooltip>
                 )}
-                {/* Botão Deletar - apenas para MSPs ativos */}
-                {role === "admin" && !msp.deletedAt && (
+                {/* Botão Deletar - apenas para Vituax Admin e MSPs ativos */}
+                {canDeleteMSP() && !msp.deletedAt && (
                   <IconButton
                     onClick={() => {
                       setMspToBeDeleted(msp);

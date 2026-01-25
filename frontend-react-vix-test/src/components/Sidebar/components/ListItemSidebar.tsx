@@ -1,4 +1,4 @@
-import { Divider, List, Stack } from "@mui/material";
+import { Divider, List, Stack, Tooltip } from "@mui/material";
 import { useZTheme } from "../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { useSetSidebar } from "../../../hooks/useSetSidebar";
@@ -15,6 +15,7 @@ import { ItemListed } from "./ItemListed";
 import { useZBrandInfo } from "../../../stores/useZBrandStore";
 import { UserCheckDone } from "../../../icons/UserCheckDone";
 import { CloudIcon } from "../../../icons/CloudIcon";
+import { usePermissions } from "../../../hooks/usePermissions";
 
 export const ListItemSidebar = () => {
   const { mode, theme } = useZTheme();
@@ -26,9 +27,15 @@ export const ListItemSidebar = () => {
   const { goLogout } = useLogin();
   const { pathname } = useLocation();
   const { manual, termsOfUse, privacyPolicy } = useZBrandInfo();
+  const { canAccessCreateVM, canAccessMSPPage, canAccessEmployeeRegister, getMSPPagePath } = usePermissions();
   const lan = t("costsAndFinances.lan") === "pt" ? "pt" : "eng";
   const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:3001";
   const manualUrl = `${baseUrl}/api/v1/uploads/dark-user-manual-vituax-${lan}.pdf`;
+
+  const canCreateVM = canAccessCreateVM();
+  const canAccessMSP = canAccessMSPPage();
+  const canAccessEmployee = canAccessEmployeeRegister();
+  const mspPath = getMSPPagePath();
 
   return (
     <Stack
@@ -67,12 +74,17 @@ export const ListItemSidebar = () => {
           handleSelect={(val) => handleSelect(val, "/")}
           selected={selected}
         />
-        <Item
-          icon={(props) => <PlusIcon {...props} />}
-          text={t("sidebar.newVM")}
-          handleSelect={(val) => handleSelect(val, "/virtual-machine")}
-          selected={selected}
-        />
+        <Tooltip title={!canCreateVM ? t("permissions.noPermission") : ""} placement="right">
+          <span>
+            <Item
+              icon={(props) => <PlusIcon {...props} />}
+              text={t("sidebar.newVM")}
+              handleSelect={(val) => canCreateVM && handleSelect(val, "/virtual-machine")}
+              selected={selected}
+              disabled={!canCreateVM}
+            />
+          </span>
+        </Tooltip>
         <Item
           icon={(props) => <CloudIcon {...props} />}
           text={t("sidebar.myVMs")}
@@ -87,19 +99,23 @@ export const ListItemSidebar = () => {
           listItems={[
             {
               text: t("sidebar.mspRegister"),
-              path: "/msp-register",
-              isSelected: pathname === "/msp-register",
+              path: mspPath,
+              isSelected: pathname.startsWith("/msp-register"),
               icon: (props) => <UserCheckDone {...props} />,
+              disabled: !canAccessMSP,
+              tooltip: !canAccessMSP ? t("permissions.noPermission") : undefined,
             },
             {
               text: t("sidebar.colaboratorRegister"),
               path: "/colaborator-register",
               isSelected: pathname === "/colaborator-register",
               icon: (props) => <UserCheckDone {...props} />,
+              disabled: !canAccessEmployee,
+              tooltip: !canAccessEmployee ? t("permissions.noPermission") : undefined,
             },
           ]}
           hadleSelectItem={(val) =>
-            handleSelect(t("sidebar.registers"), val.path)
+            !val.disabled && handleSelect(t("sidebar.registers"), val.path)
           }
         />
       </List>

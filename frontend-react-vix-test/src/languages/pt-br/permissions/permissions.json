@@ -1,0 +1,13 @@
+{
+  "cannotControlVM": "Você não tem permissão para controlar esta máquina virtual",
+  "cannotDeleteVM": "Você não tem permissão para excluir esta máquina virtual",
+  "cannotCreateMSP": "Você não tem permissão para criar MSPs",
+  "cannotEditMSP": "Você não tem permissão para editar este MSP",
+  "cannotDeleteMSP": "Você não tem permissão para excluir MSPs",
+  "noPermission": "Você não tem permissão para realizar esta ação",
+  "accessDenied": "Acesso negado. Você será redirecionado.",
+  "cannotAccessPage": "Você não tem permissão para acessar esta página",
+  "cannotEditEmployee": "Você não tem permissão para editar colaboradores",
+  "cannotDeleteEmployee": "Você não tem permissão para excluir colaboradores",
+  "cannotFilterMSP": "Apenas usuários Vituax podem filtrar por MSP"
+}

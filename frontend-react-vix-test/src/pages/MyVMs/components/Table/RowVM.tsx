@@ -1,4 +1,4 @@
-import { IconButton, Stack, Typography } from "@mui/material";
+import { IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import React, { useEffect } from "react";
@@ -23,6 +23,8 @@ import { StopCircleIcon } from "../../../../icons/StopCircleIcon";
 import { ModalStartVM } from "../ModalStartVM";
 import { ModalStopVM } from "../ModalStopVM";
 import { useStatusInfo } from "../../../../hooks/useStatusInfo";
+import { usePermissions } from "../../../../hooks/usePermissions";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   vm: IVMCreatedResponse;
@@ -31,12 +33,15 @@ interface IProps {
 
 export const RowVM = ({ vm, index }: IProps) => {
   const { mode, theme } = useZTheme();
+  const { t } = useTranslation();
   const [row, setRow] = React.useState<IVMCreatedResponse>(vm);
   const [vmIDToStop, setVmIDToStop] = React.useState<number>(0);
   const [vmIDToStart, setVmIDToStart] = React.useState<number>(0);
   const { currentVM, setCurrentVM } = useZMyVMsList();
   const { getStatus } = useStatusInfo();
   const { getOS, getVMById, updateVMStatus, isLoading: isLoadingVm } = useVmResource();
+  const { canCreateVM } = usePermissions();
+  const canControl = canCreateVM(); // Same permission: admin/manager can control VMs
 
   const idVM: number = Number(row.idVM);
   const labelId = `enhanced-table-checkbox-${index}`;
@@ -391,39 +396,53 @@ export const RowVM = ({ vm, index }: IProps) => {
             }}
           >
             {getStatus(row).isRunning && (
-              <IconButton
-                disabled={row.status === "STOPPED" || row.status === null}
-                onClick={() => setVmIDToStop(row.idVM)}
-                sx={{
-                  gap: "8px",
-                  ":hover": { opacity: 0.8 },
-                  ":disabled": { opacity: 0.5 },
-                }}
-              >
-                <StopCircleIcon fill={theme[mode].lightRed} />
-              </IconButton>
+              <Tooltip title={!canControl ? t("permissions.cannotControlVM") : ""}>
+                <span>
+                  <IconButton
+                    disabled={!canControl || row.status === "STOPPED" || row.status === null}
+                    onClick={() => canControl && setVmIDToStop(row.idVM)}
+                    sx={{
+                      gap: "8px",
+                      ":hover": { opacity: 0.8 },
+                      ":disabled": { opacity: 0.5 },
+                    }}
+                  >
+                    <StopCircleIcon fill={canControl ? theme[mode].lightRed : theme[mode].tertiary} />
+                  </IconButton>
+                </span>
+              </Tooltip>
             )}
             {getStatus(row).isStopped && (
-              <IconButton
-                disabled={row.status === "RUNNING" || row.status === null}
-                onClick={() => setVmIDToStart(row.idVM)}
-                sx={{
-                  gap: "8px",
-                  ":hover": { opacity: 0.8 },
-                  ":disabled": { opacity: 0.5 },
-                }}
-              >
-                <PlayCircleIcon fill={theme[mode].greenLight} />
-              </IconButton>
+              <Tooltip title={!canControl ? t("permissions.cannotControlVM") : ""}>
+                <span>
+                  <IconButton
+                    disabled={!canControl || row.status === "RUNNING" || row.status === null}
+                    onClick={() => canControl && setVmIDToStart(row.idVM)}
+                    sx={{
+                      gap: "8px",
+                      ":hover": { opacity: 0.8 },
+                      ":disabled": { opacity: 0.5 },
+                    }}
+                  >
+                    <PlayCircleIcon fill={canControl ? theme[mode].greenLight : theme[mode].tertiary} />
+                  </IconButton>
+                </span>
+              </Tooltip>
             )}
-            <Btn
-              onClick={() => handleClick(row)}
-              sx={{
-                borderRadius: "50%",
-              }}
-            >
-              <PencilCicleIcon fill={theme[mode].blueMedium} />
-            </Btn>
+            <Tooltip title={!canControl ? t("permissions.cannotControlVM") : ""}>
+              <span>
+                <Btn
+                  disabled={!canControl}
+                  onClick={() => canControl && handleClick(row)}
+                  sx={{
+                    borderRadius: "50%",
+                    opacity: !canControl ? 0.5 : 1,
+                  }}
+                >
+                  <PencilCicleIcon fill={canControl ? theme[mode].blueMedium : theme[mode].tertiary} />
+                </Btn>
+              </span>
+            </Tooltip>
           </Stack>
         </TableCell>
       </TableRow>

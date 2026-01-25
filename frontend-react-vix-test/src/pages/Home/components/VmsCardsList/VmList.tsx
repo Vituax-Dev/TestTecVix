@@ -33,12 +33,14 @@ export const VmList = () => {
     task: taskMock,
     owner: getVMOwnership(vm).name,
     logo: getVMOwnership(vm).logo,
+    idBrandMaster: vm.idBrandMaster,
   }));
 
   useEffect(() => {
+    // Show all VMs regardless of company - permission is checked in VmCard
     fetchListVms({
       search: searchGlobalHeader,
-      idBrandMaster: idBrand,
+      showAll: true,
       limit: 20,
     });
   }, [searchGlobalHeader]);

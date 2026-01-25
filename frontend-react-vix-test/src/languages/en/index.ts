@@ -17,6 +17,7 @@ import costsAndFinances from "./costsAndFinances/costsAndFinances.json";
 import invoices from "./invoices/invoices.json";
 import isos from "./isos/isos.json";
 import alerts from "./alerts/alerts.json";
+import permissions from "./permissions/permissions.json";
 
 export const en = {
   home,
@@ -38,4 +39,5 @@ export const en = {
   invoices,
   isos,
   alerts,
+  permissions,
 };

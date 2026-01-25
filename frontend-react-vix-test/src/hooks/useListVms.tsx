@@ -31,6 +31,7 @@ export const useListVms = () => {
       limit?: number;
       search?: string;
       idBrandMaster?: number;
+      showAll?: boolean;
     } = {},
   ) => {
     const auth = await getAuth();

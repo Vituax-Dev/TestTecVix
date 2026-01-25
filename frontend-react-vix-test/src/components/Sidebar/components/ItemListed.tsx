@@ -8,6 +8,7 @@ import {
   ListItemText,
   Stack,
   SxProps,
+  Tooltip,
 } from "@mui/material";
 import { useZTheme } from "../../../stores/useZTheme";
 import { TextRob16FontL } from "../../TextL";
@@ -22,6 +23,7 @@ interface IItem {
   path?: string;
   isSelected?: boolean;
   disabled?: boolean | undefined;
+  tooltip?: string;
 }
 export const ItemListed = ({
   icon,
@@ -125,51 +127,54 @@ export const ItemListed = ({
             }}
           >
             {listItems.map((item) => (
-              <ListItemButton
-                key={item.text + item.path}
-                onClick={() => hadleSelectItem(item)}
-                sx={{
-                  backgroundColor: item.isSelected
-                    ? theme[mode].blueLight
-                    : "none",
-                  borderRadius: "12px",
-                  padding: "4px 12px",
-                  gap: "12px",
-                  "&:hover": {
-                    background: theme[mode].blueLight,
-                    opacity: 0.75,
-                    cursor: item?.disabled ? "not-allowed" : "pointer",
-                  },
-                  ...item.sx,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    width: "fit-content",
-                  }}
-                >
-                  {item.icon ? (
-                    item.icon({
-                      fill: item?.disabled
-                        ? theme[mode].tertiary
-                        : selected === text
-                          ? theme[mode].btnLightText
-                          : theme[mode].gray,
-                    })
-                  ) : (
-                    <CloudIcon fill={theme[mode].btnLightText} />
-                  )}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  sx={{
-                    color: item?.disabled
-                      ? theme[mode].tertiary
-                      : theme[mode].btnLightText,
-                  }}
-                />
-              </ListItemButton>
+              <Tooltip key={item.text + item.path} title={item.tooltip || ""} placement="right">
+                <span>
+                  <ListItemButton
+                    onClick={() => !item.disabled && hadleSelectItem(item)}
+                    sx={{
+                      backgroundColor: item.isSelected
+                        ? theme[mode].blueLight
+                        : "none",
+                      borderRadius: "12px",
+                      padding: "4px 12px",
+                      gap: "12px",
+                      "&:hover": {
+                        background: theme[mode].blueLight,
+                        opacity: 0.75,
+                        cursor: item?.disabled ? "not-allowed" : "pointer",
+                      },
+                      ...item.sx,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        width: "fit-content",
+                      }}
+                    >
+                      {item.icon ? (
+                        item.icon({
+                          fill: item?.disabled
+                            ? theme[mode].tertiary
+                            : selected === text
+                              ? theme[mode].btnLightText
+                              : theme[mode].gray,
+                        })
+                      ) : (
+                        <CloudIcon fill={theme[mode].btnLightText} />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.text}
+                      sx={{
+                        color: item?.disabled
+                          ? theme[mode].tertiary
+                          : theme[mode].btnLightText,
+                      }}
+                    />
+                  </ListItemButton>
+                </span>
+              </Tooltip>
             ))}
           </List>
         </Collapse>

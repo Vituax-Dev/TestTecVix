@@ -11,11 +11,24 @@ import { ScreenFullPage } from "../../components/ScreenFullPage";
 import { useEffect } from "react";
 import { useZVM } from "../../stores/useZVM";
 import { CardMarketPlace } from "./components/CardMarketPlace";
+import { usePermissions } from "../../hooks/usePermissions";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const VirtualMachinePage = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
   const { newRandomPassword, resetAll } = useZVM();
+  const { canAccessCreateVM } = usePermissions();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Redirect members that don't have access to create VMs
+    if (!canAccessCreateVM()) {
+      toast.error(t("permissions.accessDenied"));
+      navigate("/");
+    }
+  }, [canAccessCreateVM, navigate, t]);
 
   useEffect(() => {
     return () => {

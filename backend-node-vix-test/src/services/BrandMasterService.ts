@@ -19,6 +19,20 @@ export class BrandMasterService {
   private brandMasterModel = new BrandMasterModel();
   private bucketService = new BucketLocalService();
 
+  /**
+   * Helper to check if user is from Vituax (can manage all MSPs)
+   */
+  private isVituaxUser(user: user): boolean {
+    return user.idBrandMaster === null;
+  }
+
+  /**
+   * Helper to check if user is admin or manager
+   */
+  private isAdminOrManager(user: user): boolean {
+    return user.role === "admin" || user.role === "manager";
+  }
+
   async getSelf(domain: string) {
     return await this.brandMasterModel.getSelf(domain);
   }
@@ -27,16 +41,41 @@ export class BrandMasterService {
     return this.brandMasterModel.getById(idBrandMaster);
   }
 
-  async listAll(query: unknown) {
+  async listAll(query: unknown, requestingUser: user) {
     const validQuery = querySchema.parse(query);
-    return this.brandMasterModel.listAll(validQuery, validQuery.includeDeleted);
+
+    // Members cannot see any MSP listing
+    if (requestingUser.role === "member") {
+      return { totalCount: 0, result: [] };
+    }
+
+    // Vituax users see all MSPs
+    if (this.isVituaxUser(requestingUser)) {
+      return this.brandMasterModel.listAll(validQuery, validQuery.includeDeleted);
+    }
+
+    // MSP Admin/Manager sees only their own company
+    if (requestingUser.idBrandMaster) {
+      const ownBrand = await this.brandMasterModel.getById(requestingUser.idBrandMaster);
+      if (!ownBrand) {
+        return { totalCount: 0, result: [] };
+      }
+      return { totalCount: 1, result: [ownBrand] };
+    }
+
+    return { totalCount: 0, result: [] };
   }
 
   /**
    * Cria um novo MSP com admin obrigatório em uma transação
    * Se qualquer um falhar, faz rollback automático
+   * ONLY Vituax Admin/Manager can create MSPs
    */
-  async createNewBrandMaster(data: TBrandMaster) {
+  async createNewBrandMaster(data: TBrandMaster, requestingUser: user) {
+    // Only Vituax Admin/Manager can create MSPs
+    if (!this.isVituaxUser(requestingUser) || !this.isAdminOrManager(requestingUser)) {
+      throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
+    }
     const validData = brandMasterSchema.parse(data);
     const { admin: adminData, ...mspData } = validData;
 
@@ -119,7 +158,6 @@ export class BrandMasterService {
     idBrandMaster,
     oldBrandMaster,
   }: {
-    user?: user;
     validData: TBrandMasterUpdate;
     idBrandMaster: number;
     oldBrandMaster: brandMaster;
@@ -145,10 +183,19 @@ export class BrandMasterService {
     return result;
   }
 
-  async updateBrandMaster(idBrandMaster: number, data: unknown, user?: user) {
-    if (user?.idBrandMaster && user.idBrandMaster !== idBrandMaster) {
+  async updateBrandMaster(idBrandMaster: number, data: unknown, requestingUser: user) {
+    // Check authorization:
+    // - Vituax Admin/Manager can update any MSP
+    // - MSP Admin/Manager can only update their own MSP
+    // - Members cannot update
+    if (requestingUser.role === "member") {
       throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
     }
+
+    if (!this.isVituaxUser(requestingUser) && requestingUser.idBrandMaster !== idBrandMaster) {
+      throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
+    }
+
     const validData = brandMasterUpdateSchema.parse(data);
     const oldBrandMaster = await this.brandMasterModel.getById(idBrandMaster);
     if (!oldBrandMaster) {
@@ -175,14 +222,18 @@ export class BrandMasterService {
     }
 
     return this.update({
-      user,
       validData,
       idBrandMaster,
       oldBrandMaster,
     });
   }
 
-  async deleteBrandMaster(idBrandMaster: number, user: user) {
+  async deleteBrandMaster(idBrandMaster: number, requestingUser: user) {
+    // Only Vituax Admin can delete MSPs
+    if (!this.isVituaxUser(requestingUser) || requestingUser.role !== "admin") {
+      throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
+    }
+
     const oldBrandMaster = await this.brandMasterModel.getById(idBrandMaster);
     if (!oldBrandMaster) {
       throw new AppError(
@@ -224,8 +275,14 @@ export class BrandMasterService {
 
   /**
    * Reativa um MSP e todos os usuários vinculados (que foram soft deleted junto)
+   * Only Vituax Admin can reactivate MSPs
    */
-  async reactivateBrandMaster(idBrandMaster: number) {
+  async reactivateBrandMaster(idBrandMaster: number, requestingUser: user) {
+    // Only Vituax Admin can reactivate MSPs
+    if (!this.isVituaxUser(requestingUser) || requestingUser.role !== "admin") {
+      throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
+    }
+
     // Busca o MSP mesmo se deletado
     const oldBrandMaster = await prisma.brandMaster.findUnique({
       where: { idBrandMaster },

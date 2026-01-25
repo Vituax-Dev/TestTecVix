@@ -15,5 +15,6 @@
   "active": "Ativa",
   "inactive": "Inativa",
   "onlyMyVms": "Apenas minhas VMs",
-  "onlyMSPVms": "Apenas VMs do MSP"
+  "onlyMSPVms": "Apenas VMs do MSP",
+  "onlyVituax": "Apenas Vituax"
 }

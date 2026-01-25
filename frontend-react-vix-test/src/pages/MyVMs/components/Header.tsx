@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useZTheme } from "../../../stores/useZTheme";
-import { Stack } from "@mui/material";
+import { Stack, Tooltip } from "@mui/material";
 import { SearchInput } from "../../../components/Inputs/SearchInput";
 import { DropDown } from "../../../components/Inputs/DropDown";
 import { FilterIcon } from "../../../icons/FilterIcon";
@@ -12,10 +12,12 @@ import { api } from "../../../services/api";
 import { useAuth } from "../../../hooks/useAuth";
 import { IListAll } from "../../../types/ListAllTypes";
 import { TrashIcon } from "../../../icons/TrashIcon";
+import { usePermissions } from "../../../hooks/usePermissions";
 
 export const Header = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
+  const { isVituaxUser } = usePermissions();
   const {
     search,
     setSearch,
@@ -175,62 +177,71 @@ export const Header = () => {
           placeholder={t("myVMs.allVMs")}
           placeholderIcon={<FilterIcon fill={theme[mode].gray} />}
         />
-        <DropDown
-          data={formatToIOptionMPS(msps).map((msp) => ({
-            ...msp,
-            tag: msp.deletedAt ? (
-              <TrashIcon
-                width={"12px"}
-                fill={theme[mode].danger}
-                className="mr-2 opacity-50"
-              />
-            ) : null,
-          }))}
-          onChange={(val) => {
-            if (onlyMyVMs) setOnlyMyVMs(false);
-            if (val) {
-              setSelectedMSP({
-                idBrandMaster: val?.id,
-                brandName: val?.label,
-              });
-              return;
-            }
-            setSelectedMSP(null);
-          }}
-          value={
-            selectedMSP
-              ? {
-                id: selectedMSP.idBrandMaster,
-                label: selectedMSP.brandName,
-                value: selectedMSP,
+        <Tooltip
+          title={!isVituaxUser ? t("permissions.cannotFilterMSP") : ""}
+          placement="top"
+        >
+          <span>
+            <DropDown
+              disabled={!isVituaxUser}
+              data={formatToIOptionMPS(msps).map((msp) => ({
+                ...msp,
+                tag: msp.deletedAt ? (
+                  <TrashIcon
+                    width={"12px"}
+                    fill={theme[mode].danger}
+                    className="mr-2 opacity-50"
+                  />
+                ) : null,
+              }))}
+              onChange={(val) => {
+                if (onlyMyVMs) setOnlyMyVMs(false);
+                if (val) {
+                  setSelectedMSP({
+                    idBrandMaster: val?.id,
+                    brandName: val?.label,
+                  });
+                  return;
+                }
+                setSelectedMSP(null);
+              }}
+              value={
+                selectedMSP
+                  ? {
+                    id: selectedMSP.idBrandMaster,
+                    label: selectedMSP.brandName,
+                    value: selectedMSP,
+                  }
+                  : null
               }
-              : null
-          }
-          sxContainer={{
-            width: "216px",
-            "@media (max-width: 659px)": {
-              width: "100%",
-            },
-          }}
-          placeholder={t("invoices.msps")}
-          placeholderIcon={<FilterIcon fill={theme[mode].gray} />}
-          sxItemList={{ textTransform: "none" }}
-        />
-        {
+              sxContainer={{
+                width: "216px",
+                "@media (max-width: 659px)": {
+                  width: "100%",
+                },
+              }}
+              placeholder={t("invoices.msps")}
+              placeholderIcon={<FilterIcon fill={theme[mode].gray} />}
+              sxItemList={{ textTransform: "none" }}
+            />
+          </span>
+        </Tooltip>
+        {/* Checkbox only visible for Vituax users - filters to show only Vituax VMs (idBrandMaster: null) */}
+        {isVituaxUser && (
           <Stack sx={{ justifyContent: "center" }}>
             <CheckboxLabel
-              label={
-                selectedMSP === null
-                  ? t("myVMs.onlyMyVms")
-                  : t("myVMs.onlyMSPVms")
-              }
+              label={t("myVMs.onlyVituax")}
               value={onlyMyVMs}
               onChange={() => {
+                // Clear MSP selection when checking Vituax filter
+                if (!onlyMyVMs && selectedMSP) {
+                  setSelectedMSP(null);
+                }
                 setOnlyMyVMs(!onlyMyVMs);
               }}
             />
           </Stack>
-        }
+        )}
       </Stack>
     </Stack>
   );

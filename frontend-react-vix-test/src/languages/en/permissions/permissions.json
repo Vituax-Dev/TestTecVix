@@ -1,0 +1,13 @@
+{
+  "cannotControlVM": "You do not have permission to control this virtual machine",
+  "cannotDeleteVM": "You do not have permission to delete this virtual machine",
+  "cannotCreateMSP": "You do not have permission to create MSPs",
+  "cannotEditMSP": "You do not have permission to edit this MSP",
+  "cannotDeleteMSP": "You do not have permission to delete MSPs",
+  "noPermission": "You do not have permission to perform this action",
+  "accessDenied": "Access denied. You will be redirected.",
+  "cannotAccessPage": "You do not have permission to access this page",
+  "cannotEditEmployee": "You do not have permission to edit employees",
+  "cannotDeleteEmployee": "You do not have permission to delete employees",
+  "cannotFilterMSP": "Only Vituax users can filter by MSP"
+}

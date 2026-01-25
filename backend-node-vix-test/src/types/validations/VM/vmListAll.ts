@@ -34,6 +34,11 @@ export const vmListAllSchema = querySchema.merge(
             : parseInt(val.toString())
           : val,
       ),
+    // When true, shows all VMs regardless of user's company (used in Home page)
+    showAll: z
+      .union([z.string(), z.boolean()])
+      .optional()
+      .transform((val) => val === "true" || val === true),
   }),
 );
 

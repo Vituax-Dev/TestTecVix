@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Stack } from "@mui/material";
+import { Box, Button, Modal, Stack, Tooltip } from "@mui/material";
 import { ScreenFullPage } from "../../components/ScreenFullPage";
 import { TextRob20Font1MB } from "../../components/Text1MB";
 import { useZTheme } from "../../stores/useZTheme";
@@ -19,9 +19,12 @@ import { MspFormStep1, MspFormStep2 } from "./MspForm";
 import { toast } from "react-toastify";
 import AddIcon from "@mui/icons-material/Add";
 import { useUploadFile } from "../../hooks/useUploadFile";
+import { usePermissions } from "../../hooks/usePermissions";
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
+  const { t } = useTranslation();
+  const { canCreateMSP } = usePermissions();
   const {
     activeStep,
     modalOpen,
@@ -70,7 +73,6 @@ export const MSPRegisterPage = () => {
     setBrandLogoPreview,
     setBrandLogo,
   } = useZMspRegisterPage();
-  const { t } = useTranslation();
   const {
     isLoading,
     createAnewBrandMaster,
@@ -312,24 +314,26 @@ export const MSPRegisterPage = () => {
               }}
             >
               <MspTableFilters />
-              <Button
-                onClick={handleStartCreate}
-                startIcon={<AddIcon />}
-                sx={{
-                  background: theme[mode].blue,
-                  color: theme[mode].btnText,
-                  textTransform: "none",
-                  borderRadius: "12px",
-                  padding: "8px 16px",
-                  fontWeight: 500,
-                  whiteSpace: "nowrap",
-                  "&:hover": {
-                    background: theme[mode].blueDark,
-                  },
-                }}
-              >
-                {t("mspRegister.createNewMsp")}
-              </Button>
+              {canCreateMSP() && (
+                <Button
+                  onClick={handleStartCreate}
+                  startIcon={<AddIcon />}
+                  sx={{
+                    background: theme[mode].blue,
+                    color: theme[mode].btnText,
+                    textTransform: "none",
+                    borderRadius: "12px",
+                    padding: "8px 16px",
+                    fontWeight: 500,
+                    whiteSpace: "nowrap",
+                    "&:hover": {
+                      background: theme[mode].blueDark,
+                    },
+                  }}
+                >
+                  {t("mspRegister.createNewMsp")}
+                </Button>
+              )}
             </Box>
           </Box>
           <MspTable />

@@ -1,1 +1,47 @@
-{}
+[
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440000",
+    "username": "admin",
+    "password": "$2a$10$0LrTvBc76RzoKV.u3N42/.igOBCA/sYyvftuyEdrU78daxXgWLk9S",
+    "email": "admin@vituax.com",
+    "role": "admin",
+    "idBrandMaster": null,
+    "isActive": true
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440001",
+    "username": "manager_alpha",
+    "password": "$2a$10$BXltBDqlwxh3VWtDg1x5cOn1/RbbgHBQKdP4a832NvnnwheBJayi6",
+    "email": "manager@alpha.com",
+    "role": "manager",
+    "idBrandMaster": 1,
+    "isActive": true
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440002",
+    "username": "member_alpha",
+    "password": "$2a$10$.M8DwggnOaQsfi6BBIat7.Z35aDaEaikTLwEquB0mWdJecA//IaFa",
+    "email": "member@alpha.com",
+    "role": "member",
+    "idBrandMaster": 1,
+    "isActive": true
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440003",
+    "username": "manager_beta",
+    "password": "$2a$10$BXltBDqlwxh3VWtDg1x5cOn1/RbbgHBQKdP4a832NvnnwheBJayi6",
+    "email": "manager@beta.com",
+    "role": "manager",
+    "idBrandMaster": 2,
+    "isActive": true
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440004",
+    "username": "member_beta",
+    "password": "$2a$10$.M8DwggnOaQsfi6BBIat7.Z35aDaEaikTLwEquB0mWdJecA//IaFa",
+    "email": "member@beta.com",
+    "role": "member",
+    "idBrandMaster": 2,
+    "isActive": true
+  }
+]

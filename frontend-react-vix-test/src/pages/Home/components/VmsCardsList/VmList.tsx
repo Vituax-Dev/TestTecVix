@@ -38,7 +38,6 @@ export const VmList = () => {
   useEffect(() => {
     fetchListVms({
       search: searchGlobalHeader,
-      idBrandMaster: idBrand,
       limit: 20,
     });
   }, [searchGlobalHeader]);

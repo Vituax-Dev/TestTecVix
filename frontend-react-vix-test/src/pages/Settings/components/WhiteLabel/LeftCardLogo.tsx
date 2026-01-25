@@ -10,6 +10,8 @@ import { TextRob12Font2Xs } from "../../../../components/Text2Xs";
 import { CircleIcon } from "../../../../icons/CircleIcon";
 import { TextRob16FontL } from "../../../../components/TextL";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
+import { useZUserProfile } from "../../../../stores/useZUserProfile";
+import { useBrandMasterResources } from "../../../../hooks/useBrandMasterResources";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -21,8 +23,11 @@ interface IWhiteLabelChildProps {
 export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
   const { t } = useTranslation();
+  const { role, idBrand } = useZUserProfile();
+  const isAdmin = role === "admin";
   const { handleUpload, isUploading } = useUploadFile();
-  const { setBrandInfo, brandLogoTemp } = useZBrandInfo();
+  const { getSelf, isLoading } = useBrandMasterResources();
+  const { setBrandInfo, brandLogoTemp, brandLogo } = useZBrandInfo();
   const [uploadedFile, setUploadedFile] = useState<string | null>(
     brandLogoTemp,
   );
@@ -30,11 +35,12 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
 
-    const file = acceptedFiles[0]; // Seleciona o primeiro arquivo
+    const file = acceptedFiles[0];
     const response = await handleUpload(file);
 
     if (response && response.url) {
-      setUploadedFile(response.url); // Atualiza a URL do logo carregado
+      setUploadedFile(response.url);
+
       setBrandInfo({
         brandLogoTemp: response.url,
         brandObjectName: response.objectName,
@@ -43,7 +49,13 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   };
 
   const hadleRemoveLogo = () => {
-    setBrandInfo({ brandLogoTemp: "" });
+    setUploadedFile(null);
+
+    setBrandInfo({
+      brandLogo: "", 
+      brandLogoTemp: "", 
+      brandObjectName: "",
+    });
   };
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
@@ -53,10 +65,20 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   });
 
   useEffect(() => {
-    if (!brandLogoTemp) {
-      setUploadedFile(null);
-    }
-  }, [brandLogoTemp]);
+    const fetchBrandData = async () => {
+      if (idBrand) {
+        const data = await getSelf();
+        if (data?.brandLogo) {
+          setBrandInfo({ brandLogo: data.brandLogo });
+        }
+      }
+    };
+    fetchBrandData();
+  }, [idBrand]);
+
+  useEffect(() => {
+    setUploadedFile(brandLogoTemp || brandLogo || null);
+  }, [brandLogoTemp, brandLogo]);
 
   return (
     <>
@@ -89,7 +111,7 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
           cursor: "pointer",
         }}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} disabled={!isAdmin} />
         <UploadFileIcon color={theme[mode].tertiary} />
         <TextRob12Font2Xs
           sx={{
@@ -155,6 +177,7 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
             },
           }}
           onClick={open}
+          disabled={!isAdmin}
         >
           {t("whiteLabel.changeLogo")}
         </Button>
@@ -174,7 +197,8 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
               width: "100%",
             },
           }}
-          onClick={hadleRemoveLogo} // Remove o logo
+          onClick={hadleRemoveLogo}
+          disabled={!isAdmin} // Remove o logo
         >
           {t("whiteLabel.removeLogo")}
         </Button>

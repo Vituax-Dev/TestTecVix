@@ -45,6 +45,7 @@ export class UserService {
         profileImgUrl: user.profileImgUrl,
         role: user.role,
         isActive: user.isActive,
+        idBrandMaster: user.idBrandMaster,
       },
       token
     };

@@ -7,6 +7,8 @@ import { TextRob14Font1Xs } from "../../../../components/Text1Xs";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
 import { useBrandMasterResources } from "../../../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../../../components/AbsoluteBackDrop";
+import { useZUserProfile } from "../../../../stores/useZUserProfile";
+import { toast } from "react-toastify";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -18,6 +20,9 @@ interface IWhiteLabelChildProps {
 export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
   const { t } = useTranslation();
+  const { role, idBrand } = useZUserProfile();
+  const isAdmin = role === "admin";
+
   const {
     brandLogoTemp,
     brandObjectName,
@@ -26,7 +31,7 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   } = useZBrandInfo();
   // const [domain, setDomain] = useState<string>(domainName);
   // const { updateDomain } = useBrandMasterResources();
-  const { updateBrandMaster, isLoading } = useBrandMasterResources();
+  const { editBrandMaster, isLoading } = useBrandMasterResources();
 
   // const handleSave = async () => {
   //   const response = await updateBrandMaster({
@@ -47,15 +52,30 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   // };
 
   const handleSave = async () => {
-    const response = await updateBrandMaster({
-      brandLogo: brandObjectName || undefined,
-    });
-    if (!response) return;
-    setBrandInfo({
-      ...(brandLogoTemp
-        ? { brandLogo: brandLogoTemp, brandLogoTemp: "", brandObjectName: "" }
-        : {}),
-    });
+    try {
+      const fullImageUrl = brandObjectName
+        ? `http://localhost:3001/uploads/${brandObjectName}`
+        : undefined;
+
+      const response = await editBrandMaster(idBrand, {
+        idBrandMaster: idBrand,
+        brandLogo: fullImageUrl,
+      });
+
+      if (!response) {
+        return toast.error(t("profileAndNotifications.errorForm"));
+      }
+
+      setBrandInfo({
+        ...(brandLogoTemp
+          ? { brandLogo: brandLogoTemp, brandLogoTemp: "", brandObjectName: "" }
+          : {}),
+      });
+
+      return toast.success(t("generic.dataSavesuccess"));
+    } catch (error) {
+      console.error("Erro ao salvar:", error);
+    }
   };
 
   return (
@@ -106,6 +126,7 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
           height: "48px",
           borderRadius: "12px",
         }}
+        disabled={!isAdmin}
         onClick={() => handleSave()}
       >
         {t("whiteLabel.saveChanges")}

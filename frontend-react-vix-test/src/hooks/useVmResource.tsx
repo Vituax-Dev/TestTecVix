@@ -324,6 +324,26 @@ export const useVmResource = () => {
     return Boolean(response.data);
   };
 
+  const startVM = async (idVM: number, vmName?: string) => {
+    setIsLoading(true);
+    const result = await updateVMStatus({ idVM, status: "RUNNING" });
+    setIsLoading(false);
+    if (result) {
+      toast.success(t("home.startVmSuccess", { vmName }));
+    }
+    return result;
+  };
+
+  const stopVM = async (idVM: number, vmName?: string) => {
+    setIsLoading(true);
+    const result = await updateVMStatus({ idVM, status: "STOPPED" });
+    setIsLoading(false);
+    if (result) {
+      toast.success(t("home.stopVmSuccess", { vmName }));
+    }
+    return result;
+  };
+
   return {
     createVm,
     updateNameVm,
@@ -344,5 +364,7 @@ export const useVmResource = () => {
     getOSDeletedLabel,
     monitoringVMStatus,
     updateVMStatus,
+    startVM,
+    stopVM,
   };
 };

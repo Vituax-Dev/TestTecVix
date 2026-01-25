@@ -80,6 +80,8 @@ export const VmCard = ({
     getVMById: getVMByIdResource,
     isLoading,
     getOS,
+    startVM,
+    stopVM,
   } = useVmResource();
 
   const getVMById = async () => {
@@ -108,8 +110,13 @@ export const VmCard = ({
 
   const handleConfirm = async () => {
     if (statusState !== preStatusState) {
+      // Executa a ação real de start/stop
+      if (statusState === "RUNNING") {
+        await startVM(vmId, vmNameState?.toString());
+      } else if (statusState === "STOPPED") {
+        await stopVM(vmId, vmNameState?.toString());
+      }
       setPreStatusState(statusState);
-
       await getVMById();
     }
     setShowConfirmation(false);
@@ -161,7 +168,7 @@ export const VmCard = ({
     if (updateThisVm === vmId) {
       getVMById();
     }
-  }, [updateThisVm, vmId]);
+  }, [updateThisVm, vmId, getVMById]);
 
   if (isLoading) return <VmCardSkeleton />;
   return (

@@ -1,1 +1,41 @@
-{}
+[
+  {
+    "idUser": "admin-user-id-001",
+    "username": "Admin Vituax",
+    "email": "admin@vituax.com",
+    "password": "$2b$10$q4jbWjoWO0QzMKBWuI0Q3OvZo/EDIfEyG63Meyx1gNuU4ZqFTUEdG",
+    "role": "admin",
+    "isActive": true,
+    "idBrandMaster": null,
+    "createdAt": "2026-01-25T20:00:00.000Z",
+    "updatedAt": "2026-01-25T20:00:00.000Z",
+    "deletedAt": null,
+    "lastLoginDate": null
+  },
+  {
+    "idUser": "manager-user-id-002",
+    "username": "Manager Vituax",
+    "email": "manager@vituax.com",
+    "password": "$2b$10$jsXapCNG6Se2AsjqfFYwYuGgh14w8VW3k5GGxF08F.DzIcJf7nSoe",
+    "role": "manager",
+    "isActive": true,
+    "idBrandMaster": null,
+    "createdAt": "2026-01-25T20:00:00.000Z",
+    "updatedAt": "2026-01-25T20:00:00.000Z",
+    "deletedAt": null,
+    "lastLoginDate": null
+  },
+  {
+    "idUser": "member-user-id-003",
+    "username": "Member Vituax",
+    "email": "member@vituax.com",
+    "password": "$2b$10$SQ2G1RuzyWqQQYvjnjZe5ut9.Cv8lAPBTZWZsyU/eDN39xjlGMzSC",
+    "role": "member",
+    "isActive": true,
+    "idBrandMaster": null,
+    "createdAt": "2026-01-25T20:00:00.000Z",
+    "updatedAt": "2026-01-25T20:00:00.000Z",
+    "deletedAt": null,
+    "lastLoginDate": null
+  }
+]

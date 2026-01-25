@@ -58,7 +58,7 @@ export const useLogin = () => {
         username: userData.username,
         userEmail: userData.email,
         role: userData.role,
-        idBrand: userData.idBrandMaster,
+        idBrand: userData.idBrand,
         token: response.data.token,
         profileImgUrl: userData.profileImgUrl,
       });

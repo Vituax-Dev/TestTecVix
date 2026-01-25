@@ -11,6 +11,7 @@ export interface AuthResponse {
     email: string;
     role: string;
     isActive: boolean;
+    idBrand: number | null;
   };
   token: string;
 }
@@ -18,5 +19,5 @@ export interface AuthResponse {
 export interface IPayload {
   id: string;
   role: string;
-  brandId?: number | null;
+  idBrandMaster?: number | null;
 }

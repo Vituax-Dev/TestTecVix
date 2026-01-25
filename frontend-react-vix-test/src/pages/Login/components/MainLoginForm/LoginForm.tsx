@@ -58,7 +58,7 @@ export const LoginForm = ({
           id="bootstrap-input-email"
           // sx={{ height: "48px" }}
           type="text"
-          inputSx={{ height: "48px", borderRadius: "12px" }}
+          inputSx={{ height: "48px", borderRadius: "12px", width: "100%"}}
           value={email}
           onChange={setEmail}
         />
@@ -82,7 +82,7 @@ export const LoginForm = ({
           id="bootstrap-input-password"
           type="password"
           value={password}
-          inputSx={{ height: "48px", borderRadius: "12px" }}
+          inputSx={{ height: "48px", borderRadius: "12px", width: "100%"}}
           onChange={setPassword}
           onEnter={onEnterPassword}
         />

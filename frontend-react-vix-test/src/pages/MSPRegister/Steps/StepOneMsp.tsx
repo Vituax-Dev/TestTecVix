@@ -125,6 +125,7 @@ export const StepOneMsp = () => {
   };
 
   const inputSx = {
+    width: "85%",
     height: "65px",
     "& .MuiOutlinedInput-root": {
       height: "40px",

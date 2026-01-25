@@ -4,7 +4,7 @@
   "stepTwoTitle": "Administrador principal da MSP",
   "companyInfos": "Informações da empresa MSP",
   "companyName": "Nome da empresa MSP",
-  "required": "(Obrigatório)",
+  "required": "Obrigatório",
   "cnpj": "CNPJ",
   "phone": "Telefone",
   "sector": "Setor de atuação",
@@ -68,5 +68,6 @@
   "mspDeleted": "MSP {{ brandName }} deletado com sucesso!",
   "doYouWantToDeleteThisVMs": "Deseja realmente deletar estas VMs?",
   "deletedVMs": "VMs deletadas com sucesso!",
-  "state":"Estado"
+  "state":"Estado",
+  "discountPercent": "Porcentagem de desconto para o MSP"
 }

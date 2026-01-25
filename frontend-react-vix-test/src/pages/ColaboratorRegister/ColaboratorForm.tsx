@@ -98,6 +98,7 @@ export const ColaboratorForm = () => {
   const companyOptions = [{ label: "Megas MSP Test", value: 0 }];
 
   const inputSx = {
+    width: "85%",
     height: "65px",
     "& .MuiOutlinedInput-root": {
       height: "40px",
@@ -107,7 +108,8 @@ export const ColaboratorForm = () => {
   };
 
   const dropDownStyle = {
-    width:"85%",
+    width: "85%",
+
     "& .MuiOutlinedInput-root": {
       height: "50px",
       borderRadius: "20px",

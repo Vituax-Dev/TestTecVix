@@ -43,7 +43,6 @@ export const SimpleInput = ({
       id={id}
       type={type === "password" && !showPassword ? "password" : "text"}
       sx={{
-        width: "85%",
         "label + &": {
           marginTop: "26px",
         },

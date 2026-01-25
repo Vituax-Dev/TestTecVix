@@ -65,6 +65,7 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
   } = useZMspRegisterPage();
 
   const inputSx = {
+    width: "90%",
     height: "75px",
     maxWidth: "350px",
   };
@@ -174,7 +175,7 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
 
       <Stack sx={{ gap: "10px" }}>
         <TextRob16Font1S sx={sectionTitleStyle}>Domínio do MSP</TextRob16Font1S>
-        <Stack sx={{ rowGap: "20px", maxWidth: "400px", maxHeight: "20px" }}>
+        <Stack sx={{ rowGap: "20px", maxWidth: "350px", maxHeight: "20px" }}>
           <TextRob16Font1S sx={labelStyle}>
             Domínio (Obrigatório)
           </TextRob16Font1S>

@@ -5,6 +5,7 @@ import { VirtualMachineRouter } from "./VirtualMachineRouter";
 import { MSPRegisterRouter } from "./MSPRegisterRouter";
 import { RegisterRouter } from "./RegisterRouter";
 import { LoginRouter } from "./LoginRouter";
+import { UserRegisterRouter } from "./UserRegisterRouter";
 import { WhiteLabelRouter } from "./WhiteLabelRouter";
 
 export const mainRoutes = [
@@ -16,4 +17,5 @@ export const mainRoutes = [
   MyVMsRouter,
   MSPRegisterRouter,
   WhiteLabelRouter,
+  UserRegisterRouter,
 ];

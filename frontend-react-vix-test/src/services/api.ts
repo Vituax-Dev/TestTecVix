@@ -68,7 +68,14 @@ const retryRequest = async <T>(config: IApiParams): Promise<IResponse<T>> => {
       message = error?.response?.data?.message || error.message;
       statusCode = error?.response?.status || 500;
     }
-    return { message, error: true, err: error, data: [] as T, statusCode };
+    // Ajuste aqui também para evitar erro de tipo no catch
+    return {
+      message,
+      error: true,
+      err: error,
+      data: [] as unknown as T,
+      statusCode,
+    };
   }
 };
 
@@ -84,6 +91,25 @@ const app = async <T>(config: IApiParams): Promise<IResponse<T>> => {
     tryRefetch = false,
     signal,
   } = config;
+
+  // 🔒 TRAVA DE SEGURANÇA CORRIGIDA
+  const token = useZUserProfile.getState().token;
+
+  // Rotas que não precisam de token
+  const isPublicRoute =
+    url.includes("session") || url.includes("login") || url.includes("auth");
+
+  if (!token && !isPublicRoute) {
+    // ✅ CORREÇÃO: Adicionado 'err' e tipagem segura no 'data'
+    return {
+      error: true,
+      message: "Aguardando autenticação...",
+      data: [] as unknown as T, // Resolve o problema do 'any'
+      err: null, // Resolve o problema da propriedade faltante
+      statusCode: 0,
+    };
+  }
+  // 🔓 FIM DA TRAVA
 
   try {
     const BASE_URL =
@@ -132,7 +158,14 @@ const app = async <T>(config: IApiParams): Promise<IResponse<T>> => {
       }
       message = error?.response?.data?.message || error.message;
     }
-    return { message, error: true, err: error, data: [] as T, statusCode };
+    // Ajuste aqui também
+    return {
+      message,
+      error: true,
+      err: error,
+      data: [] as unknown as T,
+      statusCode,
+    };
   }
 };
 

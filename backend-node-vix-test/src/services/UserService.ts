@@ -9,6 +9,7 @@ import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 import bcrypt from "bcrypt";
+import { genToken } from "../utils/jwt";
 
 export class UserService {
   private userModel = new UserModel();
@@ -179,5 +180,29 @@ export class UserService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.userModel.getByEmail(email);
+    if (!user) {
+      throw new AppError("Credenciais inválidas", STATUS_CODE.UNAUTHORIZED);
+    }
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw new AppError("Credenciais inválidas", STATUS_CODE.UNAUTHORIZED);
+    }
+    if (!user.isActive) {
+      throw new AppError("Usuário inativo", STATUS_CODE.UNAUTHORIZED);
+    }
+    const token = genToken({
+      idUser: user.idUser,
+      email: user.email,
+      role: user.role,
+    });
+
+    await this.userModel.updateLastLogin(user.idUser);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = user;
+    return { user: userWithoutPassword, token };
   }
 }

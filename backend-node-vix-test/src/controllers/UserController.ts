@@ -13,7 +13,9 @@ export class UserController {
     const user = req.user as user;
     const { idUser } = req.params;
     if (typeof idUser !== "string") {
-      return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "ID do usuário inválido" });
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ message: "ID do usuário inválido" });
     }
     const result = await this.userService.getById(idUser, user);
     return res.status(STATUS_CODE.OK).json(result);
@@ -35,7 +37,9 @@ export class UserController {
     const user = req.user as user;
     const { idUser } = req.params;
     if (typeof idUser !== "string") {
-      return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "ID do usuário inválido" });
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ message: "ID do usuário inválido" });
     }
     const result = await this.userService.updateUser(idUser, req.body, user);
     return res.status(STATUS_CODE.OK).json(result);
@@ -45,7 +49,9 @@ export class UserController {
     const user = req.user as user;
     const { idUser } = req.params;
     if (typeof idUser !== "string") {
-      return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "ID do usuário inválido" });
+      return res
+        .status(STATUS_CODE.BAD_REQUEST)
+        .json({ message: "ID do usuário inválido" });
     }
     const result = await this.userService.deleteUser(idUser, user);
     return res.status(STATUS_CODE.OK).json(result);
@@ -53,10 +59,10 @@ export class UserController {
 
   async login(req: CustomRequest<unknown>, res: Response) {
     const { email, password } = req.body;
-    const user = await this.userService.verifyCredentials(email, password);
+    const result = await this.userService.login(email, password);
     return res.status(STATUS_CODE.OK).json({
       message: "Login realizado com sucesso",
-      user,
+      ...result,
     });
   }
 

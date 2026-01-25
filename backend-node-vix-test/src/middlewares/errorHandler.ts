@@ -37,6 +37,13 @@ export const errorHandler = (
       });
     }
 
+    // Record not found
+    if (err.code === "P2025") {
+      return res.status(STATUS_CODE.NOT_FOUND).json({
+        message: "Record not found",
+      });
+    }
+
     return res
       .status(STATUS_CODE.BAD_REQUEST)
       .json(

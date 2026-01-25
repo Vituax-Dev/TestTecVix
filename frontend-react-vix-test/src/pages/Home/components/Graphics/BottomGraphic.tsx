@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   Line,
   XAxis,
@@ -16,18 +16,22 @@ import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
-import { IFormatData } from "../../../../types/socketType";
+import { generateMockChartData } from "../../../../utils/mockChartData";
 
 export const BottomGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const { currentIdVM, currentVMName: vmName } = useZGlobalVar();
+
+  const chartData = useMemo(
+    () => generateMockChartData(currentIdVM, "memory"),
+    [currentIdVM]
+  );
 
   const lastMemoryData =
     Number(chartData[chartData.length - 1]?.value.toFixed(2)) || 0;
 
   const valueColor = lastMemoryData < 80 ? theme[mode].ok : theme[mode].danger;
-  const { currentVMName: vmName } = useZGlobalVar();
 
   // if (!chartData.length) return <EmptyFeedBack />;
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   XAxis,
   YAxis,
@@ -14,12 +14,17 @@ import { Stack, Typography } from "@mui/material";
 import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
-import { IFormatData } from "../../../../types/socketType";
+import { generateMockChartData } from "../../../../utils/mockChartData";
 
 export const MainGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const { currentIdVM, currentVMName: vmName } = useZGlobalVar();
+
+  const chartData = useMemo(
+    () => generateMockChartData(currentIdVM, "cpu"),
+    [currentIdVM]
+  );
 
   const lastCpuUsage = chartData[chartData.length - 1]?.value || 0;
 
@@ -29,8 +34,6 @@ export const MainGraphic = () => {
       : lastCpuUsage < 90
         ? theme[mode].warning
         : theme[mode].danger;
-
-  const { currentVMName: vmName } = useZGlobalVar();
 
   // if (!chartData.length) return <EmptyFeedBack />;
 

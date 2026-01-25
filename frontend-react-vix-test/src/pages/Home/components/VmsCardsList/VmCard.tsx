@@ -71,10 +71,13 @@ export const VmCard = ({
   const {
     updateThisVm,
     setUpdateThisVm,
+    currentIdVM,
     setCurrentIdVM,
     setCurrentVMOS,
     setCurrentVMName,
   } = useZGlobalVar();
+
+  const isSelected = currentIdVM === vmId;
 
   const {
     updateNameVm,
@@ -526,22 +529,23 @@ export const VmCard = ({
             }}
             sx={{
               width: "100%",
-              border: "1px solid",
+              border: isSelected ? "2px solid" : "1px solid",
               borderColor: theme[mode].blueDark,
               borderRadius: "8px",
               display: "flex",
               flexDirection: "row",
+              backgroundColor: isSelected ? theme[mode].blueDark : "transparent",
               ":disabled": {
                 opacity: 0.4,
               },
             }}
           >
-            <ChartBarIcon fill={theme[mode].blueDark} />
+            <ChartBarIcon fill={isSelected ? theme[mode].btnText : theme[mode].blueDark} />
             <TextRob14Font1Xs
               sx={{
-                color: theme[mode].blueDark,
+                color: isSelected ? theme[mode].btnText : theme[mode].blueDark,
                 fontSize: "12px",
-                fontWeight: "500",
+                fontWeight: isSelected ? "700" : "500",
                 lineHeight: "16px",
                 wordWrap: "break-word",
               }}

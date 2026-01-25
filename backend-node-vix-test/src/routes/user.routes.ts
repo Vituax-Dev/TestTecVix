@@ -13,6 +13,8 @@ export const makeUserController = () => {
 
 const userController = makeUserController();
 
+/*Nota de Segurança: A rota /user/token/:id foi deixada pública temporariamente para facilitar a renovação de sessão no frontend.
+Em produção, recomenda-se a implementação de Refresh Tokens via cookies seguros.*/
 userRoutes.get(`${BASE_PATH}/token/:id`, async (req, res) => {
   await userController.listById(req, res);
 });

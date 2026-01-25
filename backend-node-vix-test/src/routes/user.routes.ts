@@ -29,6 +29,10 @@ userRoutes.get(`${BASE_PATH}/:id`, async (req, res) => {
   await userController.listById(req, res);
 });
 
+userRoutes.post(BASE_PATH, async (req, res) => {
+  await userController.create(req, res);
+});
+
 userRoutes.put(`${BASE_PATH}/:id`, async (req, res) => {
   await userController.update(req, res);
 });

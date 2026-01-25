@@ -10,7 +10,7 @@ import { ModalUserProfile } from "./ModalUserProfile";
 import { PictureProfile } from "./PictureProfile";
 
 export const UserPicProfile = () => {
-  const { username } = useZUserProfile();
+  const { fullName, username } = useZUserProfile();
   const { theme, mode } = useZTheme();
   // const navigate = useNavigate();
   const { t } = useTranslation();
@@ -80,7 +80,7 @@ export const UserPicProfile = () => {
               maxWidth: "100%",
             }}
           >
-            {t("home.hi")}, {username || "My Guess"}
+            {t("home.hi")}, {fullName?.trim() !== "" ? fullName : username}
           </TextRob12Font2Xs>
           <IconButton onClick={handleClick}>
             <ArrowDown fill={theme[mode].blueMedium} />

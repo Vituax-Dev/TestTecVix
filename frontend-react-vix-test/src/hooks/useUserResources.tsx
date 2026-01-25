@@ -53,14 +53,16 @@ export const useUserResources = () => {
       return null;
     }
 
+    const updatedData = (response.data as any).data;
+
     setUser({
-      fullName: response.data.fullName,
-      phone: response.data.phone, 
-      profileImgUrl: response.data.profileImgUrl,
-      username: response.data.username,
-      userEmail: response.data.email,
-      idBrand: response.data.idBrandMaster,
-      role: response.data.role,
+      fullName: updatedData.fullName, 
+      phone: updatedData.phone,
+      profileImgUrl: updatedData.profileImgUrl,
+      username: updatedData.username,
+      userEmail: updatedData.email,
+      idBrand: updatedData.idBrandMaster,
+      role: updatedData.role,
     });
 
     return response.data;

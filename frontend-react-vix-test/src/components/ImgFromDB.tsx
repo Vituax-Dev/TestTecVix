@@ -19,6 +19,8 @@ export const ImgFromDB = ({
   const { mode, theme } = useZTheme();
 
   useEffect(() => {
+    setSrcIMage(src);
+    
     getFileByObjectName(src).then(({ url }) => {
       setSrcIMage(url);
     });

@@ -16,6 +16,9 @@ import { ModalDeleteVMsFromMSP } from "./ModalDeleteVMsFromMSP";
 import { useBrandMasterResources } from "../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { useVmResource } from "../../hooks/useVmResource";
+import { FormMspStep1 } from "./FormMspStep1";
+import { FormMspStep2 } from "./FormMspStep2";
+import { Btn } from "../../components/Buttons/Btn";
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
@@ -32,16 +35,47 @@ export const MSPRegisterPage = () => {
     vmsToBeDeleted,
     setBrandMasterDeleted,
     setVmsToBeDeleted,
+    isEditing,
+    enterOnEditing,
+    setEnterOnEditing,
   } = useZMspRegisterPage();
   const { t } = useTranslation();
-  const { isLoading } = useBrandMasterResources();
+  const { isLoading, listAllBrands } = useBrandMasterResources();
   const { isLoadingDeleteVM, deleteVM } = useVmResource();
   const [openModalUserNotCreated, setOpenModalUserNotCreated] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   const resetAllStepStates = () => {
     setIsEditing([]);
     setActiveStep(0);
     resetAll();
+    setShowForm(false);
+    setEnterOnEditing(false);
+  };
+
+  const handleStartNewMsp = () => {
+    resetAll();
+    setActiveStep(0);
+    setShowForm(true);
+  };
+
+  const handleContinueToStep2 = () => {
+    setActiveStep(1);
+  };
+
+  const handleBackToStep1 = () => {
+    setActiveStep(0);
+  };
+
+  const { setMspList } = useZMspRegisterPage();
+
+  const handleConfirmMsp = async () => {
+    // Refresh the list after create/edit
+    const response = await listAllBrands();
+    if (response?.result) {
+      setMspList(response.result);
+    }
+    resetAllStepStates();
   };
 
   const handleCancelAfterDeleteMSP = () => {
@@ -63,6 +97,15 @@ export const MSPRegisterPage = () => {
       resetAllStepStates();
     };
   }, []);
+
+  // Show form when entering edit mode
+  useEffect(() => {
+    if (enterOnEditing && isEditing.length > 0) {
+      setShowForm(true);
+    }
+  }, [enterOnEditing, isEditing]);
+
+  const isFormVisible = showForm || (isEditing.length > 0);
 
   return (
     <ScreenFullPage
@@ -122,46 +165,90 @@ export const MSPRegisterPage = () => {
           boxSizing: "border-box",
         }}
       >
-        {
+        {isFormVisible && (
           <Stack
             sx={{
               background: theme[mode].mainBackground,
               borderRadius: "16px",
               width: "100%",
-              padding: "24px",
               boxSizing: "border-box",
             }}
           >
-            <Stack
+            {activeStep === 0 && (
+              <FormMspStep1
+                onContinue={handleContinueToStep2}
+                onCancel={resetAllStepStates}
+              />
+            )}
+            {activeStep === 1 && (
+              <FormMspStep2
+                onBack={handleBackToStep1}
+                onConfirm={handleConfirmMsp}
+                onClear={() => {}}
+              />
+            )}
+          </Stack>
+        )}
+        <Stack
+          sx={{
+            background: theme[mode].mainBackground,
+            borderRadius: "16px",
+            width: "100%",
+            padding: "24px",
+            boxSizing: "border-box",
+          }}
+        >
+          <Stack
+            sx={{
+              gap: "40px",
+            }}
+          >
+            <Box
               sx={{
-                gap: "40px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "24px",
               }}
             >
-              <Box
+              <TextRob16Font1S
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: "24px",
+                  color: theme[mode].black,
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
                 }}
               >
-                <TextRob16Font1S
-                  sx={{
-                    color: theme[mode].black,
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  {t("mspRegister.tableTitle")}
-                </TextRob16Font1S>
+                {t("mspRegister.tableTitle")}
+              </TextRob16Font1S>
+              <Stack sx={{ flexDirection: "row", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
+                {!isFormVisible && (
+                  <Btn
+                    onClick={handleStartNewMsp}
+                    sx={{
+                      padding: "8px 16px",
+                      backgroundColor: theme[mode].blue,
+                      borderRadius: "12px",
+                    }}
+                  >
+                    <TextRob16Font1S
+                      sx={{
+                        color: theme[mode].btnText,
+                        fontSize: "14px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      + {t("mspRegister.title")}
+                    </TextRob16Font1S>
+                  </Btn>
+                )}
                 <MspTableFilters />
-              </Box>
-              <MspTable />
-            </Stack>
+              </Stack>
+            </Box>
+            <MspTable />
           </Stack>
-        }
+        </Stack>
       </Stack>
       {modalOpen !== null && (
         <Modal

@@ -21,11 +21,13 @@ Table brandMaster {
   placeNumber String
   state String
   street String
-  cnpj String
+  cnpj String [unique]
   cep String
   cityCode Int
   district String
   isPoc Boolean [default: false]
+  minConsumption Decimal
+  discountPercent Decimal
   contract String
   contractAt DateTime
   pocOpenedAt DateTime

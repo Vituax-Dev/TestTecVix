@@ -1,0 +1,10 @@
+{
+  "cnpjAlreadyExists": "A company with this CNPJ already exists",
+  "emailAlreadyExists": "This email is already in use",
+  "usernameAlreadyExists": "This username is already in use",
+  "domainAlreadyExists": "This domain is already in use",
+  "fieldAlreadyExists": "This field is already in use",
+  "recordNotFound": "Record not found",
+  "databaseError": "Database error",
+  "unknownError": "An unexpected error occurred"
+}

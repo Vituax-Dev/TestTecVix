@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormHelperText,
   IconButton,
   Stack,
   SxProps,
@@ -21,6 +22,8 @@ interface Props {
   className?: string;
   type?: string;
   disabled?: boolean;
+  onBlur?: () => void;
+  error?: string | null;
 }
 
 export const LabelInputVM = ({
@@ -34,6 +37,8 @@ export const LabelInputVM = ({
   className = "",
   type = "text",
   disabled = false,
+  onBlur,
+  error,
 }: Props) => {
   const { theme, mode } = useZTheme();
   const [showPassword, setShowPassword] = useState(false);
@@ -67,6 +72,7 @@ export const LabelInputVM = ({
         disabled={disabled}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         type={showPassword ? "text" : type}
         sx={{
           width: "100%",
@@ -74,13 +80,14 @@ export const LabelInputVM = ({
           borderRadius: "12px",
           "& .MuiOutlinedInput-root": {
             "& fieldset": {
-              border: "none",
+              border: error ? `1px solid ${theme[mode].danger}` : "none",
+              borderRadius: "12px",
             },
             "&:hover fieldset": {
-              border: "none",
+              border: error ? `1px solid ${theme[mode].danger}` : "none",
             },
             "&.Mui-focused fieldset": {
-              border: `1px solid ${theme[mode].blue}`,
+              border: `1px solid ${error ? theme[mode].danger : theme[mode].blue}`,
               borderRadius: "12px",
             },
           },
@@ -134,6 +141,17 @@ export const LabelInputVM = ({
             )}
           </IconButton>
         </Stack>
+      )}
+      {error && (
+        <FormHelperText
+          sx={{
+            color: theme[mode].danger,
+            fontSize: "12px",
+            margin: 0,
+          }}
+        >
+          {error}
+        </FormHelperText>
       )}
     </FormControl>
   );

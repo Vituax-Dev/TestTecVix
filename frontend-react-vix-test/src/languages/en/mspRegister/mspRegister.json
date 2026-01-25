@@ -67,5 +67,20 @@
   "vmsFromThisMSP": "VMS from this MSP",
   "mspDeleted": "MSP {{ brandName }} deleted successfully!",
   "doYouWantToDeleteThisVMs": "Do you really want to delete these VMs?",
-  "deletedVMs": "VMs deleted successfully!"
+  "deletedVMs": "VMs deleted successfully!",
+  "continue": "Continue",
+  "username": "Username",
+  "usernamePlaceholder": "Username",
+  "mspDomainInfo": "MSP Domain",
+  "logoPattern": "Pattern: 165x50px",
+  "logoSize": "Size: 50mb",
+  "logoFormats": "Formats: .svg .png .jpg .gif .webp",
+  "changeLogo": "Change logo",
+  "removeLogo": "Remove logo",
+  "clickToUpload": "Click here to upload your logo",
+  "district": "District",
+  "districtPlaceholder": "Downtown",
+  "searchingAddress": "Searching address...",
+  "addressNotFound": "Postal code not found",
+  "addressFound": "Address filled automatically"
 }

@@ -39,6 +39,8 @@ interface IMspRegisterPage {
   showCepError: boolean;
   showAddressFields: boolean;
   isPoc: boolean;
+  minConsumption: string;
+  discountPercent: string;
   isPocFilter: boolean;
   brandMasterDeleted: IBrandMasterBasicInfo | null;
   vmsToBeDeleted: IVMCreatedResponse[];
@@ -81,6 +83,8 @@ const INIT_STATE: IMspRegisterPage = {
   showCepError: false,
   showAddressFields: false,
   isPoc: false,
+  minConsumption: "0",
+  discountPercent: "0",
   isPocFilter: false,
   brandMasterDeleted: null,
   vmsToBeDeleted: [],
@@ -141,6 +145,8 @@ interface IMspRegisterPageState extends IMspRegisterPage {
   setShowCepError: (showCepError: boolean) => void;
   setShowAddressFields: (showAddressFields: boolean) => void;
   setIsPoc: (isPoc: boolean) => void;
+  setMinConsumption: (minConsumption: string) => void;
+  setDiscountPercent: (discountPercent: string) => void;
   setIsPocFilter: (isPocFilter: boolean) => void;
   setBrandMasterDeleted: (
     brandMasterDeleted: IBrandMasterBasicInfo | null,
@@ -206,6 +212,10 @@ export const useZMspRegisterPage = create<IMspRegisterPageState>((set) => ({
   setShowAddressFields: (showAddressFields: boolean) =>
     set((state) => ({ ...state, showAddressFields })),
   setIsPoc: (isPoc: boolean) => set((state) => ({ ...state, isPoc })),
+  setMinConsumption: (minConsumption: string) =>
+    set((state) => ({ ...state, minConsumption })),
+  setDiscountPercent: (discountPercent: string) =>
+    set((state) => ({ ...state, discountPercent })),
   setIsPocFilter: (isPocFilter: boolean) =>
     set((state) => ({ ...state, isPocFilter })),
   setBrandMasterDeleted: (brandMasterDeleted: IBrandMasterBasicInfo | null) =>

@@ -32,8 +32,19 @@ export const errorHandler = (
       const target = err.meta?.target as string;
       // Extract field name: "user_username_key" -> "username"
       const field = target.split("_").slice(1, -1).join("_");
+
+      const errorKeys: Record<string, string> = {
+        cnpj: "errors.cnpjAlreadyExists",
+        email: "errors.emailAlreadyExists",
+        username: "errors.usernameAlreadyExists",
+        domain: "errors.domainAlreadyExists",
+      };
+
+      const messageKey = errorKeys[field] || "errors.fieldAlreadyExists";
+
       return res.status(STATUS_CODE.CONFLICT).json({
-        message: `'${field}' already exists`,
+        message: messageKey,
+        field,
       });
     }
 

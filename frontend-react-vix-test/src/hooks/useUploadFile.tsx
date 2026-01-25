@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { api } from "../services/api";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 export const useUploadFile = () => {
   const [isUploading, setIsUploading] = useState(false);
@@ -34,7 +34,7 @@ export const useUploadFile = () => {
     return await uploadFile(file);
   };
 
-  const getFileByObjectName = async (objectName: string) => {
+  const getFileByObjectName = useCallback(async (objectName: string) => {
     if (!objectName) return { url: "" };
     if (
       objectName.includes("https://") ||
@@ -53,7 +53,7 @@ export const useUploadFile = () => {
       return { url: "" };
     }
     return { url: response.data?.url || "" };
-  };
+  }, []);
 
   return { handleUpload, isUploading, getFileByObjectName, isLoading };
 };

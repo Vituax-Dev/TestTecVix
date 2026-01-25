@@ -32,6 +32,8 @@ interface IUpdateBrandMaster {
   cityCode?: number;
   district?: string;
   isPoc?: boolean;
+  minConsumption?: number;
+  discountPercent?: number;
 
   manual?: string;
   termsOfUse?: string;
@@ -81,6 +83,8 @@ interface ICreateNewBrandMaster {
   cityCode?: number;
   district?: string;
   isPoc?: boolean;
+  minConsumption?: number;
+  discountPercent?: number;
 }
 
 export interface INewMSPResponse {
@@ -238,7 +242,7 @@ export const useBrandMasterResources = () => {
         brandName: data.companyName,
         isActive: true,
         brandLogo: data.brandLogo,
-        domain: undefined,
+        domain: data.mspDomain,
         setorName: data.sector,
         fieldName: undefined,
         location: data.locality,
@@ -254,12 +258,17 @@ export const useBrandMasterResources = () => {
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
+        minConsumption: data?.minConsumption ? data.minConsumption : undefined,
+        discountPercent: data?.discountPercent ? data.discountPercent : undefined,
       },
     });
 
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const message = response.message.startsWith("errors.") 
+        ? t(response.message) 
+        : response.message;
+      toast.error(message);
       return;
     }
 
@@ -271,7 +280,7 @@ export const useBrandMasterResources = () => {
     const response = await api.get<IListAll<INewMSPResponse>>({
       url: "/brand-master",
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
       toast.error(response.message);

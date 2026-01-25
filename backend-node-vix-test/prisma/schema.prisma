@@ -35,11 +35,13 @@ model brandMaster {
   placeNumber   String?
   state         String?
   street        String?
-  cnpj          String?
+  cnpj          String?   @unique
   cep           String?
   cityCode      Int?
   district      String?
   isPoc         Boolean?  @default(false)
+  minConsumption Decimal? @db.Decimal(10, 2)
+  discountPercent Decimal? @db.Decimal(5, 2)
   contract      String?
   contractAt    DateTime? @db.DateTime(0)
   pocOpenedAt   DateTime? @db.DateTime(0)

@@ -18,6 +18,7 @@ import costsAndFinances from "./costsAndFinances/costsAndFinances.json";
 import invoices from "./invoices/invoices.json";
 import isos from "./isos/isos.json";
 import alerts from "./alerts/alerts.json";
+import errors from "./errors/errors.json";
 
 export const ptBR = {
   ...en,
@@ -40,4 +41,5 @@ export const ptBR = {
   invoices,
   isos,
   alerts,
+  errors,
 };

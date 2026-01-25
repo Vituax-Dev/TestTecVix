@@ -51,6 +51,12 @@ export const MspFormStepOne = ({ onNext, onCancel }: { onNext: () => void; onCan
         }
     };
 
+    const handleCancelAction = () => {
+        store.resetAll(); 
+        setFieldErrors({});
+        onCancel();
+    };
+
     const inputStyle = {
         backgroundColor: "#2C313C",
         "& .MuiInputBase-input": {
@@ -117,11 +123,16 @@ export const MspFormStepOne = ({ onNext, onCancel }: { onNext: () => void; onCan
                 </Stack>
                 <Stack flex={1} gap="4px">
                     <Typography sx={{ color: theme[mode].primary, fontSize: "12px" }}>Cidade</Typography>
-                    <InputLabel value={store.city} disabled sx={inputStyle} />
+                    <InputLabel
+                        value={store.enterOnEditing && /\d/.test(store.city) ? "" : store.city}
+                        disabled
+                        placeholder="Preenchido via CEP"
+                        sx={inputStyle}
+                    />
                 </Stack>
                 <Stack flex={0.6} gap="4px">
                     <Typography sx={{ color: theme[mode].primary, fontSize: "12px" }}>Estado</Typography>
-                    <InputLabel value={store.countryState} disabled sx={inputStyle} />
+                    <InputLabel value={store.countryState} disabled placeholder="UF" sx={inputStyle} />
                 </Stack>
             </Stack>
 
@@ -149,7 +160,7 @@ export const MspFormStepOne = ({ onNext, onCancel }: { onNext: () => void; onCan
                 <Btn onClick={handleNextStep} sx={{ backgroundColor: theme[mode].blue, width: "200px", borderRadius: "12px", py: 1.2 }}>
                     <TextRob16Font1S sx={{ color: theme[mode].btnText }}>Continuar</TextRob16Font1S>
                 </Btn>
-                <Btn onClick={onCancel} sx={{ border: "1px solid #FFF", width: "200px", borderRadius: "12px", py: 1.2 }}>
+                <Btn onClick={handleCancelAction} sx={{ border: "1px solid #FFF", width: "200px", borderRadius: "12px", py: 1.2 }}>
                     <TextRob16Font1S sx={{ color: "#FFF" }}>Cancelar</TextRob16Font1S>
                 </Btn>
             </Stack>

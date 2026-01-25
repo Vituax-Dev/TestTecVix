@@ -18,6 +18,7 @@ import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { useVmResource } from "../../hooks/useVmResource";
 import { MspFormStepOne } from "../MSPRegister/components/MspFormStepOne";
 import { MspFormStepTwo } from "../MSPRegister/components/MspFormStepTwo";
+import { Btn } from "../../components/Buttons/Btn"; 
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
@@ -105,15 +106,6 @@ export const MSPRegisterPage = () => {
           />
         </Box>
       }
-    //  sx= estilização do componente pai
-    // children= elementos do componente
-    // className= estilização do componente
-    // isLoading= ativa um loaing na tela
-    // title= componente do titulo
-    // subtitle= componente do subtitulo
-    // keepSubtitle = false= mantem o subtitulo no caso de tela mobile ou pequena
-    // sxContainer= estilização do componente children
-    // sxTitleSubTitle= estilização do componente title e subtitle
     >
       {Boolean(isLoading || isLoadingDeleteVM) && <AbsoluteBackDrop open />}
       <Stack
@@ -158,13 +150,40 @@ export const MSPRegisterPage = () => {
                 >
                   {t("mspRegister.tableTitle")}
                 </TextRob16Font1S>
-                <MspTableFilters />
+
+                <Stack direction="row" gap="16px" alignItems="center">
+                  <MspTableFilters />
+
+                  <Btn
+                    onClick={() => {
+                      resetAll();
+                      setModalOpen("registeringMsp");
+                    }}
+                    sx={{
+                      backgroundColor: theme[mode].blue,
+                      borderRadius: "12px", 
+                      padding: "10px 24px",
+                      textTransform: "none",
+                      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)", 
+                      height: "40px", 
+                      "&:hover": {
+                        backgroundColor: theme[mode].blueDark,
+                      }
+                    }}
+                  >
+                    <TextRob16Font1S sx={{ color: theme[mode].btnText, fontWeight: 600 }}>
+                      {t("mspRegister.addMspButton")}
+                    </TextRob16Font1S>
+                  </Btn>
+                </Stack>
               </Box>
+
               <MspTable />
             </Stack>
           </Stack>
         }
       </Stack>
+
       {modalOpen !== null && (
         <Modal
           open={modalOpen !== null}
@@ -192,7 +211,7 @@ export const MSPRegisterPage = () => {
                 ) : (
                   <MspFormStepTwo
                     onBack={() => setActiveStep(0)}
-                    onConfirm={() => setModalOpen("createdMsp")}
+                    onConfirm={() => setModalOpen("createdMsp")} 
                   />
                 )}
               </Stack>
@@ -200,7 +219,7 @@ export const MSPRegisterPage = () => {
 
             {modalOpen === "deletedMsp" && mspToBeDeleted && (
               <ModalDeleteMsp
-                mspToDelete={mspToBeDeleted} 
+                mspToDelete={mspToBeDeleted}
                 onClose={() => {
                   setModalOpen(null);
                   setMspToBeDeleted(null);

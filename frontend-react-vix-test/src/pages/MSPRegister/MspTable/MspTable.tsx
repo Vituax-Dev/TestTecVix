@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useCallback } from "react";
+import { Fragment, useEffect } from "react";
 import { useZTheme } from "../../../stores/useZTheme";
 import { Box, IconButton, Stack, Divider } from "@mui/material";
 import { ImgFromDB } from "../../../components/ImgFromDB";
@@ -18,18 +18,20 @@ export const MspTable = () => {
   const { listAllBrands } = useBrandMasterResources();
   const { role } = useZUserProfile();
 
-  const fetchMsps = useCallback(async () => {
-    try {
-      const response = await listAllBrands();
-      store.setMspList(response.result);
-    } catch (error) {
-      console.error("Erro ao listar MSPs", error);
-    }
-  }, [listAllBrands, store]);
-
   useEffect(() => {
+    const fetchMsps = async () => {
+      try {
+        const response = await listAllBrands();
+        if (response && response.result) {
+          store.setMspList(response.result);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar MSPs:", error);
+      }
+    };
+
     fetchMsps();
-  }, [fetchMsps]);
+  }, []);
 
   const handleEdit = (id: number) => {
     const msp = store.mspList.find((c) => c.idBrandMaster === id);
@@ -39,27 +41,36 @@ export const MspTable = () => {
     store.setIsEditing([id]);
     store.setActiveStep(0);
     store.setShowAddressFields(true);
+
+    store.setModalOpen("registeringMsp");
+
     store.setCompanyName(msp.brandName || "");
     store.setCnpj(msp.cnpj || "");
-    store.setPhone(msp.smsContact || "");
     store.setContactEmail(msp.emailContact || "");
-    store.setCep(msp.cep || "");
+    store.setPhone(msp.smsContact || "");
+    store.setSector(msp.setorName || "");
+
     store.setLocality(msp.location || "");
+
+    store.setCep(msp.cep || "");
     store.setCountryState(msp.state || "");
-    store.setCity(msp.city || "");
     store.setStreet(msp.street || "");
     store.setStreetNumber(msp.placeNumber || "");
-    store.setSector(msp.setorName || "");
-    store.setMSPDomain(msp.domain || "");
-    store.setBrandLogo({
-      brandLogoUrl: msp.brandLogo || "",
-      brandObjectName: "logo"
-    });
+
     store.setCityCode(msp.cityCode ? String(msp.cityCode) : "");
     store.setDistrict(msp.district || "");
     store.setIsPoc(Boolean(msp.isPoc));
 
-    store.setModalOpen("registeringMsp");
+    store.setMSPDomain(msp.domain || "");
+    store.setAdmName(""); 
+    store.setAdmEmail(""); 
+
+    store.setCity(msp.city || "");
+
+    store.setBrandLogo({
+      brandLogoUrl: msp.brandLogo || "",
+      brandObjectName: "logo"
+    });
   };
 
   return (
@@ -79,6 +90,7 @@ export const MspTable = () => {
               <Box sx={{ flex: "2", display: "flex", gap: "16px", alignItems: "center", width: "100%" }}>
                 <ImgFromDB
                   style={{ width: "36px", height: "36px", borderRadius: "100%" }}
+                  alt="msp image"
                   src={msp.brandLogo || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhGHdcalX0wUWxZQCiSv8WzmSPpFGHr4jlsw&s"}
                 />
                 <Stack>

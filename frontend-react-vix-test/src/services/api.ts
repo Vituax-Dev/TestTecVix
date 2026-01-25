@@ -96,7 +96,7 @@ const app = async <T>(config: IApiParams): Promise<IResponse<T>> => {
       url: fullEndpoint || `${BASE_URL}${url}`,
       data,
       params,
-      signal, 
+      signal,
       ...nAuth,
     };
 

@@ -41,6 +41,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
     deleteVM,
     isLoadingDeleteVM,
     getNetworkType,
+    getStorageType,
     isLoadingUpdateVM,
   } = useVmResource();
 
@@ -55,10 +56,9 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const [vmvCpu, setVmvCpu] = useState(currentVM.vCPU);
   const [vmMemory, setVmMemory] = useState(currentVM.ram);
   const [vmDisk, setVmDisk] = useState(currentVM.disk);
-  const [vmStorageType] = useState<TOptionsTyped<string>>({
-    value: "ssd",
-    label: "SSD",
-  });
+  const [vmStorageType, setVmStorageType] = useState<TOptionsTyped<string>>(
+    getStorageType(currentVM.storageType),
+  );
   const [vmLocalization] = useState<TOptionsTyped<string>>({
     label: localizationOptions[0]?.label,
     value: String(localizationOptions[0]?.value),
@@ -81,7 +81,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
     setVmvCpu(currentVM.vCPU);
     setVmMemory(currentVM.ram);
     setVmDisk(currentVM.disk);
-    // setVmStorageType(null);
+    setVmStorageType(getStorageType(currentVM.storageType));
     // setVmLocalization(null);
     setHasBackup(currentVM.hasBackup);
     setStatus(currentVM.status);
@@ -298,11 +298,12 @@ export const FormEditVM = ({ onClose }: IProps) => {
             }}
           >
             <DropDowText
-              disabled
               label={t("createVm.storageType")}
               data={storageOptions}
               value={vmStorageType}
-              onChange={() => {}}
+              onChange={(v) =>
+                v && setVmStorageType({ label: v.label, value: v.value as string })
+              }
               sxContainer={{
                 "@media (min-width: 660px)": {
                   maxWidth: "180px",

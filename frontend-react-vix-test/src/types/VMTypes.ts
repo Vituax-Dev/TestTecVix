@@ -94,6 +94,7 @@ export interface IVMCreatedResponse {
   status: string | null;
   idBrandMaster: number | null;
   pass: string | null;
+  storageType: EStorageType;
   createdAt: Date | string;
   updatedAt: Date | string;
   deletedAt: Date | string | null;

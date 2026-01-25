@@ -296,6 +296,18 @@ export const useVmResource = () => {
     return networkTypeOptions[0];
   };
 
+  const getStorageType = (
+    storageTypeValue?: string,
+  ): { value: string; label: string } => {
+    if (storageTypeValue) {
+      return (
+        storageOptions?.find((st) => st.value === storageTypeValue) ||
+        storageOptions[0]
+      );
+    }
+    return storageOptions[0];
+  };
+
   const monitoringVMStatus = async (idVM: number) => {
     const response = await api.get<boolean>({
       url: `/vm/monitoring/status/${idVM}`,
@@ -317,6 +329,7 @@ export const useVmResource = () => {
     deleteVM,
     getOS,
     getNetworkType,
+    getStorageType,
     storageOptions,
     localizationOptions,
     isLoading,

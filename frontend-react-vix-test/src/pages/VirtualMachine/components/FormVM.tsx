@@ -1,6 +1,6 @@
 import { Divider, Stack } from "@mui/material";
 import { LabelInputVM } from "./LabelInputVM";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TextRob18Font2M } from "../../../components/Text2M";
 import { useZTheme } from "../../../stores/useZTheme";
@@ -64,10 +64,10 @@ export const FormVM = () => {
     resetAll,
   } = useZVMSugestion();
 
-  const vmStorageType = {
+  const [vmStorageType, setVmStorageType] = useState<TOptionsTyped<string>>({
     value: "ssd",
     label: "SSD",
-  };
+  });
   const handleCancel = () => {
     setVmPassword(genStrongPass(MIN_PASS_SIZE));
     setVmName("");
@@ -78,6 +78,7 @@ export const FormVM = () => {
     setVmLocalization(null);
     setHasBackup(false);
     setVmNetwork(networkTypeOptions[0]);
+    setVmStorageType(storageOptions[0]);
   };
 
   const handleCreateVm = async () => {
@@ -287,11 +288,12 @@ export const FormVM = () => {
             }}
           >
             <DropDowText
-              disabled
               label={t("createVm.storageType")}
               data={storageOptions}
               value={vmStorageType}
-              onChange={() => {}}
+              onChange={(v) =>
+                v && setVmStorageType({ label: v.label, value: v.value as string })
+              }
               sxContainer={{
                 maxWidth: "180px",
               }}

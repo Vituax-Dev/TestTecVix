@@ -10,12 +10,15 @@ import { MspTableFilters } from "./MspTable/MspTableFilter";
 import { MspTable } from "./MspTable/MspTable";
 import { MspModal } from "./MspModal";
 import { ModalDeleteMsp } from "./ModalDeleteMsp";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ModalUSerNotCreated } from "./ModalUSerNotCreated";
 import { ModalDeleteVMsFromMSP } from "./ModalDeleteVMsFromMSP";
 import { useBrandMasterResources } from "../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { useVmResource } from "../../hooks/useVmResource";
+import { MspFormStepOne } from "../MSPRegister/components/MspFormStepOne";
+import { MspFormStepTwo } from "../MSPRegister/components/MspFormStepTwo";
+import { Btn } from "../../components/Buttons/Btn"; 
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
@@ -38,11 +41,11 @@ export const MSPRegisterPage = () => {
   const { isLoadingDeleteVM, deleteVM } = useVmResource();
   const [openModalUserNotCreated, setOpenModalUserNotCreated] = useState(false);
 
-  const resetAllStepStates = () => {
+  const resetAllStepStates = useCallback(() => {
     setIsEditing([]);
     setActiveStep(0);
     resetAll();
-  };
+  }, [setIsEditing, setActiveStep, resetAll]);
 
   const handleCancelAfterDeleteMSP = () => {
     setMspToBeDeleted(null);
@@ -62,7 +65,7 @@ export const MSPRegisterPage = () => {
     return () => {
       resetAllStepStates();
     };
-  }, []);
+  }, [resetAllStepStates]);
 
   return (
     <ScreenFullPage
@@ -103,15 +106,6 @@ export const MSPRegisterPage = () => {
           />
         </Box>
       }
-      //  sx= estilização do componente pai
-      // children= elementos do componente
-      // className= estilização do componente
-      // isLoading= ativa um loaing na tela
-      // title= componente do titulo
-      // subtitle= componente do subtitulo
-      // keepSubtitle = false= mantem o subtitulo no caso de tela mobile ou pequena
-      // sxContainer= estilização do componente children
-      // sxTitleSubTitle= estilização do componente title e subtitle
     >
       {Boolean(isLoading || isLoadingDeleteVM) && <AbsoluteBackDrop open />}
       <Stack
@@ -156,30 +150,73 @@ export const MSPRegisterPage = () => {
                 >
                   {t("mspRegister.tableTitle")}
                 </TextRob16Font1S>
-                <MspTableFilters />
+
+                <Stack direction="row" gap="16px" alignItems="center">
+                  <MspTableFilters />
+
+                  <Btn
+                    onClick={() => {
+                      resetAll();
+                      setModalOpen("registeringMsp");
+                    }}
+                    sx={{
+                      backgroundColor: theme[mode].blue,
+                      borderRadius: "12px", 
+                      padding: "10px 24px",
+                      textTransform: "none",
+                      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)", 
+                      height: "40px", 
+                      "&:hover": {
+                        backgroundColor: theme[mode].blueDark,
+                      }
+                    }}
+                  >
+                    <TextRob16Font1S sx={{ color: theme[mode].btnText, fontWeight: 600 }}>
+                      {t("mspRegister.addMspButton")}
+                    </TextRob16Font1S>
+                  </Btn>
+                </Stack>
               </Box>
+
               <MspTable />
             </Stack>
           </Stack>
         }
       </Stack>
+
       {modalOpen !== null && (
         <Modal
           open={modalOpen !== null}
           onClose={() => setModalOpen(null)}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
         >
-          <div>
+          <Box sx={{ width: '90%', maxWidth: '900px', outline: 'none' }}>
             {(modalOpen === "editedMsp" || modalOpen === "createdMsp") && (
-              <MspModal
-                modalType={modalOpen}
-                onClose={() => setModalOpen(null)}
-              />
+              <MspModal modalType={modalOpen} onClose={() => setModalOpen(null)} />
             )}
+
+            {modalOpen === "registeringMsp" && (
+              <Stack sx={{
+                background: theme[mode].mainBackground,
+                borderRadius: "16px",
+                padding: "32px",
+                maxHeight: '90vh',
+                overflowY: 'auto'
+              }}>
+                {activeStep === 0 ? (
+                  <MspFormStepOne
+                    onNext={() => setActiveStep(1)}
+                    onCancel={() => setModalOpen(null)}
+                  />
+                ) : (
+                  <MspFormStepTwo
+                    onBack={() => setActiveStep(0)}
+                    onConfirm={() => setModalOpen("createdMsp")} 
+                  />
+                )}
+              </Stack>
+            )}
+
             {modalOpen === "deletedMsp" && mspToBeDeleted && (
               <ModalDeleteMsp
                 mspToDelete={mspToBeDeleted}
@@ -189,7 +226,7 @@ export const MSPRegisterPage = () => {
                 }}
               />
             )}
-          </div>
+          </Box>
         </Modal>
       )}
       {openModalUserNotCreated && (

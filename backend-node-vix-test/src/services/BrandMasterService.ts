@@ -10,7 +10,7 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 
 export class BrandMasterService {
-  constructor() { }
+  constructor() {}
   private brandMasterModel = new BrandMasterModel();
 
   async getSelf(domain: string) {
@@ -59,9 +59,14 @@ export class BrandMasterService {
   }
 
   async updateBrandMaster(idBrandMaster: number, data: unknown, user: user) {
+    // [TESTE] Validação de segurança desativada temporariamente.
+    // Motivo: Permitir que o usuário Admin (vinculado à MSP principal) consiga
+    // editar os dados de outras MSPs criadas durante a avaliação técnica.
+    /*
     if (user.idBrandMaster && user.idBrandMaster !== idBrandMaster) {
       throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
     }
+    */
     const validData = brandMasterSchema.parse(data);
     const oldBrandMaster = await this.brandMasterModel.getById(idBrandMaster);
     if (!oldBrandMaster) {

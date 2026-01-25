@@ -7,7 +7,9 @@ export interface IUserProfile {
   idUser: string | null;
   profileImgUrl: string | null;
   objectName?: string;
-  imageUrl?: string;
+  profileImgFile?: File | null; // Arquivo para upload após confirm
+  profileImgPreview?: string; // Preview local (blob URL)
+  removeImage?: boolean; // Flag para remover imagem
   username: string | null;
   isActive?: boolean;
   lastLoginDate?: string | Date;
@@ -20,7 +22,9 @@ const INIT_STATE: IUserProfile = {
   idUser: null,
   profileImgUrl: null,
   objectName: "",
-  imageUrl: "",
+  profileImgFile: null,
+  profileImgPreview: "",
+  removeImage: false,
   username: null,
   userEmail: null,
   token: null,
@@ -31,13 +35,10 @@ const INIT_STATE: IUserProfile = {
 
 interface IUserProfileState extends IUserProfile {
   setUser: (user: Partial<IUserProfile>) => void;
-  setImage: ({
-    imageUrl,
-    objectName,
-  }: {
-    imageUrl: string;
-    objectName: string;
-  }) => void;
+  setObjectName: (objectName: string) => void;
+  setProfileImgFile: (file: File | null) => void;
+  setProfileImgPreview: (preview: string) => void;
+  setRemoveImage: (remove: boolean) => void;
   resetAll: () => void;
 }
 const middle = middlewareLocalStorage<IUserProfileState>("userProfile");
@@ -46,8 +47,10 @@ export const useZUserProfile = create<IUserProfileState>()(
   middle((set) => ({
     ...INIT_STATE,
     setUser: (user) => set((state) => ({ ...state, ...user })),
-    setImage: ({ imageUrl, objectName }) =>
-      set((state) => ({ ...state, imageUrl, objectName })),
+    setObjectName: (objectName) => set((state) => ({ ...state, objectName })),
+    setProfileImgFile: (profileImgFile) => set((state) => ({ ...state, profileImgFile })),
+    setProfileImgPreview: (profileImgPreview) => set((state) => ({ ...state, profileImgPreview })),
+    setRemoveImage: (removeImage) => set((state) => ({ ...state, removeImage })),
     resetAll: () => set((state) => ({ ...state, ...INIT_STATE })),
   })),
 );

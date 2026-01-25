@@ -30,7 +30,7 @@ uploadsRoutes.post(`${BASE_PATH}/file`, upload.single("file"), async (req, res) 
 
 // Retorna a URL do arquivo (para uso no frontend)
 uploadsRoutes.get(`${BASE_PATH}/file/:objectName`, async (req, res) => {
-  await uploadsController.getFileUrl(req, res);
+  await uploadsController.getFileByObjectName(req, res);
 });
 
 // Serve o arquivo diretamente (para uso como src de imagem)

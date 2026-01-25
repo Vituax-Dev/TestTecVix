@@ -8,11 +8,13 @@ import { useZUserProfile } from "../../../../../stores/useZUserProfile";
 import { useUserResources } from "../../../../../hooks/useUserResources";
 import { useZBrandInfo } from "../../../../../stores/useZBrandStore";
 import { useState } from "react";
+import { useUploadFile } from "../../../../../hooks/useUploadFile";
 
 export const CTAsButtons = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
   const [isLoading, setIsLoading] = useState(false);
+  const { handleUpload } = useUploadFile();
 
   const {
     companyEmail,
@@ -26,7 +28,17 @@ export const CTAsButtons = () => {
     password,
     confirmPassword,
   } = useZFormProfileNotifications();
-  const { objectName, role, idBrand, setUser } = useZUserProfile();
+  const {
+    role,
+    idBrand,
+    setUser,
+    profileImgFile,
+    profileImgPreview,
+    removeImage,
+    setProfileImgFile,
+    setProfileImgPreview,
+    setRemoveImage,
+  } = useZUserProfile();
   const { updateProfileSettings } = useUserResources();
   const { setBrandInfo } = useZBrandInfo();
 
@@ -64,7 +76,8 @@ export const CTAsButtons = () => {
     try {
       // Build request data for unified endpoint
       const requestData: {
-        profileImgUrl?: string;
+        profileImgUrl?: string | null;
+        removeProfileImg?: boolean;
         username?: string;
         fullName?: string;
         email?: string;
@@ -77,9 +90,15 @@ export const CTAsButtons = () => {
         };
       } = {};
 
-      // Add profile image if changed
-      if (objectName) {
-        requestData.profileImgUrl = objectName;
+      // Handle profile image - upload if file exists, or mark for removal
+      if (profileImgFile) {
+        const uploadResult = await handleUpload(profileImgFile);
+        if (uploadResult?.objectName) {
+          requestData.profileImgUrl = uploadResult.objectName;
+        }
+      } else if (removeImage) {
+        // Flag para remover imagem no backend
+        requestData.removeProfileImg = true;
       }
 
       // Add personal info if provided
@@ -133,6 +152,15 @@ export const CTAsButtons = () => {
           smsContact: result.brandMaster.smsContact || "",
           timezone: result.brandMaster.timezone || "",
         });
+      }
+
+      // Limpa o arquivo pendente e flags após salvar com sucesso
+      setProfileImgFile(null);
+      setRemoveImage(false);
+      // Limpa o preview blob para que o useEffect carregue do novo profileImgUrl
+      if (profileImgPreview && profileImgPreview.startsWith("blob:")) {
+        URL.revokeObjectURL(profileImgPreview);
+        setProfileImgPreview("");
       }
 
       setIsLoading(false);

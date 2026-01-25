@@ -103,7 +103,8 @@ export const useUserResources = () => {
     email?: string;
     phone?: string;
     password?: string;
-    profileImgUrl?: string;
+    profileImgUrl?: string | null;
+    removeProfileImg?: boolean;
     companyData?: {
       emailContact?: string;
       smsContact?: string;

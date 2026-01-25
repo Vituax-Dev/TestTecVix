@@ -5,7 +5,7 @@ import { TextRob14Font1Xs } from "../../../../../components/Text1Xs";
 import { useDropzone } from "react-dropzone";
 import { useUploadFile } from "../../../../../hooks/useUploadFile";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { UploadFileIcon } from "../../../../../icons/UploadFileIcon";
 import { TextRob12Font2Xs } from "../../../../../components/Text2Xs";
 import { CircleIcon } from "../../../../../icons/CircleIcon";
@@ -14,64 +14,79 @@ import { useZUserProfile } from "../../../../../stores/useZUserProfile";
 export const PerfilPhotoUpload = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
-  const { handleUpload, isUploading, getFileByObjectName } = useUploadFile();
-  const [uploadedFile, setUploadedFile] = useState<string | null>("");
-  const { setImage, profileImgUrl } = useZUserProfile();
+  const { getFileByObjectName, isLoading } = useUploadFile();
+  const {
+    profileImgUrl,
+    profileImgPreview,
+    setProfileImgFile,
+    setProfileImgPreview,
+    setRemoveImage,
+  } = useZUserProfile();
 
   // Carrega a imagem existente do usuário quando o componente monta
   useEffect(() => {
     const loadExistingImage = async () => {
-      if (profileImgUrl && !uploadedFile) {
+      // Se já tem preview, não precisa carregar
+      if (profileImgPreview) return;
+      
+      if (profileImgUrl) {
         // Se profileImgUrl já é uma URL completa, usa diretamente
         if (profileImgUrl.startsWith("http")) {
-          setUploadedFile(profileImgUrl);
-          setImage({
-            imageUrl: profileImgUrl,
-            objectName: profileImgUrl.split("/").pop() || "",
-          });
+          setProfileImgPreview(profileImgUrl);
         } else {
           // Se é apenas o objectName, busca a URL completa
           const response = await getFileByObjectName(profileImgUrl);
           if (response && response.url) {
-            setUploadedFile(response.url);
-            setImage({
-              imageUrl: response.url,
-              objectName: profileImgUrl,
-            });
+            setProfileImgPreview(response.url);
           }
         }
       }
     };
     loadExistingImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileImgUrl]);
 
-  const onDrop = async (acceptedFiles: File[]) => {
+  // Limpar blob URL ao desmontar para evitar memory leak
+  useEffect(() => {
+    return () => {
+      if (profileImgPreview && profileImgPreview.startsWith("blob:")) {
+        URL.revokeObjectURL(profileImgPreview);
+      }
+    };
+  }, [profileImgPreview]);
+
+  // Configuração do dropzone para seleção local (sem upload imediato)
+  const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
+    const file = acceptedFiles[0];
 
-    const file = acceptedFiles[0]; // Seleciona o primeiro arquivo
-    const response = await handleUpload(file);
-
-    if (response && response.url) {
-      setUploadedFile(response.url); // Atualiza a URL do logo carregado
-      setImage({
-        imageUrl: response.url,
-        objectName: response.objectName,
-      });
+    // Revogar URL anterior se existir
+    if (profileImgPreview && profileImgPreview.startsWith("blob:")) {
+      URL.revokeObjectURL(profileImgPreview);
     }
+
+    // Criar preview local
+    const previewUrl = URL.createObjectURL(file);
+    setProfileImgFile(file);
+    setProfileImgPreview(previewUrl);
+    setRemoveImage(false); // Cancelar remoção se estava marcada
   };
 
   const handleRemoveLogo = () => {
-    setImage({
-      imageUrl: "",
-      objectName: "",
-    });
-    setUploadedFile("");
+    // Revogar URL de preview se existir
+    if (profileImgPreview && profileImgPreview.startsWith("blob:")) {
+      URL.revokeObjectURL(profileImgPreview);
+    }
+    setProfileImgFile(null);
+    setProfileImgPreview("");
+    setRemoveImage(true); // Marca para remover no backend ao salvar
   };
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif", ".svg"] },
     maxSize: 50 * 1024 * 1024, // Limita para 50MB
+    disabled: isLoading,
   });
 
   return (
@@ -121,10 +136,10 @@ export const PerfilPhotoUpload = () => {
               userSelect: "none",
             }}
           >
-            {isUploading ? t("whiteLabel.loading") : t("whiteLabel.clickHere")}
+            {isLoading ? t("whiteLabel.loading") : t("whiteLabel.clickHere")}
           </TextRob12Font2Xs>
         </Box>
-        {uploadedFile && (
+        {profileImgPreview && (
           <Box
             sx={{
               display: "flex",
@@ -134,7 +149,7 @@ export const PerfilPhotoUpload = () => {
             }}
           >
             <img
-              src={uploadedFile}
+              src={profileImgPreview}
               alt="Logo carregado"
               style={{
                 maxWidth: "100%",

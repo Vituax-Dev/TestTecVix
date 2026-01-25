@@ -127,7 +127,9 @@ export class BrandMasterService {
     // Guarda o logo antigo para deletar APÓS o save
     const oldLogo = oldBrandMaster.brandLogo;
     const newLogo = validData.brandLogo;
-    const shouldDeleteOldLogo = newLogo && oldLogo && newLogo !== oldLogo;
+    // Delete old logo if: there was an old logo AND (new logo is different OR logo was removed)
+    const logoWasChanged = newLogo !== undefined && newLogo !== oldLogo;
+    const shouldDeleteOldLogo = oldLogo && logoWasChanged;
 
     // Primeiro salva no banco
     const result = await this.brandMasterModel.updateBrandMaster(

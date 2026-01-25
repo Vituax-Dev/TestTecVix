@@ -10,6 +10,7 @@ import {
   userCreatedByManagerSchema,
 } from "../types/validations/User/createUser";
 import { prisma } from "../database/client";
+import { BucketLocalService } from "./BucketLocalService";
 
 export interface ILoggedUser {
   idUser: string;
@@ -285,6 +286,7 @@ export class UserService {
       phone?: string;
       password?: string;
       profileImgUrl?: string;
+      removeProfileImg?: boolean;
       // Company fields (only for admin/manager)
       companyData?: {
         emailContact?: string;
@@ -310,7 +312,7 @@ export class UserService {
       email?: string;
       phone?: string;
       password?: string;
-      profileImgUrl?: string;
+      profileImgUrl?: string | null;
       updatedAt: Date;
     } = { updatedAt: new Date() };
 
@@ -318,7 +320,17 @@ export class UserService {
     if (data.fullName) userUpdateData.fullName = data.fullName;
     if (data.email) userUpdateData.email = data.email;
     if (data.phone) userUpdateData.phone = data.phone;
-    if (data.profileImgUrl) userUpdateData.profileImgUrl = data.profileImgUrl;
+    
+    // Handle profile image: update, remove, or keep
+    const oldProfileImg = user.profileImgUrl;
+    if (data.removeProfileImg) {
+      // User wants to remove profile image
+      userUpdateData.profileImgUrl = null;
+    } else if (data.profileImgUrl) {
+      // User wants to update profile image
+      userUpdateData.profileImgUrl = data.profileImgUrl;
+    }
+
     if (data.password) {
       userUpdateData.password = await bcrypt.hash(data.password, 10);
     }
@@ -360,6 +372,13 @@ export class UserService {
 
       return { user: updatedUser, brandMaster: updatedBrandMaster };
     });
+
+    // Delete old profile image file after successful transaction
+    // Only delete if image was changed or removed
+    if (oldProfileImg && (data.profileImgUrl || data.removeProfileImg)) {
+      const bucketService = new BucketLocalService();
+      await bucketService.deleteFile(oldProfileImg);
+    }
 
     // Remove password from response
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -79,6 +79,8 @@ model user {
   username      String    @unique
   password      String
   email         String    @unique
+  fullName      String?
+  phone         String?
   profileImgUrl String?
   role          ERole     @default(member)
   idBrandMaster Int?

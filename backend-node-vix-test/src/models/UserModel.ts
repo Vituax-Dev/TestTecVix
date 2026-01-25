@@ -6,6 +6,8 @@ const userSelectFields = {
   idUser: true,
   username: true,
   email: true,
+  fullName: true,
+  phone: true,
   profileImgUrl: true,
   role: true,
   idBrandMaster: true,
@@ -93,6 +95,13 @@ export class UserModel {
   async createUser(data: TUserCreate) {
     return await prisma.user.create({
       data: { ...data, isActive: false },
+      select: userSelectFields,
+    });
+  }
+
+  async createActiveUser(data: TUserCreate) {
+    return await prisma.user.create({
+      data: { ...data, isActive: true },
       select: userSelectFields,
     });
   }

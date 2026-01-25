@@ -27,7 +27,7 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
   const { t } = useTranslation();
   const { mode, theme } = useZTheme();
   const { handleUpload, isUploading, getFileByObjectName } = useUploadFile();
-  const { createAnewBrandMaster, editBrandMaster, isLoading } = useBrandMasterResources();
+  const { createAnewBrandMaster, editBrandMaster, listAllBrands, isLoading } = useBrandMasterResources();
   
   const {
     mspDomain,
@@ -40,6 +40,8 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
     setAdmPhone,
     admPassword,
     setAdmPassword,
+    admUsername,
+    setAdmUsername,
     brandObjectName,
     setBrandLogo,
     companyName,
@@ -63,15 +65,17 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
     setActiveStep,
     resetAll,
     setIsEditing,
+    setMspList,
   } = useZMspRegisterPage();
 
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
-  const [username, setUsername] = useState("");
 
   // Field-level error states
   const [domainError, setDomainError] = useState<string | null>(null);
   const [admNameError, setAdmNameError] = useState<string | null>(null);
   const [admEmailError, setAdmEmailError] = useState<string | null>(null);
+  const [admUsernameError, setAdmUsernameError] = useState<string | null>(null);
+  const [admPasswordError, setAdmPasswordError] = useState<string | null>(null);
 
   // Validation functions
   const validateDomain = () => {
@@ -103,6 +107,32 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
       return false;
     }
     setAdmEmailError(null);
+    return true;
+  };
+
+  const validateAdmUsername = () => {
+    if (!admUsername.trim()) {
+      setAdmUsernameError(t("validation.required"));
+      return false;
+    }
+    if (admUsername.trim().length < 2) {
+      setAdmUsernameError(t("validation.minLength", { min: 2 }));
+      return false;
+    }
+    setAdmUsernameError(null);
+    return true;
+  };
+
+  const validateAdmPassword = () => {
+    if (!admPassword.trim()) {
+      setAdmPasswordError(t("validation.required"));
+      return false;
+    }
+    if (admPassword.length < 8) {
+      setAdmPasswordError(t("validation.minLength", { min: 8 }));
+      return false;
+    }
+    setAdmPasswordError(null);
     return true;
   };
 
@@ -142,17 +172,27 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
 
   const handleConfirm = async () => {
     const isDomainValid = validateDomain();
-    const isAdmNameValid = validateAdmName();
-    const isAdmEmailValid = validateAdmEmail();
+    const isEditingMsp = isEditing.length > 0;
+    
+    const isAdmNameValid = isEditingMsp || validateAdmName();
+    const isAdmEmailValid = isEditingMsp || validateAdmEmail();
+    const isAdmUsernameValid = isEditingMsp || validateAdmUsername();
+    const isAdmPasswordValid = isEditingMsp || validateAdmPassword();
 
-    if (!isDomainValid || !isAdmNameValid || !isAdmEmailValid) {
+    if (!isDomainValid || !isAdmNameValid || !isAdmEmailValid || !isAdmUsernameValid || !isAdmPasswordValid) {
       return;
     }
 
-    const isEditingMsp = isEditing.length > 0;
+    const parsedMinConsumption = minConsumption && !isNaN(parseFloat(minConsumption)) 
+      ? parseFloat(minConsumption) 
+      : undefined;
+    const parsedDiscountPercent = discountPercent && !isNaN(parseFloat(discountPercent)) 
+      ? Math.min(parseFloat(discountPercent), 100) 
+      : undefined;
 
     if (isEditingMsp) {
       // Edit existing MSP
+
       const response = await editBrandMaster(isEditing[0], {
         brandName: companyName,
         cnpj,
@@ -169,8 +209,8 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
         cityCode: cityCode ? parseInt(cityCode) : undefined,
         district,
         isPoc,
-        minConsumption: minConsumption ? parseFloat(minConsumption) : undefined,
-        discountPercent: discountPercent ? parseFloat(discountPercent) : undefined,
+        minConsumption: parsedMinConsumption,
+        discountPercent: parsedDiscountPercent,
         domain: mspDomain,
         admName,
         admEmail,
@@ -179,13 +219,16 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
       });
 
       if (response?.brandMaster) {
+        const updatedList = await listAllBrands();
+        if (updatedList?.result) {
+          setMspList(updatedList.result);
+        }
         setModalOpen("editedMsp");
         resetAll();
         setIsEditing([]);
         setActiveStep(0);
       }
     } else {
-      // Create new MSP
       const response = await createAnewBrandMaster({
         companyName,
         cnpj,
@@ -202,17 +245,22 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
         admEmail,
         admPhone,
         admPassword: admPassword || "TempPass@123",
+        admUsername,
         brandLogo: brandObjectName,
         position: "admin",
         mspDomain,
         cityCode: cityCode ? parseInt(cityCode) : undefined,
         district,
         isPoc,
-        minConsumption: minConsumption ? parseFloat(minConsumption) : undefined,
-        discountPercent: discountPercent ? parseFloat(discountPercent) : undefined,
+        minConsumption: parsedMinConsumption,
+        discountPercent: parsedDiscountPercent,
       });
 
       if (response?.brandMaster) {
+        const updatedList = await listAllBrands();
+        if (updatedList?.result) {
+          setMspList(updatedList.result);
+        }
         setModalOpen("createdMsp");
         resetAll();
         setActiveStep(0);
@@ -228,7 +276,7 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
     setAdmEmail("");
     setAdmPhone("");
     setAdmPassword("");
-    setUsername("");
+    setAdmUsername("");
     handleRemoveLogo();
     onClear();
   };
@@ -273,86 +321,100 @@ export const FormMspStep2 = ({ onBack, onConfirm, onClear }: FormMspStep2Props) 
 
         <Divider sx={{ borderColor: theme[mode].grayLight }} />
 
-        <TextRob18Font2M
-          sx={{
-            color: theme[mode].black,
-            fontSize: "18px",
-            fontWeight: "500",
-            lineHeight: "24px",
-          }}
-        >
-          {t("mspRegister.principalAdmin")}
-        </TextRob18Font2M>
+        {isEditing.length === 0 && (
+          <>
+            <TextRob18Font2M
+              sx={{
+                color: theme[mode].black,
+                fontSize: "18px",
+                fontWeight: "500",
+                lineHeight: "24px",
+              }}
+            >
+              {t("mspRegister.principalAdmin")}
+            </TextRob18Font2M>
 
-        <Stack
-          sx={{
-            gap: "24px",
-            "@media (min-width: 768px)": {
-              flexDirection: "row",
-            },
-          }}
-        >
-          <LabelInputVM
-            onChange={(val) => {
-              setAdmName(val);
-              if (admNameError) setAdmNameError(null);
-            }}
-            value={admName}
-            label={`${t("mspRegister.completeName")} ${t("mspRegister.required")}`}
-            placeholder={t("mspRegister.completeNamePlaceholder")}
-            onBlur={validateAdmName}
-            error={admNameError}
-          />
-          <LabelInputVM
-            onChange={(val) => {
-              setAdmEmail(val);
-              if (admEmailError) setAdmEmailError(null);
-            }}
-            value={admEmail}
-            label={`${t("mspRegister.email")} ${t("mspRegister.required")}`}
-            placeholder={t("mspRegister.emailPlaceholder")}
-            onBlur={validateAdmEmail}
-            error={admEmailError}
-          />
-        </Stack>
+            <Stack
+              sx={{
+                gap: "24px",
+                "@media (min-width: 768px)": {
+                  flexDirection: "row",
+                },
+              }}
+            >
+              <LabelInputVM
+                onChange={(val) => {
+                  setAdmName(val);
+                  if (admNameError) setAdmNameError(null);
+                }}
+                value={admName}
+                label={`${t("mspRegister.completeName")} ${t("mspRegister.required")}`}
+                placeholder={t("mspRegister.completeNamePlaceholder")}
+                onBlur={validateAdmName}
+                error={admNameError}
+              />
+              <LabelInputVM
+                onChange={(val) => {
+                  setAdmEmail(val);
+                  if (admEmailError) setAdmEmailError(null);
+                }}
+                value={admEmail}
+                label={`${t("mspRegister.email")} ${t("mspRegister.required")}`}
+                placeholder={t("mspRegister.emailPlaceholder")}
+                onBlur={validateAdmEmail}
+                error={admEmailError}
+              />
+            </Stack>
 
-        <Stack
-          sx={{
-            gap: "24px",
-            "@media (min-width: 768px)": {
-              flexDirection: "row",
-            },
-          }}
-        >
-          <LabelInputVM
-            onChange={(val) => setAdmPhone(maskPhone(val))}
-            value={admPhone}
-            label={t("mspRegister.phone")}
-            placeholder="(00) 00000-0000"
-          />
-          <LabelInputVM
-            onChange={() => {}}
-            value={"Administrador"}
-            label={t("mspRegister.position")}
-            placeholder={t("mspRegister.positionPlaceholder")}
-            disabled
-          />
-          <LabelInputVM
-            onChange={setAdmPassword}
-            value={admPassword}
-            label={`${t("mspRegister.initialPassword")} ${t("mspRegister.required")}`}
-            placeholder={t("mspRegister.initialPasswordPlaceholder")}
-            type="password"
-          />
-          <LabelInputVM
-            onChange={setUsername}
-            value={username}
-            label={t("mspRegister.username")}
-            placeholder={t("mspRegister.usernamePlaceholder")}
-          />
-        </Stack>
+            <Stack
+              sx={{
+                gap: "24px",
+                "@media (min-width: 768px)": {
+                  flexDirection: "row",
+                },
+              }}
+            >
+              <LabelInputVM
+                onChange={(val) => setAdmPhone(maskPhone(val))}
+                value={admPhone}
+                label={t("mspRegister.phone")}
+                placeholder="(00) 00000-0000"
+              />
+              <LabelInputVM
+                onChange={() => {}}
+                value={"Administrador"}
+                label={t("mspRegister.position")}
+                placeholder={t("mspRegister.positionPlaceholder")}
+                disabled
+              />
+              <LabelInputVM
+                onChange={(val) => {
+                  setAdmPassword(val);
+                  if (admPasswordError) setAdmPasswordError(null);
+                }}
+                value={admPassword}
+                label={`${t("mspRegister.initialPassword")} ${t("mspRegister.required")}`}
+                placeholder={t("mspRegister.initialPasswordPlaceholder")}
+                type="password"
+                onBlur={validateAdmPassword}
+                error={admPasswordError}
+              />
+              <LabelInputVM
+                onChange={(val) => {
+                  setAdmUsername(val);
+                  if (admUsernameError) setAdmUsernameError(null);
+                }}
+                value={admUsername}
+                label={`${t("mspRegister.username")} ${t("mspRegister.required")}`}
+                placeholder={t("mspRegister.usernamePlaceholder")}
+                onBlur={validateAdmUsername}
+                error={admUsernameError}
+              />
+            </Stack>
 
-        <Divider sx={{ borderColor: theme[mode].grayLight }} />
+            <Divider sx={{ borderColor: theme[mode].grayLight }} />
+          </>
+        )}
 
         <Stack sx={{ gap: "8px" }}>
           <TextRob18Font2M

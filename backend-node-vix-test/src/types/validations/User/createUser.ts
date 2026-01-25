@@ -20,6 +20,8 @@ export const userCreatedSchema = z.object({
   email: z
     .string({ required_error: "Email is required" })
     .email("Invalid email"),
+  fullName: z.string().nullable().optional(),
+  phone: z.string().nullable().optional(),
   profileImgUrl: z.string().nullable().optional(),
   role: z.enum(ROLES).optional(),
   idBrandMaster: z.number().nullable().optional(),

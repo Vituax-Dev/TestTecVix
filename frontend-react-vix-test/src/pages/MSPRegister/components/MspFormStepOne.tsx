@@ -36,7 +36,7 @@ export const MspFormStepOne = ({ onNext, onCancel }: { onNext: () => void; onCan
             sector: store.sector || "",
             contactEmail: store.contactEmail || "",
             cep: store.cep || "",
-            locality: store.locality || "", 
+            locality: store.locality || "",
         });
 
         if (!result.success) {
@@ -65,12 +65,12 @@ export const MspFormStepOne = ({ onNext, onCancel }: { onNext: () => void; onCan
     };
 
     return (
-        <Stack sx={{ width: "100%", gap: "20px", padding: "8px", maxWidth: "900px", overflow: "hidden" }}>
+        <Stack sx={{ width: "100%", gap: "20px", padding: "8px", maxWidth: "900px" }}>
             <Typography sx={{ color: theme[mode].primary, fontWeight: "500", fontSize: "18px", mb: 1 }}>
                 Informações da empresa MSP
             </Typography>
 
-            <Stack direction="row" gap="20px">
+            <Stack direction={{ xs: "column", md: "row" }} gap="20px">
                 <Stack flex={1} gap="4px">
                     <Typography sx={{ color: theme[mode].primary, fontSize: "12px" }}>Nome da empresa MSP (Obrigatório)</Typography>
                     <InputLabel value={store.companyName} onChange={store.setCompanyName} placeholder="Vituax" showEditIcon sx={inputStyle} error={fieldErrors.companyName} />
@@ -85,7 +85,7 @@ export const MspFormStepOne = ({ onNext, onCancel }: { onNext: () => void; onCan
                 </Stack>
             </Stack>
 
-            <Stack direction="row" gap="20px">
+            <Stack direction={{ xs: "column", md: "row" }} gap="20px">
                 <Stack flex={1} gap="4px">
                     <Typography sx={{ color: theme[mode].primary, fontSize: "12px" }}>Telefone</Typography>
                     <InputLabel value={store.phone} onChange={store.setPhone} placeholder="(00) 00000-0000" showEditIcon sx={inputStyle} />
@@ -100,7 +100,7 @@ export const MspFormStepOne = ({ onNext, onCancel }: { onNext: () => void; onCan
                 </Stack>
             </Stack>
 
-            <Stack direction="row" gap="20px">
+            <Stack direction={{ xs: "column", md: "row" }} gap="20px">
                 <Stack flex={0.4} gap="4px">
                     <Typography sx={{ color: theme[mode].primary, fontSize: "12px" }}>CEP</Typography>
                     <InputLabel
@@ -127,16 +127,16 @@ export const MspFormStepOne = ({ onNext, onCancel }: { onNext: () => void; onCan
 
             <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)", my: 1 }} />
 
-            <Stack direction="row" gap="24px" alignItems="center">
-                <Stack flex={1} gap="4px">
+            <Stack direction={{ xs: "column", md: "row" }} gap="24px" alignItems="center">
+                <Stack flex={1} gap="4px" sx={{ width: "100%" }}>
                     <Typography sx={{ color: theme[mode].primary, fontSize: "12px" }}>Consumo mínimo (em R$)</Typography>
                     <InputLabel type="number" value={store.cityCode || ""} onChange={(v) => store.setCityCode(v)} sx={inputStyle} />
                 </Stack>
-                <Stack flex={1} gap="4px">
+                <Stack flex={1} gap="4px" sx={{ width: "100%" }}>
                     <Typography sx={{ color: theme[mode].primary, fontSize: "12px" }}>Porcentagem de desconto</Typography>
                     <InputLabel type="number" value={store.district || ""} onChange={(v) => store.setDistrict(v)} sx={inputStyle} />
                 </Stack>
-                <Stack flex={1} mt={3}>
+                <Stack flex={1} mt={{ xs: 0, md: 3 }} sx={{ width: "100%" }}>
                     <FormControlLabel
                         control={<Checkbox checked={store.isPoc} onChange={(e) => store.setIsPoc(e.target.checked)} />}
                         label="MSP em fase de POC"

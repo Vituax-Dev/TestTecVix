@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { middlewareLocalStorage } from "./middlewareLocalStorage";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type TRole = "admin" | "manager" | "member";
 
@@ -41,10 +41,11 @@ interface IUserProfileState extends IUserProfile {
   setRemoveImage: (remove: boolean) => void;
   resetAll: () => void;
 }
-const middle = middlewareLocalStorage<IUserProfileState>("userProfile");
 
-export const useZUserProfile = create<IUserProfileState>()(
-  middle((set) => ({
+// Middleware personalizado que exclui campos temporários do localStorage
+// File não é serializável e blob URLs ficam inválidas após refresh
+const userProfileStorage = persist<IUserProfileState, [], [], Partial<IUserProfile>>(
+  (set) => ({
     ...INIT_STATE,
     setUser: (user) => set((state) => ({ ...state, ...user })),
     setObjectName: (objectName) => set((state) => ({ ...state, objectName })),
@@ -52,5 +53,25 @@ export const useZUserProfile = create<IUserProfileState>()(
     setProfileImgPreview: (profileImgPreview) => set((state) => ({ ...state, profileImgPreview })),
     setRemoveImage: (removeImage) => set((state) => ({ ...state, removeImage })),
     resetAll: () => set((state) => ({ ...state, ...INIT_STATE })),
-  })),
+  }),
+  {
+    name: "userProfile",
+    storage: createJSONStorage(() => localStorage),
+    // Exclui campos temporários que não devem ir para localStorage
+    partialize: (state) => ({
+      idUser: state.idUser,
+      profileImgUrl: state.profileImgUrl,
+      objectName: state.objectName,
+      username: state.username,
+      isActive: state.isActive,
+      lastLoginDate: state.lastLoginDate,
+      userEmail: state.userEmail,
+      token: state.token,
+      idBrand: state.idBrand,
+      role: state.role,
+      // NÃO incluir: profileImgFile, profileImgPreview, removeImage
+    }),
+  }
 );
+
+export const useZUserProfile = create<IUserProfileState>()(userProfileStorage);

@@ -11,10 +11,13 @@ import { formatToIOptionMPS } from "../../../utils/formatOptions";
 import { api } from "../../../services/api";
 import { IListAll } from "../../../types/ListAllTypes";
 import { TrashIcon } from "../../../icons/TrashIcon";
+import { useZUserProfile } from "../../../stores/useZUserProfile";
 
 export const Header = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
+  const { idBrand } = useZUserProfile();
+  const isVituaxUser = idBrand === null;
   const {
     search,
     setSearch,
@@ -52,13 +55,20 @@ export const Header = () => {
 
   useEffect(() => {
     fetchMSPs().then((response) => {
-      setMsps(
-        response.result.map((m) => ({
+      // Adiciona opção Vituax (idBrandMaster = null) no início
+      const vituaxOption = {
+        idBrandMaster: null as unknown as number,
+        brandName: "Vituax",
+        deletedAt: null,
+      };
+      setMsps([
+        vituaxOption,
+        ...response.result.map((m) => ({
           idBrandMaster: m.idBrandMaster,
           brandName: m.brandName,
           deletedAt: m.deletedAt,
         })),
-      );
+      ]);
     });
   }, []);
 
@@ -170,48 +180,50 @@ export const Header = () => {
           placeholder={t("myVMs.allVMs")}
           placeholderIcon={<FilterIcon fill={theme[mode].gray} />}
         />
-        <DropDown
-          data={formatToIOptionMPS(msps).map((msp) => ({
-            ...msp,
-            tag: msp.deletedAt ? (
-              <TrashIcon
-                width={"12px"}
-                fill={theme[mode].danger}
-                className="mr-2 opacity-50"
-              />
-            ) : null,
-          }))}
-          onChange={(val) => {
-            if (onlyMyVMs) setOnlyMyVMs(false);
-            if (val) {
-              setSelectedMSP({
-                idBrandMaster: val?.id,
-                brandName: val?.label,
-              });
-              return;
-            }
-            setSelectedMSP(null);
-          }}
-          value={
-            selectedMSP
-              ? {
-                id: selectedMSP.idBrandMaster,
-                label: selectedMSP.brandName,
-                value: selectedMSP,
+        {isVituaxUser && (
+          <DropDown
+            data={formatToIOptionMPS(msps).map((msp) => ({
+              ...msp,
+              tag: msp.deletedAt ? (
+                <TrashIcon
+                  width={"12px"}
+                  fill={theme[mode].danger}
+                  className="mr-2 opacity-50"
+                />
+              ) : null,
+            }))}
+            onChange={(val) => {
+              if (onlyMyVMs) setOnlyMyVMs(false);
+              if (val) {
+                setSelectedMSP({
+                  idBrandMaster: val?.id,
+                  brandName: val?.label,
+                });
+                return;
               }
-              : null
-          }
-          sxContainer={{
-            width: "216px",
-            "@media (max-width: 659px)": {
-              width: "100%",
-            },
-          }}
-          placeholder={t("invoices.msps")}
-          placeholderIcon={<FilterIcon fill={theme[mode].gray} />}
-          sxItemList={{ textTransform: "none" }}
-        />
-        {
+              setSelectedMSP(null);
+            }}
+            value={
+              selectedMSP
+                ? {
+                  id: selectedMSP.idBrandMaster,
+                  label: selectedMSP.brandName,
+                  value: selectedMSP,
+                }
+                : null
+            }
+            sxContainer={{
+              width: "216px",
+              "@media (max-width: 659px)": {
+                width: "100%",
+              },
+            }}
+            placeholder={t("invoices.msps")}
+            placeholderIcon={<FilterIcon fill={theme[mode].gray} />}
+            sxItemList={{ textTransform: "none" }}
+          />
+        )}
+        {isVituaxUser && (
           <Stack sx={{ justifyContent: "center" }}>
             <CheckboxLabel
               label={
@@ -225,7 +237,7 @@ export const Header = () => {
               }}
             />
           </Stack>
-        }
+        )}
       </Stack>
     </Stack>
   );

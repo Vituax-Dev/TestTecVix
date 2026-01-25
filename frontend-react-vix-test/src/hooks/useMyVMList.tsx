@@ -13,8 +13,8 @@ export const useMyVMList = () => {
       page?: number;
       limit?: number;
       search?: string;
-      orderBy?: string; // field_name:asc or field_name:desc
-      idBrandMaster?: number | "null";
+      orderBy?: string;
+      idBrandMaster?: number | null;
     } = {},
   ) => {
     setIsLoading(true);
@@ -22,7 +22,7 @@ export const useMyVMList = () => {
       url: "/vm",
       params: {
         ...params,
-        //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined
+        idBrandMaster: params.idBrandMaster === null ? "null" : params.idBrandMaster,
       },
     });
 

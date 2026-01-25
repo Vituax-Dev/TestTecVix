@@ -18,7 +18,7 @@ export class VMModel {
     return prisma.vM.count({
       where: {
         deletedAt: null,
-        idBrandMaster: idBrandMaster ?? undefined,
+        idBrandMaster,
         status: query.status,
         vmName: {
           contains: query.search,
@@ -38,7 +38,7 @@ export class VMModel {
     const vms = await prisma.vM.findMany({
       where: {
         deletedAt: null,
-        idBrandMaster: idBrandMaster ?? undefined,
+        idBrandMaster,
         status: query.status,
         vmName: {
           contains: query.search,

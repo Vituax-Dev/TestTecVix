@@ -197,12 +197,11 @@ export const FormEditVM = ({ onClose }: IProps) => {
             }}
           >
             <LabelInputVM
-              onChange={() => {}}
+              onChange={setVmPassword}
               value={vmPassword}
               label={t("createVm.password")}
               placeholder={t("createVm.userPassword")}
               type="password"
-              disabled
             />
             <PasswordValidations vmPassword={vmPassword} />
           </Stack>

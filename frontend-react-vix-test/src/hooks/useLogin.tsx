@@ -46,36 +46,44 @@ export const useLogin = () => {
       return;
     }
 
-    const response = await api.post<IUserLoginResponse>({
-      url: "/user/login",
-      data: {
-        username: username || undefined,
-        password,
-        email: email || undefined,
-      },
-      tryRefetch: true,
-    });
+    try {
+      const response = await api.post<IUserLoginResponse>({
+        url: "/users/login",
+        data: {
+          username: username || undefined,
+          password,
+          email: email || undefined,
+        },
+        tryRefetch: true,
+      });
 
-    setIsLoading(false);
-    if (response.error) {
-      toast.error(response.message);
-      return;
-    }
-    if (!response.data.user?.isActive) {
-      setIsOpenModalUserNotActive(true);
-      return;
-    }
+      setIsLoading(false);
+      if (response.error) {
+        toast.error(response.message);
+        return;
+      }
+      if (!response.data.user?.isActive) {
+        setIsOpenModalUserNotActive(true);
+        return;
+      }
 
-    setUser({
-      idUser: response.data.user.idUser,
-      profileImgUrl: response.data.user.profileImgUrl,
-      username: response.data.user.username,
-      userEmail: response.data.user.email,
-      idBrand: response.data.user.idBrandMaster,
-      token: response.data.token,
-      role: response.data.user.role,
-    });
-    setLoginTime(new Date());
+      setUser({
+        idUser: response.data.user.idUser,
+        profileImgUrl: response.data.user.profileImgUrl,
+        username: response.data.user.username,
+        userEmail: response.data.user.email,
+        idBrand: response.data.user.idBrandMaster,
+        token: response.data.token,
+        role: response.data.user.role,
+      });
+      setLoginTime(new Date());
+      
+      // Redirecionar para a home após login bem-sucedido
+      navigate("/");
+    } catch (err) {
+      setIsLoading(false);
+      toast.error("Erro inesperado ao tentar login");
+    }
   };
 
   const goLogout = () => {

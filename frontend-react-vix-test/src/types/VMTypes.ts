@@ -1,3 +1,9 @@
+export enum EVMStatus {
+  running = "RUNNING",
+  stopped = "STOPPED",
+  paused = "PAUSED",
+}
+
 export enum ENetworkType {
   public = "public",
   public_private = "public_private",

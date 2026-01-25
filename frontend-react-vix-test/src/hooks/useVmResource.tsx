@@ -9,6 +9,7 @@ import { MIN_PASS_SIZE } from "../configs/contants";
 
 import {
   ENetworkType,
+  EVMStatus,
   IVMCreatedResponse,
   IVMResource,
 } from "../types/VMTypes";
@@ -166,7 +167,7 @@ export const useVmResource = () => {
     status,
   }: {
     idVM: number;
-    status: "RUNNING" | "STOPPED" | "PAUSED";
+    status: EVMStatus;
   }) => {
     const response = await api.put<IVMCreatedResponse>({
       url: `/vm/${idVM}`,

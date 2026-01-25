@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-const EVMStatus = z.enum(["RUNNING", "STOPPED", "PAUSED"]);
+export const EVMStatus = z.enum(["RUNNING", "STOPPED", "PAUSED"]);
+
 const ETaskLocation = z.enum(["bre_barueri", "usa_miami"]);
 const ENetworkType = z.enum(["public", "private", "public_private"]);
 const EStorageType = z.enum(["ssd", "hd"]);

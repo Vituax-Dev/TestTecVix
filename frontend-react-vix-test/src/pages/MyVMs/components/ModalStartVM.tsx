@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ModalSimple } from "../../../components/Modal/ModalSimple";
 import { useTranslation } from "react-i18next";
 import { Stack } from "@mui/material";
@@ -8,6 +8,7 @@ import { CTAsDoubleButtons } from "../../../components/Buttons/CTAsDoubleButtons
 import { useVmResource } from "../../../hooks/useVmResource";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
 import { PlayCircleIcon } from "../../../icons/PlayCircleIcon";
+import { EVMStatus } from "../../../types/VMTypes";
 
 interface IProps {
   idVM: number;
@@ -19,21 +20,14 @@ interface IProps {
 export const ModalStartVM = ({ idVM, onConfirm, onCancel, vmName }: IProps) => {
   const { mode, theme } = useZTheme();
   const { t } = useTranslation();
-  const { isLoading } = useVmResource();
-  const [vmID, setVmID] = useState(idVM);
+  const { isLoading, updateVMStatus } = useVmResource();
 
   const handleConfirm = async () => {
-    onConfirm();
+    const result = await updateVMStatus({ idVM, status: EVMStatus.running });
+    if (result) {
+      onConfirm();
+    }
   };
-
-  const handleCancel = () => {
-    setVmID(0);
-    onCancel();
-  };
-
-  useEffect(() => {
-    if (idVM !== vmID) setVmID(idVM);
-  }, [idVM]);
 
   return (
     <>
@@ -42,8 +36,8 @@ export const ModalStartVM = ({ idVM, onConfirm, onCancel, vmName }: IProps) => {
         sx={{
           maxWidth: "600px",
         }}
-        open={Boolean(vmID)}
-        onClose={handleCancel}
+        open={Boolean(idVM)}
+        onClose={onCancel}
         title={
           <Stack
             sx={{
@@ -82,13 +76,13 @@ export const ModalStartVM = ({ idVM, onConfirm, onCancel, vmName }: IProps) => {
                   lineHeight: "20px",
                 }}
               >
-                {`#${vmID} - ${vmName}`}
+                {`#${idVM} - ${vmName}`}
               </span>
             </TextRob16FontL>
             <CTAsDoubleButtons
               labelSave={t("alerts.confirm")}
               labelRestore={t("alerts.cancel")}
-              handleRestore={handleCancel}
+              handleRestore={onCancel}
               handleSave={handleConfirm}
               sxButtonSave={{
                 background: theme[mode].blue,

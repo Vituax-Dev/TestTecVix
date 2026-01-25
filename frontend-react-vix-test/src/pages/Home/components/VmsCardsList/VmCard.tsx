@@ -25,7 +25,7 @@ import { ChartBarIcon } from "../../../../icons/ChartIcon";
 import { TextRob14Font1Xs } from "../../../../components/Text1Xs";
 import { TerminalIcon } from "../../../../icons/TerminalIcon";
 import { MonitorIcon } from "../../../../icons/MonitorIcon";
-import { IVMTask, taskMock } from "../../../../types/VMTypes";
+import { EVMStatus, IVMTask, taskMock } from "../../../../types/VMTypes";
 import { useAuth } from "../../../../auth/PrivatePage";
 
 export interface IVmCardProps {
@@ -82,6 +82,7 @@ export const VmCard = ({
     getVMById: getVMByIdResource,
     isLoading,
     getOS,
+    updateVMStatus,
   } = useVmResource();
 
   const getVMById = async () => {
@@ -109,10 +110,17 @@ export const VmCard = ({
   };
 
   const handleConfirm = async () => {
-    if (statusState !== preStatusState) {
-      setPreStatusState(statusState);
-
-      await getVMById();
+    if (statusState !== preStatusState && statusState) {
+      const result = await updateVMStatus({
+        idVM: vmId,
+        status: statusState as EVMStatus,
+      });
+      if (result) {
+        setPreStatusState(statusState);
+        await getVMById();
+      } else {
+        setStatusState(preStatusState);
+      }
     }
     setShowConfirmation(false);
   };

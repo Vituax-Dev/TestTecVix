@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { BrandMasterController } from "../controllers/BrandMasterController";
 import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
-import { isManagerOrIsAdmin } from "../auth/isManagerOrIsAdmin";
-import { isAdmin } from "../auth/isAdmin";
 import { authUser } from "../auth/authUser";
+import { hasRole } from "../auth/hasRole";
+import { ERole } from "@prisma/client";
 
 const BASE_PATH = API_VERSION.V1 + ROOT_PATH.BRANDMASTER; // /api/v1/brand-master
 
@@ -34,7 +34,7 @@ brandMasterRoutes.get(`${BASE_PATH}`, authUser, async (req, res) => {
 brandMasterRoutes.post(
   `${BASE_PATH}`,
   authUser,
-  isManagerOrIsAdmin,
+  hasRole([ERole.manager, ERole.admin]),
   async (req, res) => {
     await brandMasterController.createNewBrandMaster(req, res);
   },
@@ -43,7 +43,7 @@ brandMasterRoutes.post(
 brandMasterRoutes.put(
   `${BASE_PATH}/:idBrandMaster`,
   authUser,
-  isManagerOrIsAdmin,
+  hasRole([ERole.manager, ERole.admin]),
   async (req, res) => {
     await brandMasterController.updateBrandMaster(req, res);
   },
@@ -52,7 +52,7 @@ brandMasterRoutes.put(
 brandMasterRoutes.delete(
   `${BASE_PATH}/:idBrandMaster`,
   authUser,
-  isAdmin,
+  hasRole([ERole.admin]),
   async (req, res) => {
     await brandMasterController.deleteBrandMaster(req, res);
   },

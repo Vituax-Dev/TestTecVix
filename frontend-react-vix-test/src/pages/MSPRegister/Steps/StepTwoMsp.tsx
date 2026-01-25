@@ -143,12 +143,12 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
   }, [setPosition]);
 
   return (
-    <Stack sx={{ gap: "30px" }}>
+    <Stack sx={{ gap: "20px" }}>
       {isLoading && <AbsoluteBackDrop open />}
 
-      <Stack sx={{ gap: "15px" }}>
+      <Stack sx={{ gap: "10px" }}>
         <TextRob16Font1S sx={sectionTitleStyle}>Domínio do MSP</TextRob16Font1S>
-        <Stack sx={{ rowGap: "25px", maxWidth: "400px", maxHeight: "20px" }}>
+        <Stack sx={{ rowGap: "20px", maxWidth: "400px", maxHeight: "20px" }}>
           <TextRob16Font1S sx={labelStyle}>
             Domínio (Obrigatório)
           </TextRob16Font1S>
@@ -174,12 +174,12 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
         Administrador principal da MSP
       </TextRob16Font1S>
 
-      <Stack sx={{ gap: "30px" }}>
+      <Stack sx={{ gap: "15px" }}>
         <Box
           sx={{
             display: "grid",
             gridTemplateColumns: "350px 350px 350px 350px",
-            columnGap: "20px",
+            columnGap: "10px",
           }}
         >
           <Stack>
@@ -210,7 +210,7 @@ export const StepTwoMsp = ({ onRefresh }: StepTwoMspProps) => {
           sx={{
             display: "grid",
             gridTemplateColumns: "350px 350px 350px 350px",
-            columnGap: "20px",
+            columnGap: "10px",
           }}
         >
           <Stack>

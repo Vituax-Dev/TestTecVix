@@ -34,7 +34,7 @@ export const MainLoginForm = () => {
   };
 
   const handleSend = () => {
-    goLogin({ username, password, email });
+    goLogin({ username, password, email: email.trim() });
   };
 
   return (

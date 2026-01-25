@@ -13,7 +13,7 @@ interface IPayload {
 
 export const genToken = (payload: IPayload) => {
   if (!secret) {
-    throw new AppError("JWT_SECRET não configurado", STATUS_CODE.INTERNAL_SERVER_ERROR);
+    throw new AppError("JWT_SECRET não configurado", STATUS_CODE.SERVER_ERROR);
   }
   return jwt.sign(payload, secret, { expiresIn: "7d" });
 };
@@ -21,7 +21,7 @@ export const genToken = (payload: IPayload) => {
 export const verifyToken = (token: string): IPayload => {
   try {
     if (!secret) {
-      throw new AppError("JWT_SECRET não configurado", STATUS_CODE.INTERNAL_SERVER_ERROR);
+      throw new AppError("JWT_SECRET não configurado", STATUS_CODE.SERVER_ERROR);
     }
     const data = jwt.verify(token, secret) as IPayload;
     return data;

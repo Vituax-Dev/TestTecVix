@@ -1,5 +1,21 @@
 import { Request } from "express";
 
-export interface CustomRequest<T> extends Request {
+declare global {
+  namespace Express {
+    namespace Multer {
+      interface File {
+        fieldname: string;
+        originalname: string;
+        encoding: string;
+        mimetype: string;
+        buffer: Buffer;
+        size: number;
+      }
+    }
+  }
+}
+
+export interface CustomRequest<T = unknown> extends Request {
   user?: T;
+  file?: Express.Multer.File;
 }

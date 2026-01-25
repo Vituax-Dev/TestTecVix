@@ -393,23 +393,23 @@ O sistema possui três níveis de permissão:
 
 ## 🔑 Credenciais de Teste
 
-> **Importante**: Após implementar o sistema de autenticação, adicione aqui as credenciais de usuários de teste para cada tipo de permissão.
+Os usuários de teste são criados automaticamente através da migration (admin) e dos seeds (demais usuários).
 
-Exemplo:
+### 👥 Usuários no Seed
 
-```
-Admin:
-  Email: admin@vituax.com
-  Senha: Admin@123
+| Empresa | Email | Senha |
+|---------|-------|-------|
+| **Vituax (null)** | admin@vituax.com | Admin@123 |
+| **Vituax (null)** | manager@vituax.com | Manager@123 |
+| **Vituax (null)** | member@vituax.com | Member@123 |
+| **Alpha (1)** | admin@alpha.com | Admin@123 |
+| **Alpha (1)** | manager@alpha.com | Manager@123 |
+| **Alpha (1)** | member@alpha.com | Member@123 |
+| **Beta (2)** | admin@beta.com | Admin@123 |
+| **Beta (2)** | manager@beta.com | Manager@123 |
+| **Beta (2)** | member@beta.com | Member@123 |
 
-Manager:
-  Email: manager@vituax.com
-  Senha: Manager@123
-
-Member:
-  Email: member@vituax.com
-  Senha: Member@123
-```
+> **Nota**: Todos os usuários são criados com `isActive: true` e podem fazer login imediatamente após rodar as migrations e seeds.
 
 ---
 

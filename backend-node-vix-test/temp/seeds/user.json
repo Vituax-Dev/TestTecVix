@@ -1,7 +1,7 @@
 [
   {
     "idUser": "550e8400-e29b-41d4-a716-446655440000",
-    "username": "admin",
+    "username": "admin_vituax",
     "password": "$2a$10$0LrTvBc76RzoKV.u3N42/.igOBCA/sYyvftuyEdrU78daxXgWLk9S",
     "email": "admin@vituax.com",
     "role": "admin",
@@ -9,7 +9,25 @@
     "isActive": true
   },
   {
-    "idUser": "550e8400-e29b-41d4-a716-446655440005",
+    "idUser": "550e8400-e29b-41d4-a716-446655440006",
+    "username": "manager_vituax",
+    "password": "$2a$10$BXltBDqlwxh3VWtDg1x5cOn1/RbbgHBQKdP4a832NvnnwheBJayi6",
+    "email": "manager@vituax.com",
+    "role": "manager",
+    "idBrandMaster": null,
+    "isActive": true
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440007",
+    "username": "member_vituax",
+    "password": "$2a$10$.M8DwggnOaQsfi6BBIat7.Z35aDaEaikTLwEquB0mWdJecA//IaFa",
+    "email": "member@vituax.com",
+    "role": "member",
+    "idBrandMaster": null,
+    "isActive": true
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440001",
     "username": "admin_alpha",
     "password": "$2a$10$0LrTvBc76RzoKV.u3N42/.igOBCA/sYyvftuyEdrU78daxXgWLk9S",
     "email": "admin@alpha.com",
@@ -18,7 +36,7 @@
     "isActive": true
   },
   {
-    "idUser": "550e8400-e29b-41d4-a716-446655440001",
+    "idUser": "550e8400-e29b-41d4-a716-446655440002",
     "username": "manager_alpha",
     "password": "$2a$10$BXltBDqlwxh3VWtDg1x5cOn1/RbbgHBQKdP4a832NvnnwheBJayi6",
     "email": "manager@alpha.com",
@@ -27,7 +45,7 @@
     "isActive": true
   },
   {
-    "idUser": "550e8400-e29b-41d4-a716-446655440002",
+    "idUser": "550e8400-e29b-41d4-a716-446655440003",
     "username": "member_alpha",
     "password": "$2a$10$.M8DwggnOaQsfi6BBIat7.Z35aDaEaikTLwEquB0mWdJecA//IaFa",
     "email": "member@alpha.com",
@@ -36,7 +54,16 @@
     "isActive": true
   },
   {
-    "idUser": "550e8400-e29b-41d4-a716-446655440003",
+    "idUser": "550e8400-e29b-41d4-a716-446655440004",
+    "username": "admin_beta",
+    "password": "$2a$10$0LrTvBc76RzoKV.u3N42/.igOBCA/sYyvftuyEdrU78daxXgWLk9S",
+    "email": "admin@beta.com",
+    "role": "admin",
+    "idBrandMaster": 2,
+    "isActive": true
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440005",
     "username": "manager_beta",
     "password": "$2a$10$BXltBDqlwxh3VWtDg1x5cOn1/RbbgHBQKdP4a832NvnnwheBJayi6",
     "email": "manager@beta.com",
@@ -45,7 +72,7 @@
     "isActive": true
   },
   {
-    "idUser": "550e8400-e29b-41d4-a716-446655440004",
+    "idUser": "550e8400-e29b-41d4-a716-446655440008",
     "username": "member_beta",
     "password": "$2a$10$.M8DwggnOaQsfi6BBIat7.Z35aDaEaikTLwEquB0mWdJecA//IaFa",
     "email": "member@beta.com",

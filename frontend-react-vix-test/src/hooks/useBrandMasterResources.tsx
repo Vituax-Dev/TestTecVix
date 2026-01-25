@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import { api } from "../services/api";
 import { IListAll } from "../types/ListAllTypes";
@@ -291,10 +291,18 @@ export const useBrandMasterResources = () => {
     return { brandMaster: response.data };
   };
 
-  const listAllBrands = async () => {
+  const listAllBrands = useCallback(async (filters?: { search?: string; isPoc?: boolean }) => {
     setIsLoading(true);
+    
+    const params = new URLSearchParams();
+    if (filters?.search) params.append("search", filters.search);
+    if (filters?.isPoc) params.append("isPoc", "true");
+    
+    const queryString = params.toString();
+    const url = queryString ? `/brand-master?${queryString}` : "/brand-master";
+    
     const response = await api.get<IListAll<INewMSPResponse>>({
-      url: "/brand-master",
+      url,
     });
     setIsLoading(false);
 
@@ -307,7 +315,7 @@ export const useBrandMasterResources = () => {
       };
     }
     return response.data;
-  };
+  }, []);
 
   const deleteBrandMaster = async (brandMasterId: number | string) => {
     if (!brandMasterId) return null;

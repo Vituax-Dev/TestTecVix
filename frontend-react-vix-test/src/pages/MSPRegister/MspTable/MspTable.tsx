@@ -59,12 +59,15 @@ export const MspTable = () => {
 
   useEffect(() => {
     const fetchMsps = async () => {
-      const response = await listAllBrands();
+      const response = await listAllBrands({
+        search: mspTableFilter || undefined,
+        isPoc: isPocFilter || undefined,
+      });
       return setMspList(response.result);
     };
 
     fetchMsps();
-  }, []);
+  }, [mspTableFilter, isPocFilter, listAllBrands, setMspList]);
 
   const startEditing = (index: number) => {
     setShowAddressFields(true);
@@ -121,15 +124,7 @@ export const MspTable = () => {
         gap: "16px",
       }}
     >
-      {[...mspList]
-        .filter(
-          (msp) =>
-            msp.brandName
-              .toLowerCase()
-              .includes(mspTableFilter.toLowerCase()) &&
-            (!isPocFilter || msp.isPoc === isPocFilter),
-        )
-        .map((msp, index) => (
+      {mspList.map((msp, index) => (
           <Fragment key={`${msp.idBrandMaster}-${msp.brandName}`}>
             <Box
               sx={{

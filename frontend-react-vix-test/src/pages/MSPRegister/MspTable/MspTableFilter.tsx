@@ -25,6 +25,8 @@ export const MspTableFilters = () => {
         value={mspTableFilter}
         onChange={setMspTableFilter}
         placeholder={t("mspRegister.filterPlaceholder")}
+        hasDebounce
+        debounceDelay={400}
       />
       <Stack sx={{ justifyContent: "center" }}>
         <CheckboxLabel

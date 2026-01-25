@@ -87,7 +87,7 @@ export const useLogin = () => {
 
   const goLogout = () => {
     resetAllStates();
-    return navigate("/login");
+    return navigate("/login", { replace: true });
   };
 
   return { goLogin, isLoading, goLogout };

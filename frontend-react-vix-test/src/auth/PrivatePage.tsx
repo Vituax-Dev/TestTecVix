@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useZResetAllStates } from "../stores/useZResetAllStates";
 import { FullPage } from "../components/Skeletons/FullPage";
 import { useEffect, useState } from "react";
-import { useZUserProfile } from "../stores/useZUserProfile"; 
+import { useZUserProfile } from "../stores/useZUserProfile";
 
 interface IProps {
   children: React.ReactNode;
@@ -20,28 +20,28 @@ export const PrivatePage = ({
   const [isChecking, setIsChecking] = useState(true);
   const { resetAllStates } = useZResetAllStates();
   const navigate = useNavigate();
-  
+
   const { idUser, role, token } = useZUserProfile();
 
   useEffect(() => {
     if (!idUser || !token) {
-      resetAllStates();
+      if (idUser !== null || token !== null) {
+        resetAllStates();
+      }
       navigate("/login");
       return;
     }
 
-    if (onlyAdmin && role !== "admin") {
-      navigate(-1);
-      return;
-    }
-
-    if (onlyManagerOrAdmin && role !== "admin" && role !== "manager") {
-      navigate(-1);
-      return;
-    }
-
     setIsChecking(false);
-  }, [idUser, token, role, onlyAdmin, onlyManagerOrAdmin, navigate, resetAllStates]);
+  }, [
+    idUser,
+    token,
+    role,
+    onlyAdmin,
+    onlyManagerOrAdmin,
+    navigate,
+    resetAllStates,
+  ]);
 
   if (isChecking || !idUser) {
     return <FullPage />;

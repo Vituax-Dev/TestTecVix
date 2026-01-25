@@ -10,6 +10,20 @@ const userController = new UserController();
 
 const BASE_PATH = API_VERSION.V1 + ROOT_PATH.USER;
 
+// Update profile settings (user data + company notifications) - authenticated users
+// Uses transaction for atomicity - if one fails, all changes are rolled back
+userRoutes.put(
+  `${BASE_PATH}/profile-settings`,
+  authUser,
+  async (req, res, next) => {
+    try {
+      await userController.updateProfileSettings(req, res);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 // Create new user - manager or admin only
 userRoutes.post(
   `${BASE_PATH}/new-user`,

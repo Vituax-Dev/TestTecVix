@@ -12,6 +12,7 @@
   "resizePlan": "Increase plan",
   "prev": "Previous",
   "next": "Next",
+  "loading": "Saving...",
   "errorOlnlyAdmin": "Only admin can do this action",
   "dataSavesuccess": "All data saved successfully",
   "errorToSaveData": "Error to save data",
@@ -31,5 +32,6 @@
   "placeholderObservations": "Observations about this MSP, origin, commercial manager, follows (on, up), etc.",
   "saveNotes": "Save notes",
   "editNotes": "Edit notes",
-  "createNotes": "Create notes"
+  "createNotes": "Create notes",
+  "vituaxCannotEdit": "Vituax users cannot edit their own company settings"
 }

@@ -22,14 +22,7 @@ export class BucketController {
     return res.sendFile(filePath);
   }
 
-  // Retorna a URL para acessar o arquivo diretamente
-  async getFileUrl(req: CustomRequest<unknown>, res: Response) {
-    const { objectName } = req.params;
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const url = `${baseUrl}/api/v1/uploads/raw/${objectName}`;
-    return res.status(STATUS_CODE.OK).json({ url });
-  }
-
+  // Retorna a URL do arquivo via service
   async getFileByObjectName(req: CustomRequest<unknown>, res: Response) {
     const { objectName } = req.params;
     const response = await this.bucketService.renewPresignedUrl(

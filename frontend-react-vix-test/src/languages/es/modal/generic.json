@@ -12,6 +12,7 @@
   "resizePlan": "Cambiar el tamaño del plan",
   "prev": "Anterior",
   "next": "Siguiente",
+  "loading": "Guardando...",
   "errorOlnlyAdmin": "Solo el admin puede hacer esto",
   "dataSavesuccess": "Todos los datos fueron guardados con exito",
   "errorToSaveData": "Error al guardar los datos",
@@ -31,5 +32,6 @@
   "placeholderObservations": "Observaciones sobre este MSP, origen, responsable comercial, seguimiento (en adelante, arriba), etc.",
   "saveNotes": "Guardar notas",
   "editNotes": "Editar notas",
-  "createNotes": "Crear notas"
+  "createNotes": "Crear notas",
+  "vituaxCannotEdit": "Los usuarios de Vituax no pueden editar la configuración de su propia empresa"
 }

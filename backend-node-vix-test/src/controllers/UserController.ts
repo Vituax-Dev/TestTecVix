@@ -72,4 +72,15 @@ export class UserController {
     const result = await this.userService.reactivate(String(idUser));
     return res.status(STATUS_CODE.OK).json(result);
   }
+
+  async updateProfileSettings(req: CustomRequest<{ idUser: string }>, res: Response) {
+    const idUser = req.user?.idUser;
+    if (!idUser) {
+      return res
+        .status(STATUS_CODE.UNAUTHORIZED)
+        .json({ message: "Unauthorized" });
+    }
+    const result = await this.userService.updateProfileSettings(idUser, req.body);
+    return res.status(STATUS_CODE.OK).json(result);
+  }
 }

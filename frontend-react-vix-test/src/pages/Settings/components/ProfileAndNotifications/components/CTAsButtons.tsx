@@ -3,17 +3,177 @@ import { useTranslation } from "react-i18next";
 import { useZTheme } from "../../../../../stores/useZTheme";
 import { TextRob16FontL } from "../../../../../components/TextL";
 import { toast } from "react-toastify";
+import { useZFormProfileNotifications } from "../../../../../stores/useZFormProfileNotifications";
+import { useZUserProfile } from "../../../../../stores/useZUserProfile";
+import { useUserResources } from "../../../../../hooks/useUserResources";
+import { useZBrandInfo } from "../../../../../stores/useZBrandStore";
+import { useState } from "react";
+import { useUploadFile } from "../../../../../hooks/useUploadFile";
 
 export const CTAsButtons = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
+  const [isLoading, setIsLoading] = useState(false);
+  const { handleUpload } = useUploadFile();
+
+  const {
+    companyEmail,
+    companySMS,
+    timeZone,
+    resetAll,
+    fullNameForm,
+    userName,
+    userEmail,
+    userPhone,
+    password,
+    confirmPassword,
+  } = useZFormProfileNotifications();
+  const {
+    role,
+    idBrand,
+    setUser,
+    profileImgFile,
+    profileImgPreview,
+    removeImage,
+    setProfileImgFile,
+    setProfileImgPreview,
+    setRemoveImage,
+  } = useZUserProfile();
+  const { updateProfileSettings } = useUserResources();
+  const { setBrandInfo } = useZBrandInfo();
+
+  const isAdmin = role === "admin";
+  const isManager = role === "manager";
+  const canEditCompany = (isAdmin || isManager) && idBrand !== null;
+
+  const validateForm = (): boolean => {
+    // Validate personal info fields
+    if (fullNameForm.errorMessage || userName.errorMessage || userEmail.errorMessage || userPhone.errorMessage) {
+      return false;
+    }
+    // Validate password match
+    if (password.value && password.value !== confirmPassword.value) {
+      return false;
+    }
+    // Validate company email if user can edit company
+    if (canEditCompany && companyEmail.errorMessage) {
+      return false;
+    }
+    // Validate company SMS if user can edit company
+    if (canEditCompany && companySMS.errorMessage) {
+      return false;
+    }
+    return true;
+  };
 
   const handleSave = async () => {
-    const allValid = true;
-    if (!allValid) return toast.error(t("profileAndNotifications.errorForm"));
-    const r = true;
-    if (r) return toast.success(t("generic.dataSavesuccess"));
-    return;
+    if (!validateForm()) {
+      return toast.error(t("profileAndNotifications.errorForm"));
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Build request data for unified endpoint
+      const requestData: {
+        profileImgUrl?: string | null;
+        removeProfileImg?: boolean;
+        username?: string;
+        fullName?: string;
+        email?: string;
+        phone?: string;
+        password?: string;
+        companyData?: {
+          emailContact?: string;
+          smsContact?: string;
+          timezone?: string;
+        };
+      } = {};
+
+      // Handle profile image - upload if file exists, or mark for removal
+      if (profileImgFile) {
+        const uploadResult = await handleUpload(profileImgFile);
+        if (uploadResult?.objectName) {
+          requestData.profileImgUrl = uploadResult.objectName;
+        }
+      } else if (removeImage) {
+        // Flag para remover imagem no backend
+        requestData.removeProfileImg = true;
+      }
+
+      // Add personal info if provided
+      if (userName.value) {
+        requestData.username = userName.value;
+      }
+      if (fullNameForm.value) {
+        requestData.fullName = fullNameForm.value;
+      }
+      if (userEmail.value) {
+        requestData.email = userEmail.value;
+      }
+      if (userPhone.value) {
+        requestData.phone = userPhone.value;
+      }
+
+      // Add password if provided and matches confirmation
+      if (password.value && password.value === confirmPassword.value) {
+        requestData.password = password.value;
+      }
+
+      // Add company data if user can edit company
+      if (canEditCompany) {
+        requestData.companyData = {
+          emailContact: companyEmail.value || undefined,
+          smsContact: companySMS.value || undefined,
+          timezone: timeZone.value || undefined,
+        };
+      }
+
+      // Single request with transaction - if any fails, all rolled back
+      const result = await updateProfileSettings(requestData);
+      if (!result) {
+        setIsLoading(false);
+        return;
+      }
+
+      // Update user info in store
+      if (result.user) {
+        setUser({
+          profileImgUrl: result.user.profileImgUrl || null,
+          username: result.user.username || null,
+          userEmail: result.user.email || null,
+        });
+      }
+
+      // Update brand info in store if company data was updated
+      if (result.brandMaster) {
+        setBrandInfo({
+          emailContact: result.brandMaster.emailContact || "",
+          smsContact: result.brandMaster.smsContact || "",
+          timezone: result.brandMaster.timezone || "",
+        });
+      }
+
+      // Limpa o arquivo pendente e flags após salvar com sucesso
+      setProfileImgFile(null);
+      setRemoveImage(false);
+      // Limpa o preview blob para que o useEffect carregue do novo profileImgUrl
+      if (profileImgPreview && profileImgPreview.startsWith("blob:")) {
+        URL.revokeObjectURL(profileImgPreview);
+        setProfileImgPreview("");
+      }
+
+      setIsLoading(false);
+      toast.success(t("generic.dataSavesuccess"));
+    } catch {
+      setIsLoading(false);
+      toast.error(t("generic.errorToSaveData"));
+    }
+  };
+
+  const handleReset = () => {
+    resetAll();
+    window.location.reload();
   };
 
   return (
@@ -42,6 +202,7 @@ export const CTAsButtons = () => {
           },
         }}
         onClick={handleSave}
+        disabled={isLoading}
       >
         <TextRob16FontL
           sx={{
@@ -51,7 +212,9 @@ export const CTAsButtons = () => {
             lineHeight: "16px",
           }}
         >
-          {t("profileAndNotifications.saveChanges")}
+          {isLoading
+            ? t("generic.loading")
+            : t("profileAndNotifications.saveChanges")}
         </TextRob16FontL>
       </Button>
       <Button
@@ -69,7 +232,8 @@ export const CTAsButtons = () => {
             maxWidth: "100%",
           },
         }}
-        onClick={() => {}}
+        onClick={handleReset}
+        disabled={isLoading}
       >
         <TextRob16FontL
           sx={{

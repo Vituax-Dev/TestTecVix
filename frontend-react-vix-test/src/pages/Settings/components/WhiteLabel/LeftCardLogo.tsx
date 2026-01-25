@@ -4,21 +4,24 @@ import { useUploadFile } from "../../../../hooks/useUploadFile";
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { TextRob16Font1S } from "../../../../components/Text1S";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import { UploadFileIcon } from "../../../../icons/UploadFileIcon";
 import { TextRob12Font2Xs } from "../../../../components/Text2Xs";
 import { CircleIcon } from "../../../../icons/CircleIcon";
 import { TextRob16FontL } from "../../../../components/TextL";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
+import { toast } from "react-toastify";
 
 interface IWhiteLabelChildProps {
   theme: {
     dark: themeColors;
     light: themeColors;
   };
+  isAdmin: boolean;
+  isVituaxUser: boolean;
 }
 
-export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
+export const LeftCardLogo = ({ theme, isAdmin, isVituaxUser }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
   const { t } = useTranslation();
   const { handleUpload, isUploading } = useUploadFile();
@@ -28,6 +31,10 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   );
 
   const onDrop = async (acceptedFiles: File[]) => {
+    if (!isAdmin) {
+      toast.error(t(isVituaxUser ? "generic.vituaxCannotEdit" : "generic.errorOlnlyAdmin"));
+      return;
+    }
     if (acceptedFiles.length === 0) return;
 
     const file = acceptedFiles[0]; // Seleciona o primeiro arquivo
@@ -43,6 +50,10 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   };
 
   const hadleRemoveLogo = () => {
+    if (!isAdmin) {
+      toast.error(t(isVituaxUser ? "generic.vituaxCannotEdit" : "generic.errorOlnlyAdmin"));
+      return;
+    }
     setBrandInfo({ brandLogoTemp: "" });
   };
 
@@ -50,6 +61,8 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
     onDrop,
     accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"] },
     maxSize: 50 * 1024 * 1024, // Limita para 50MB
+    noClick: !isAdmin,
+    noDrag: !isAdmin,
   });
 
   useEffect(() => {
@@ -57,6 +70,11 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
       setUploadedFile(null);
     }
   }, [brandLogoTemp]);
+
+  // Mensagem do tooltip baseada no motivo do bloqueio
+  const disabledTooltip = isVituaxUser
+    ? t("generic.vituaxCannotEdit")
+    : t("generic.errorOlnlyAdmin");
 
   return (
     <>
@@ -70,9 +88,10 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
       >
         {t("whiteLabel.brandLogo")}
       </TextRob16Font1S>
-      <Box
-        {...getRootProps()}
-        sx={{
+      <Tooltip title={!isAdmin ? disabledTooltip : ""} arrow placement="top">
+        <Box
+          {...getRootProps()}
+          sx={{
           width: "100%",
           height: "216px",
           border: `1px solid ${theme[mode].grayLight}`,
@@ -86,7 +105,8 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
             ? theme[mode].grayLight
             : theme[mode].lightV2,
           marginBottom: "24px",
-          cursor: "pointer",
+          cursor: isAdmin ? "pointer" : "not-allowed",
+          opacity: isAdmin ? 1 : 0.6,
         }}
       >
         <input {...getInputProps()} />
@@ -104,7 +124,8 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
         >
           {isUploading ? t("whiteLabel.loading") : t("whiteLabel.clickHere")}
         </TextRob12Font2Xs>
-      </Box>
+        </Box>
+      </Tooltip>
       {uploadedFile && (
         <Box
           sx={{
@@ -138,46 +159,65 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
           },
         }}
       >
-        <Button
-          sx={{
-            background: theme[mode].blue,
-            border: `1px solid ${theme[mode].blue}`,
-            color: theme[mode].btnText,
-            textTransform: "none",
-            borderRadius: "12px",
-            flexGrow: 2,
-            height: "48px",
-            fontWeight: "500",
-            fontSize: "16px",
-            "@media (max-width: 440px)": {
-              flexGrow: 0,
-              width: "100%",
-            },
-          }}
-          onClick={open}
-        >
-          {t("whiteLabel.changeLogo")}
-        </Button>
-        <Button
-          sx={{
-            background: "transparent",
-            color: theme[mode].blueDark,
-            border: `1px solid ${theme[mode].blueDark}`,
-            textTransform: "none",
-            borderRadius: "12px",
-            flexGrow: 1,
-            height: "48px",
-            fontWeight: "500",
-            fontSize: "16px",
-            "@media (max-width: 440px)": {
-              flexGrow: 0,
-              width: "100%",
-            },
-          }}
-          onClick={hadleRemoveLogo} // Remove o logo
-        >
-          {t("whiteLabel.removeLogo")}
-        </Button>
+        <Tooltip title={!isAdmin ? disabledTooltip : ""} arrow placement="top">
+          <span>
+            <Button
+              disabled={!isAdmin}
+              sx={{
+                background: theme[mode].blue,
+                border: `1px solid ${theme[mode].blue}`,
+                color: theme[mode].btnText,
+                textTransform: "none",
+                borderRadius: "12px",
+                flexGrow: 2,
+                height: "48px",
+                fontWeight: "500",
+                fontSize: "16px",
+                "@media (max-width: 440px)": {
+                  flexGrow: 0,
+                  width: "100%",
+                },
+                "&.Mui-disabled": {
+                  background: theme[mode].grayLight,
+                  color: theme[mode].gray,
+                  border: `1px solid ${theme[mode].grayLight}`,
+                },
+              }}
+              onClick={open}
+            >
+              {t("whiteLabel.changeLogo")}
+            </Button>
+          </span>
+        </Tooltip>
+        <Tooltip title={!isAdmin ? disabledTooltip : ""} arrow placement="top">
+          <span>
+            <Button
+              disabled={!isAdmin}
+              sx={{
+                background: "transparent",
+                color: theme[mode].blueDark,
+                border: `1px solid ${theme[mode].blueDark}`,
+                textTransform: "none",
+                borderRadius: "12px",
+                flexGrow: 1,
+                height: "48px",
+                fontWeight: "500",
+                fontSize: "16px",
+                "@media (max-width: 440px)": {
+                  flexGrow: 0,
+                  width: "100%",
+                },
+                "&.Mui-disabled": {
+                  color: theme[mode].gray,
+                  border: `1px solid ${theme[mode].grayLight}`,
+                },
+              }}
+              onClick={hadleRemoveLogo}
+            >
+              {t("whiteLabel.removeLogo")}
+            </Button>
+          </span>
+        </Tooltip>
       </Box>
       <Box
         sx={{

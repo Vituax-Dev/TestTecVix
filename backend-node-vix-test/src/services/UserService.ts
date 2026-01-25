@@ -9,6 +9,8 @@ import {
   userCreatedSchema,
   userCreatedByManagerSchema,
 } from "../types/validations/User/createUser";
+import { prisma } from "../database/client";
+import { BucketLocalService } from "./BucketLocalService";
 
 export interface ILoggedUser {
   idUser: string;
@@ -268,5 +270,123 @@ export class UserService {
       throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
     }
     return this.userModel.update(idUser, { isActive: true });
+  }
+
+  /**
+   * Updates user profile and company settings in a single transaction.
+   * If any part fails, all changes are rolled back.
+   */
+  async updateProfileSettings(
+    idUser: string,
+    data: {
+      // User fields
+      username?: string;
+      fullName?: string;
+      email?: string;
+      phone?: string;
+      password?: string;
+      profileImgUrl?: string;
+      removeProfileImg?: boolean;
+      // Company fields (only for admin/manager)
+      companyData?: {
+        emailContact?: string;
+        smsContact?: string;
+        timezone?: string;
+      };
+    }
+  ) {
+    const user = await this.userModel.findById(idUser);
+    if (!user) {
+      throw new AppError(ERROR_MESSAGE.USER_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+    }
+
+    // Check if user can edit company data
+    const canEditCompany =
+      (user.role === "admin" || user.role === "manager") &&
+      user.idBrandMaster !== null;
+
+    // Prepare user update data
+    const userUpdateData: {
+      username?: string;
+      fullName?: string;
+      email?: string;
+      phone?: string;
+      password?: string;
+      profileImgUrl?: string | null;
+      updatedAt: Date;
+    } = { updatedAt: new Date() };
+
+    if (data.username) userUpdateData.username = data.username;
+    if (data.fullName) userUpdateData.fullName = data.fullName;
+    if (data.email) userUpdateData.email = data.email;
+    if (data.phone) userUpdateData.phone = data.phone;
+    
+    // Handle profile image: update, remove, or keep
+    const oldProfileImg = user.profileImgUrl;
+    if (data.removeProfileImg) {
+      // User wants to remove profile image
+      userUpdateData.profileImgUrl = null;
+    } else if (data.profileImgUrl) {
+      // User wants to update profile image
+      userUpdateData.profileImgUrl = data.profileImgUrl;
+    }
+
+    if (data.password) {
+      userUpdateData.password = await bcrypt.hash(data.password, 10);
+    }
+
+    // Use transaction to ensure atomicity
+    const result = await prisma.$transaction(async (tx) => {
+      // Update user
+      const updatedUser = await tx.user.update({
+        where: { idUser },
+        data: userUpdateData,
+      });
+
+      let updatedBrandMaster = null;
+
+      // Update company if allowed and data provided
+      if (canEditCompany && data.companyData && user.idBrandMaster) {
+        const brandUpdateData: {
+          emailContact?: string;
+          smsContact?: string;
+          timezone?: string;
+          updatedAt: Date;
+        } = { updatedAt: new Date() };
+
+        if (data.companyData.emailContact !== undefined) {
+          brandUpdateData.emailContact = data.companyData.emailContact;
+        }
+        if (data.companyData.smsContact !== undefined) {
+          brandUpdateData.smsContact = data.companyData.smsContact;
+        }
+        if (data.companyData.timezone !== undefined) {
+          brandUpdateData.timezone = data.companyData.timezone;
+        }
+
+        updatedBrandMaster = await tx.brandMaster.update({
+          where: { idBrandMaster: user.idBrandMaster },
+          data: brandUpdateData,
+        });
+      }
+
+      return { user: updatedUser, brandMaster: updatedBrandMaster };
+    });
+
+    // Delete old profile image file after successful transaction
+    // Only delete if image was changed or removed
+    if (oldProfileImg && (data.profileImgUrl || data.removeProfileImg)) {
+      const bucketService = new BucketLocalService();
+      await bucketService.deleteFile(oldProfileImg);
+    }
+
+    // Remove password from response
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = result.user;
+
+    return {
+      user: userWithoutPassword,
+      brandMaster: result.brandMaster,
+    };
   }
 }

@@ -7,7 +7,9 @@ import { useZUserProfile } from "../../../../stores/useZUserProfile";
 
 export const ProfileAndNotifications = () => {
   const { mode, theme } = useZTheme();
-  const { role } = useZUserProfile();
+  const { role, idBrand } = useZUserProfile();
+  const isVituaxUser = idBrand === null;
+  
   return (
     <Stack
       sx={{
@@ -29,7 +31,7 @@ export const ProfileAndNotifications = () => {
       {Boolean(role === "admin" || role === "manager") && (
         <>
           {/* Notifications */}
-          <NotificationsContact />
+          <NotificationsContact isVituaxUser={isVituaxUser} />
           <Divider
             sx={{
               mt: "16px",

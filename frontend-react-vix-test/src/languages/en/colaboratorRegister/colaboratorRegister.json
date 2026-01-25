@@ -44,5 +44,7 @@
   "ok": "OK",
   "registersManagement": "Registers Management",
   "pinCode": "PinCode",
-  "areYouSure": "Are you sure you want to delete the {{ username }}?"
+  "areYouSure": "Are you sure you want to delete the {{ username }}?",
+  "fullName": "Full name",
+  "formSubtitle":"Assign and adjust user access levels"
 }

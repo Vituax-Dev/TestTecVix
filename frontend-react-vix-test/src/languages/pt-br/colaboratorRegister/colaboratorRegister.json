@@ -1,5 +1,8 @@
 {
-  "title": "Cadastro",
+  "title": "Registrar | Permissões de usuário",
+  "formSubtitle": "Atribuir e ajustar os níveis de acesso do usuário",
+  "personalInfo": "Informações pessoais",
+  "accessLevel": "Access Level",
   "sideTitle": "Permissões de usuários",
   "subtitle": "Atribuir e ajustar niveis de acesso de usuários",
   "completeName": "Nome completo",
@@ -44,5 +47,6 @@
   "ok": "OK",
   "registersManagement": "Gerenciamento de usuários",
   "pinCode": "PinCode",
-  "areYouSure": "Tem certeza que deseja deletar o usuário {{ username }}?"
+  "areYouSure": "Tem certeza que deseja deletar o usuário {{ username }}?",
+  "fullName": "Nome completo"
 }

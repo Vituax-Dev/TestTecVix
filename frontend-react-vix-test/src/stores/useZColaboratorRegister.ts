@@ -24,6 +24,7 @@ export interface ColaboratorRegisterInputs {
   email: string;
   phone: string;
   position: string;
+  department: string;
   permission: string;
   hiringDate: string;
   status: string;
@@ -40,6 +41,7 @@ const INPUTS_INITIAL_STATE: ColaboratorRegisterInputs = {
   email: "",
   phone: "",
   position: "",
+  department: "",
   permission: "",
   hiringDate: "",
   status: "",
@@ -92,6 +94,7 @@ interface IColaboratorRegisterState extends IColaboratorRegister {
   setEmail: (email: string) => void;
   setPhone: (phone: string) => void;
   setPosition: (position: string) => void;
+  setDepartment: (department: string) => void;
   setPermission: (permission: string) => void;
   setHiringDate: (hiringDate: string) => void;
   setStatus: (status: string) => void;
@@ -122,6 +125,7 @@ export const useZColaboratorRegister = create<IColaboratorRegisterState>(
     setEmail: (email: string) => set((state) => ({ ...state, email })),
     setPhone: (phone: string) => set((state) => ({ ...state, phone })),
     setPosition: (position: string) => set((state) => ({ ...state, position })),
+    setDepartment: (department:string) => set((state) => ({...state,department})),
     setPermission: (permission: string) =>
       set((state) => ({ ...state, permission })),
     setHiringDate: (hiringDate: string) =>

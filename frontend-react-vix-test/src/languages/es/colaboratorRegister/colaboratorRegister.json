@@ -44,5 +44,7 @@
   "ok": "OK",
   "registersManagement": "Gestión de registros",
   "pinCode": "PinCode",
-  "areYouSure": "¿Está seguro de que desea eliminar el usuario {{ username }}?"
+  "areYouSure": "¿Está seguro de que desea eliminar el usuario {{ username }}?",
+  "fullName":"Nombre completo",
+  "formSubtitle":"Asignar y ajustar niveles de acceso de usuarios"
 }

@@ -43,7 +43,7 @@ export const SimpleInput = ({
       id={id}
       type={type === "password" && !showPassword ? "password" : "text"}
       sx={{
-        width: "100%",
+        width: "85%",
         "label + &": {
           marginTop: "26px",
         },
@@ -56,7 +56,7 @@ export const SimpleInput = ({
           paddingTop: 0,
           paddingBottom: 0,
           transition: "box-shadow 0.2s ease-in-out",
-          height: "65px",
+          height: "50px",
           ...(mode === "dark" && { color: theme[mode].light }),
           ...(type === "password" && { paddingRight: "40px" }),
           ...inputSx,

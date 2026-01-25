@@ -10,7 +10,7 @@ export class UserModel {
 
   async createUser(data: TUserCreate) {
     return await prisma.user.create({
-      data: { ...data },
+      data: { ...data, isActive: false },
       select: {
         idUser: true,
         username: true,

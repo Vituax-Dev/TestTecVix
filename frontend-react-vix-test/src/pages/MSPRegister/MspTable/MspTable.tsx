@@ -49,7 +49,7 @@ export const MspTable = () => {
 
   const { listAllBrands } = useBrandMasterResources();
 
-  const { isAdmin } = useAuth();
+  const { isAdmin, isManagerOrAdmin } = useAuth();
 
   useEffect(() => {
     const fetchMsps = async () => {
@@ -278,25 +278,27 @@ export const MspTable = () => {
                   "@media (max-width: 600px)": { display: "none" },
                 }}
               >
-                <IconButton
-                  onClick={() =>
-                    isEditing.includes(msp.idBrandMaster)
-                      ? saveEdit()
-                      : handleEdit(msp.idBrandMaster)
-                  }
-                >
-                  {isEditing.includes(msp.idBrandMaster) ? (
-                    <CheckCircleOutlineRoundedIcon
-                      sx={{
-                        color: theme[mode].blueMedium,
-                        width: "24px",
-                        height: "24px",
-                      }}
-                    />
-                  ) : (
-                    <PencilCicleIcon fill={theme[mode].blueMedium} />
-                  )}
-                </IconButton>
+                {isManagerOrAdmin && (
+                  <IconButton
+                    onClick={() =>
+                      isEditing.includes(msp.idBrandMaster)
+                        ? saveEdit()
+                        : handleEdit(msp.idBrandMaster)
+                    }
+                  >
+                    {isEditing.includes(msp.idBrandMaster) ? (
+                      <CheckCircleOutlineRoundedIcon
+                        sx={{
+                          color: theme[mode].blueMedium,
+                          width: "24px",
+                          height: "24px",
+                        }}
+                      />
+                    ) : (
+                      <PencilCicleIcon fill={theme[mode].blueMedium} />
+                    )}
+                  </IconButton>
+                )}
                 {isAdmin && (
                   <IconButton
                     onClick={() => {

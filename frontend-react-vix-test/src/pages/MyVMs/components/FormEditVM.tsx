@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { LabelInputVM } from "../../VirtualMachine/components/LabelInputVM";
 import { useState } from "react";
 import { useVmResource } from "../../../hooks/useVmResource";
-import { TOptions } from "../../../types/FormType";
+import { TOptionsTyped } from "../../../types/FormType";
 import { DropDowText } from "../../VirtualMachine/components/DropDowText";
 import { SliderLabelNum } from "../../VirtualMachine/components/SliderLabelNum";
 import { CheckboxLabel } from "../../VirtualMachine/components/CheckboxLabel";
@@ -24,6 +24,7 @@ import { ModalDeleteVM } from "./ModalDeleteVM";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
 import { ModalStartVM } from "./ModalStartVM";
 import { ModalStopVM } from "./ModalStopVM";
+import { useAuth } from "../../../auth/PrivatePage";
 
 interface IProps {
   onClose: (edit?: boolean) => void;
@@ -31,6 +32,7 @@ interface IProps {
 export const FormEditVM = ({ onClose }: IProps) => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const { isAdmin } = useAuth();
   const {
     storageOptions,
     localizationOptions,
@@ -46,20 +48,20 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const { currentVM, setCurrentVM } = useZMyVMsList();
   const [vmPassword, setVmPassword] = useState(currentVM.pass);
   const [vmName, setVmName] = useState(currentVM.vmName);
-  const [vmSO, setVmSO] = useState<TOptions>({
+  const [vmSO, setVmSO] = useState<TOptionsTyped<string>>({
     label: currentVM.os,
     value: currentVM.os,
   });
   const [vmvCpu, setVmvCpu] = useState(currentVM.vCPU);
   const [vmMemory, setVmMemory] = useState(currentVM.ram);
   const [vmDisk, setVmDisk] = useState(currentVM.disk);
-  const [vmStorageType] = useState<TOptions>({
+  const [vmStorageType] = useState<TOptionsTyped<string>>({
     value: "ssd",
     label: "SSD",
   });
-  const [vmLocalization] = useState<TOptions>({
+  const [vmLocalization] = useState<TOptionsTyped<string>>({
     label: localizationOptions[0]?.label,
-    value: localizationOptions[0]?.value,
+    value: String(localizationOptions[0]?.value),
   });
   const [hasBackup, setHasBackup] = useState(currentVM.hasBackup);
 
@@ -87,32 +89,24 @@ export const FormEditVM = ({ onClose }: IProps) => {
   };
 
   const handleEditVm = async () => {
-    const vm = {
-      hasBackup,
-      vmPassword,
-      vmName,
-      vmSO,
-      vmvCpu,
-      vmMemory,
-      vmDisk,
-      vmStorageType,
-      vmLocalization,
-      status,
-      oldVM: currentVM,
-    };
     setOpenConfirm(false);
     const isValidPass = validPassword(vmPassword);
     if (!isValidPass) return;
+
     await updateVM(
       {
-        ...vm,
-        vmName: vmName,
+        vmName,
         vCPU: vmvCpu,
         ram: vmMemory,
         disk: vmDisk,
-        hasBackup: hasBackup,
-        os: String(vmSO?.value) || "",
+        hasBackup,
+        os: vmSO.value,
         pass: vmPassword,
+        location: vmLocalization.value,
+        networkType: currentVM.networkType,
+        storageType: vmStorageType.value,
+        status,
+        vmLocalization,
       },
       currentVM.idVM,
     );
@@ -473,30 +467,32 @@ export const FormEditVM = ({ onClose }: IProps) => {
               {t("createVm.edit")}
             </TextRob16Font1S>
           </Btn>
-          <Btn
-            disabled={disabledBtn}
-            onClick={() => setOpenDeleteModal(true)}
-            sx={{
-              padding: "9px 24px",
-              backgroundColor: "transparent",
-              border: "1px solid " + theme[mode].danger,
-              borderRadius: "12px",
-              maxWidth: "150px",
-              marginLeft: "auto",
-              "@media (min-width: 660px)": {},
-            }}
-          >
-            <TextRob16Font1S
+          {isAdmin && (
+            <Btn
+              disabled={disabledBtn}
+              onClick={() => setOpenDeleteModal(true)}
               sx={{
-                color: theme[mode].danger,
-                fontSize: "16px",
-                fontWeight: "400",
-                lineHeight: "20px",
+                padding: "9px 24px",
+                backgroundColor: "transparent",
+                border: "1px solid " + theme[mode].danger,
+                borderRadius: "12px",
+                maxWidth: "150px",
+                marginLeft: "auto",
+                "@media (min-width: 660px)": {},
               }}
             >
-              {t("createVm.deleteVM")}
-            </TextRob16Font1S>
-          </Btn>
+              <TextRob16Font1S
+                sx={{
+                  color: theme[mode].danger,
+                  fontSize: "16px",
+                  fontWeight: "400",
+                  lineHeight: "20px",
+                }}
+              >
+                {t("createVm.deleteVM")}
+              </TextRob16Font1S>
+            </Btn>
+          )}
         </Stack>
       </Stack>
       {openConfirm && (

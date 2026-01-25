@@ -34,6 +34,7 @@ export class VMService {
     const createdVM = await this.vMModel.createNewVM({
       ...validateData,
       status: "RUNNING",
+      idBrandMaster: user.idBrandMaster,
     });
 
     return createdVM;

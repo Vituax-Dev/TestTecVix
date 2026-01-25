@@ -22,8 +22,7 @@ export const userCreatedSchema = z.object({
     .email("Invalid email"),
   profileImgUrl: z.string().nullable().optional(),
   role: z.enum(ROLES).optional(),
-  idBrandMaster: z.number().optional(),
-  isActive: z.boolean().optional().default(true),
+  idBrandMaster: z.number().nullable().optional(),
 });
 
 export type TUserCreate = z.infer<typeof userCreatedSchema>;

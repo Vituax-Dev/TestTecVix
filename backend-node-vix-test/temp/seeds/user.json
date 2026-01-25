@@ -9,6 +9,15 @@
     "isActive": true
   },
   {
+    "idUser": "550e8400-e29b-41d4-a716-446655440005",
+    "username": "admin_alpha",
+    "password": "$2a$10$0LrTvBc76RzoKV.u3N42/.igOBCA/sYyvftuyEdrU78daxXgWLk9S",
+    "email": "admin@alpha.com",
+    "role": "admin",
+    "idBrandMaster": 1,
+    "isActive": true
+  },
+  {
     "idUser": "550e8400-e29b-41d4-a716-446655440001",
     "username": "manager_alpha",
     "password": "$2a$10$BXltBDqlwxh3VWtDg1x5cOn1/RbbgHBQKdP4a832NvnnwheBJayi6",

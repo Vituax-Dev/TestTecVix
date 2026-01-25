@@ -53,5 +53,7 @@
     "desc": "A data de vencimento da sua fatura está se aproximando. Mantenha seus serviços ativos realizando o pagamento até o próximo dia 5.",
     "seeInvoice": "Ver fatura",
     "close": "Fechar"
-  }
+  },
+  "startVmSuccess": "{{vmName}} iniciada com sucesso!",
+  "stopVmSuccess": "{{vmName}} parada com sucesso!"
 }

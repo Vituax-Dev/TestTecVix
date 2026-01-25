@@ -53,5 +53,7 @@
     "desc": "Your invoice due date is approaching. Keep your services active by completing the payment by the 5th.",
     "seeInvoice": "View invoice",
     "close": "Close"
-  }
+  },
+  "startVmSuccess": "{{vmName}} started successfully!",
+  "stopVmSuccess": "{{vmName}} stopped successfully!"
 }

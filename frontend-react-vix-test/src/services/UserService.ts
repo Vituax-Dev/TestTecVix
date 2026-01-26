@@ -1,45 +1,56 @@
 import { api } from "./api";
-import { IUserList } from "../pages/UserRegister";
 
 export interface ICreateUserDTO {
-  username: string;
+  fullName: string;
   email: string;
-  password?: string; 
-  role: string; 
-  isActive: boolean;
-  idBrandMaster: number;
-  fullName?: string;
   phone?: string;
+  username: string;
+  password?: string;
   position?: string;
   department?: string;
   hiringDate?: string;
+  role: string;
+  isActive: boolean;
+  idBrandMaster: number;
 }
 
-const BASE_URL = "/users";
-
-const getAll = async () => {
-  const response = await api.get<IUserList[]>({ url: BASE_URL });
-  return response;
-};
-
-const create = async (payload: ICreateUserDTO) => {
-  const response = await api.post({ url: BASE_URL, data: payload });
-  return response;
-};
-
-const update = async (id: string, payload: Partial<ICreateUserDTO>) => {
-  const response = await api.put({ url: `${BASE_URL}/${id}`, data: payload });
-  return response;
-};
-
-const remove = async (id: string) => {
-  const response = await api.delete({ url: `${BASE_URL}/${id}` });
-  return response;
-};
+export interface IUpdateUserDTO {
+  fullName?: string;
+  username?: string;
+  email?: string;
+  phone?: string;
+  profileImgUrl?: string;
+}
 
 export const userService = {
-  getAll,
-  create,
-  update,
-  remove,
+  getAll: async () => {
+    return await api.get({ url: "/users" });
+  },
+
+  create: async (payload: ICreateUserDTO) => {
+    return await api.post({ url: "/users", data: payload });
+  },
+
+  update: async (id: string, payload: Partial<ICreateUserDTO>) => {
+    return await api.put({ url: `/users/${id}`, data: payload });
+  },
+
+  remove: async (id: string) => {
+    return await api.delete({ url: `/users/${id}` });
+  },
+
+  updateMe: async (data: IUpdateUserDTO) => {
+    return await api.put({ url: "/users/me", data });
+  },
+
+  updatePasswordMe: async (data: {
+    currentPassword?: string;
+    newPassword?: string;
+  }) => {
+    return await api.put({ url: "/users/me/change-password", data });
+  },
+
+  updateAvatarMe: async (data: { profileImgUrl: string }) => {
+    return await api.put({ url: "/users/me/avatar", data });
+  },
 };

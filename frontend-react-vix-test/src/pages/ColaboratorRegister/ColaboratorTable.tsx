@@ -52,28 +52,38 @@ export const ColaboratorTable = () => {
   };
 
   return (
-    <Stack sx={{ gap: "8px" }}>
+    <Stack sx={{ gap: "12px" }}>
       {userList.map((user, index) => (
         <Fragment key={user.idUser}>
           <Stack
             sx={{
-              flexDirection: "row",
-              alignItems: "center",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: { xs: "flex-start", md: "center" },
               justifyContent: "space-between",
-              padding: "12px 16px",
+              padding: { xs: "16px", md: "16px 24px" },
               borderRadius: "12px",
               background: theme[mode].mainBackground,
+              gap: { xs: "16px", md: "24px" },
               "&:hover": {
                 background: theme[mode].grayLight,
               },
             }}
           >
             {/* User Info */}
-            <Stack sx={{ flexDirection: "row", alignItems: "center", gap: "12px", flex: 1 }}>
+            <Stack
+              sx={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "16px",
+                flex: 1,
+                minWidth: { xs: "100%", md: "auto" },
+              }}
+            >
               <Box
                 sx={{
-                  width: "40px",
-                  height: "40px",
+                  width: "48px",
+                  height: "48px",
+                  minWidth: "48px",
                   borderRadius: "50%",
                   overflow: "hidden",
                   background: theme[mode].gray,
@@ -94,18 +104,39 @@ export const ColaboratorTable = () => {
                   </TextRob14Font1Xs>
                 )}
               </Box>
-              <Stack>
-                <TextRob14Font1Xs sx={{ color: theme[mode].primary, fontWeight: 500 }}>
+              <Stack sx={{ gap: "4px", overflow: "hidden" }}>
+                <TextRob14Font1Xs
+                  sx={{
+                    color: theme[mode].primary,
+                    fontWeight: 500,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {user.fullName || user.username}
                 </TextRob14Font1Xs>
-                <TextRob12Font2Xs sx={{ color: theme[mode].tertiary }}>
+                <TextRob12Font2Xs
+                  sx={{
+                    color: theme[mode].tertiary,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {user.email}
                 </TextRob12Font2Xs>
               </Stack>
             </Stack>
 
             {/* Status & Last Activity */}
-            <Stack sx={{ alignItems: "flex-start", minWidth: "180px" }}>
+            <Stack
+              sx={{
+                alignItems: "flex-start",
+                minWidth: { xs: "100%", md: "200px" },
+                gap: "4px",
+              }}
+            >
               <TextRob12Font2Xs sx={{ color: theme[mode].tertiary }}>
                 {t("colaboratorRegister.status")}
               </TextRob12Font2Xs>
@@ -118,12 +149,21 @@ export const ColaboratorTable = () => {
             </Stack>
 
             {/* Tags */}
-            <Stack sx={{ flexDirection: "row", gap: "8px", alignItems: "center", minWidth: "280px" }}>
+            <Stack
+              sx={{
+                flexDirection: "row",
+                gap: "10px",
+                alignItems: "center",
+                flexWrap: "wrap",
+                minWidth: { xs: "100%", md: "auto" },
+              }}
+            >
               <Box
                 sx={{
-                  padding: "4px 12px",
-                  borderRadius: "12px",
+                  padding: "6px 14px",
+                  borderRadius: "16px",
                   border: `1px solid ${theme[mode].gray}`,
+                  whiteSpace: "nowrap",
                 }}
               >
                 <TextRob12Font2Xs sx={{ color: theme[mode].primary }}>
@@ -133,9 +173,10 @@ export const ColaboratorTable = () => {
               {user.brandMaster?.brandName && (
                 <Box
                   sx={{
-                    padding: "4px 12px",
-                    borderRadius: "12px",
+                    padding: "6px 14px",
+                    borderRadius: "16px",
                     border: `1px solid ${theme[mode].gray}`,
+                    whiteSpace: "nowrap",
                   }}
                 >
                   <TextRob12Font2Xs sx={{ color: theme[mode].primary }}>
@@ -145,9 +186,10 @@ export const ColaboratorTable = () => {
               )}
               <Box
                 sx={{
-                  padding: "4px 12px",
-                  borderRadius: "12px",
+                  padding: "6px 14px",
+                  borderRadius: "16px",
                   background: user.isActive ? theme[mode].green : theme[mode].danger,
+                  whiteSpace: "nowrap",
                 }}
               >
                 <TextRob12Font2Xs sx={{ color: "#fff" }}>
@@ -159,16 +201,23 @@ export const ColaboratorTable = () => {
             </Stack>
 
             {/* Actions */}
-            <Stack sx={{ flexDirection: "row", gap: "4px" }}>
+            <Stack
+              sx={{
+                flexDirection: "row",
+                gap: "8px",
+                minWidth: { xs: "100%", md: "auto" },
+                justifyContent: { xs: "flex-end", md: "center" },
+              }}
+            >
               {isManagerOrAdmin && (
                 <IconButton
                   onClick={() => handleEdit(index)}
                   sx={{
                     color: theme[mode].blue,
-                    padding: "8px",
+                    padding: "10px",
                   }}
                 >
-                  <PencilCicleIcon fill={theme[mode].blue} width="20px" />
+                  <PencilCicleIcon fill={theme[mode].blue} width="22px" />
                 </IconButton>
               )}
               {isAdmin && (
@@ -176,10 +225,10 @@ export const ColaboratorTable = () => {
                   onClick={() => handleDelete(index)}
                   sx={{
                     color: theme[mode].danger,
-                    padding: "8px",
+                    padding: "10px",
                   }}
                 >
-                  <DeleteForeverIcon sx={{ fontSize: "20px" }} />
+                  <DeleteForeverIcon sx={{ fontSize: "22px" }} />
                 </IconButton>
               )}
             </Stack>

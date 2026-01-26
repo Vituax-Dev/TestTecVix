@@ -24,7 +24,7 @@ export const ColaboratorForm = ({ onSuccess }: ColaboratorFormProps) => {
   const { t } = useTranslation();
   const { mode, theme } = useZTheme();
   const { idBrand } = useZUserProfile();
-  const { createUser, updateUserById, isLoading } = useUserResources();
+  const { createUserByManager, updateUserById, isLoading } = useUserResources();
   const { listAllBrands } = useBrandMasterResources();
 
   const {
@@ -174,7 +174,7 @@ export const ColaboratorForm = ({ onSuccess }: ColaboratorFormProps) => {
         onSuccess();
       }
     } else {
-      const result = await createUser({
+      const result = await createUserByManager({
         ...userData,
         password,
       });

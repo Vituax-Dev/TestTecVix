@@ -2,7 +2,6 @@ import { Box, Modal, Stack } from "@mui/material";
 import { ScreenFullPage } from "../../components/ScreenFullPage";
 import { TextRob20Font1MB } from "../../components/Text1MB";
 import { useZTheme } from "../../stores/useZTheme";
-import { SampleStepper } from "../../components/SampleStepper";
 import { useZMspRegisterPage } from "../../stores/useZMspRegisterPage";
 import { useTranslation } from "react-i18next";
 import { TextRob16Font1S } from "../../components/Text1S";
@@ -16,14 +15,11 @@ import { ModalDeleteVMsFromMSP } from "./ModalDeleteVMsFromMSP";
 import { useBrandMasterResources } from "../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { useVmResource } from "../../hooks/useVmResource";
-import { MspFormStepOne } from "../MSPRegister/components/MspFormStepOne";
-import { MspFormStepTwo } from "../MSPRegister/components/MspFormStepTwo";
-import { Btn } from "../../components/Buttons/Btn"; 
+import { MspRegisterForm } from "./components/MspRegisterForm"; 
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
   const {
-    activeStep,
     modalOpen,
     mspToBeDeleted,
     setModalOpen,
@@ -36,6 +32,7 @@ export const MSPRegisterPage = () => {
     setBrandMasterDeleted,
     setVmsToBeDeleted,
   } = useZMspRegisterPage();
+
   const { t } = useTranslation();
   const { isLoading } = useBrandMasterResources();
   const { isLoadingDeleteVM, deleteVM } = useVmResource();
@@ -50,7 +47,6 @@ export const MSPRegisterPage = () => {
   const handleCancelAfterDeleteMSP = () => {
     setMspToBeDeleted(null);
     setModalOpen(null);
-    setMspToBeDeleted(null);
     setBrandMasterDeleted(null);
     setVmsToBeDeleted([]);
     resetAllStepStates();
@@ -70,151 +66,56 @@ export const MSPRegisterPage = () => {
   return (
     <ScreenFullPage
       title={
-        <TextRob20Font1MB
-          sx={{
-            color: theme[mode].primary,
-            fontSize: "28px",
-            fontWeight: "500",
-            lineHeight: "40px",
-          }}
-        >
-          {t("mspRegister.title")}
-        </TextRob20Font1MB>
+        <Stack spacing={1.5} sx={{ marginTop: { xs: "24px", md: "40px" }, marginBottom: "32px" }}>
+          <TextRob20Font1MB sx={{ color: theme[mode].primary, fontSize: "28px", fontWeight: "500" }}>
+            {t("mspRegister.title", "Cadastro de MSPs")}
+          </TextRob20Font1MB>
+          <TextRob16Font1S sx={{ color: theme[mode].tertiary, fontSize: "14px" }}>
+            Gerencie as empresas e administradores parceiros
+          </TextRob16Font1S>
+        </Stack>
       }
-      sxTitleSubTitle={{
-        paddingLeft: "40px",
-        paddingRight: "40px",
-      }}
-      sxContainer={{
-        paddingLeft: "40px",
-        paddingRight: "40px",
-        paddingBottom: "40px",
-      }}
-      subtitle={
-        <Box
-          sx={{
-            maxWidth: "646px",
-            "@media (max-width: 660px)": { maxWidth: "136px" },
-          }}
-        >
-          <SampleStepper
-            activeStep={activeStep}
-            stepsNames={[
-              t("mspRegister.stepOneTitle"),
-              t("mspRegister.stepTwoTitle"),
-            ]}
-          />
-        </Box>
-      }
+      sxTitleSubTitle={{ padding: { xs: "0 20px", md: "0 40px" } }}
+      sxContainer={{ padding: { xs: "0 20px 80px", md: "0 40px 40px" } }}
     >
-      {Boolean(isLoading || isLoadingDeleteVM) && <AbsoluteBackDrop open />}
-      <Stack
-        sx={{
-          width: "100%",
-          gap: "26px",
-          borderRadius: "16px",
-          boxSizing: "border-box",
-        }}
-      >
-        {
-          <Stack
-            sx={{
-              background: theme[mode].mainBackground,
-              borderRadius: "16px",
-              width: "100%",
-              padding: "24px",
-              boxSizing: "border-box",
-            }}
-          >
-            <Stack
-              sx={{
-                gap: "40px",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: "24px",
-                }}
-              >
-                <TextRob16Font1S
-                  sx={{
-                    color: theme[mode].black,
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  {t("mspRegister.tableTitle")}
-                </TextRob16Font1S>
+      {(isLoading || isLoadingDeleteVM) && <AbsoluteBackDrop open />}
 
-                <Stack direction="row" gap="16px" alignItems="center">
-                  <MspTableFilters />
+      <Stack sx={{ width: "100%", gap: "26px", maxWidth: "100%", overflow: "hidden" }}>
 
-                  <Btn
-                    onClick={() => {
-                      resetAll();
-                      setModalOpen("registeringMsp");
-                    }}
-                    sx={{
-                      backgroundColor: theme[mode].blue,
-                      borderRadius: "12px", 
-                      padding: "10px 24px",
-                      textTransform: "none",
-                      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)", 
-                      height: "40px", 
-                      "&:hover": {
-                        backgroundColor: theme[mode].blueDark,
-                      }
-                    }}
-                  >
-                    <TextRob16Font1S sx={{ color: theme[mode].btnText, fontWeight: 600 }}>
-                      {t("mspRegister.addMspButton")}
-                    </TextRob16Font1S>
-                  </Btn>
-                </Stack>
-              </Box>
+        <MspRegisterForm />
 
-              <MspTable />
-            </Stack>
-          </Stack>
-        }
+        <Stack
+          sx={{
+            background: theme[mode].mainBackground,
+            borderRadius: "16px",
+            width: "100%",
+            padding: { xs: "16px", md: "24px" },
+            boxSizing: "border-box",
+            gap: "24px"
+          }}
+        >
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+            <TextRob16Font1S sx={{ color: theme[mode].black, fontWeight: 500, fontSize: "16px" }}>
+              {t("mspRegister.tableTitle", "MSPs Cadastradas")}
+            </TextRob16Font1S>
+
+            <MspTableFilters />
+          </Box>
+
+          <MspTable />
+        </Stack>
       </Stack>
 
       {modalOpen !== null && (
         <Modal
-          open={modalOpen !== null}
+          open={modalOpen !== null && modalOpen !== "registeringMsp"} 
           onClose={() => setModalOpen(null)}
           sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
         >
-          <Box sx={{ width: '90%', maxWidth: '900px', outline: 'none' }}>
+          <Box sx={{ width: '90%', maxWidth: '600px', outline: 'none' }}>
+
             {(modalOpen === "editedMsp" || modalOpen === "createdMsp") && (
               <MspModal modalType={modalOpen} onClose={() => setModalOpen(null)} />
-            )}
-
-            {modalOpen === "registeringMsp" && (
-              <Stack sx={{
-                background: theme[mode].mainBackground,
-                borderRadius: "16px",
-                padding: "32px",
-                maxHeight: '90vh',
-                overflowY: 'auto'
-              }}>
-                {activeStep === 0 ? (
-                  <MspFormStepOne
-                    onNext={() => setActiveStep(1)}
-                    onCancel={() => setModalOpen(null)}
-                  />
-                ) : (
-                  <MspFormStepTwo
-                    onBack={() => setActiveStep(0)}
-                    onConfirm={() => setModalOpen("createdMsp")} 
-                  />
-                )}
-              </Stack>
             )}
 
             {modalOpen === "deletedMsp" && mspToBeDeleted && (
@@ -229,6 +130,7 @@ export const MSPRegisterPage = () => {
           </Box>
         </Modal>
       )}
+
       {openModalUserNotCreated && (
         <ModalUSerNotCreated
           open={openModalUserNotCreated}
@@ -238,6 +140,7 @@ export const MSPRegisterPage = () => {
           }}
         />
       )}
+
       {Boolean(brandMasterDeleted) && (
         <ModalDeleteVMsFromMSP
           onClose={handleCancelAfterDeleteMSP}

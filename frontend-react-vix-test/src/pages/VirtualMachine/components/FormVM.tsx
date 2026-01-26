@@ -15,10 +15,9 @@ import { ModalConfirmCreate } from "./ModalConfirmCreate";
 import { genStrongPass } from "../../../utils/genStrongPass";
 import { MIN_PASS_SIZE } from "../../../configs/contants";
 import { PasswordValidations } from "./PasswordValidations";
-import { useZVMSugestion } from "../../../stores/useZVMSugestion";
+import { useZVMSugestion, EOS } from "../../../stores/useZVMSugestion";
 import { ENetworkType } from "../../../types/VMTypes";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
-import { BTNISOsSection } from "./BTNISOsSection";
 import { useZVM } from "../../../stores/useZVM";
 
 export const FormVM = () => {
@@ -109,6 +108,12 @@ export const FormVM = () => {
       pass: vmPassword,
     });
   };
+
+  // Utilitário para mapear enum EOS para opções do dropdown
+  const osOptions = Object.values(EOS)
+    .filter((os) => typeof os === "string" && os !== "")
+    .map((os) => ({ label: os, value: os }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   const disabledBtn =
     !vmName ||
@@ -225,7 +230,15 @@ export const FormVM = () => {
             value={vmLocalization}
             onChange={setVmLocalization}
           />
-          <BTNISOsSection vmNameLabel={vmSO?.label} />
+ 
+          <DropDowText
+            label={t("createVm.operationalSystem")}
+            data={osOptions}
+            value={vmSO}
+            onChange={setVmSO}
+            placeholder={t("createVm.operationalSystem")}
+          />
+
         </Stack>
         {/* Sliders */}
         <Stack

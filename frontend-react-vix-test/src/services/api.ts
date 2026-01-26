@@ -184,3 +184,5 @@ export const api = {
   put,
   post,
 };
+
+export { retryRequest };

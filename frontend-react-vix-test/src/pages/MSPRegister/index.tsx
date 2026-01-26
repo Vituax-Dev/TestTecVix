@@ -1,4 +1,4 @@
-import { Box, Modal, Stack } from "@mui/material";
+import { Box, Modal, Stack, Button } from "@mui/material";
 import { ScreenFullPage } from "../../components/ScreenFullPage";
 import { TextRob20Font1MB } from "../../components/Text1MB";
 import { useZTheme } from "../../stores/useZTheme";
@@ -16,6 +16,9 @@ import { ModalDeleteVMsFromMSP } from "./ModalDeleteVMsFromMSP";
 import { useBrandMasterResources } from "../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { useVmResource } from "../../hooks/useVmResource";
+import { useNavigate } from "react-router-dom";
+import { usePermissions } from "../../hooks/usePermissions";
+import { PlusIcon } from "../../icons/PlusIcon";
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
@@ -37,6 +40,8 @@ export const MSPRegisterPage = () => {
   const { isLoading } = useBrandMasterResources();
   const { isLoadingDeleteVM, deleteVM } = useVmResource();
   const [openModalUserNotCreated, setOpenModalUserNotCreated] = useState(false);
+  const navigate = useNavigate();
+  const { isAdmin } = usePermissions();
 
   const resetAllStepStates = () => {
     setIsEditing([]);
@@ -156,7 +161,35 @@ export const MSPRegisterPage = () => {
                 >
                   {t("mspRegister.tableTitle")}
                 </TextRob16Font1S>
-                <MspTableFilters />
+                
+                <Box sx={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                  <MspTableFilters />
+                  {isAdmin && (
+                    <Button
+                      variant="contained"
+                      startIcon={<PlusIcon color={theme[mode].btnText} size="16px" />}
+                      onClick={() => navigate("/msp-register/create")}
+                      sx={{
+                        height: "40px",
+                        borderRadius: "12px",
+                        textTransform: "none",
+                        backgroundColor: theme[mode].blue,
+                        "&:hover": {
+                          backgroundColor: theme[mode].blueHover || theme[mode].blue,
+                        },
+                      }}
+                    >
+                      <TextRob16Font1S
+                        sx={{
+                          color: theme[mode].btnText,
+                          fontWeight: "500",
+                        }}
+                      >
+                        {t("general.create")}
+                      </TextRob16Font1S>
+                    </Button>
+                  )}
+                </Box>
               </Box>
               <MspTable />
             </Stack>

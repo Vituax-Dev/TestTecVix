@@ -13,6 +13,12 @@
             "null"
           ]
         },
+        "corporateName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "isActive": {
           "type": [
             "boolean",
@@ -65,6 +71,18 @@
             "null"
           ]
         },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "fieldName": {
           "type": [
             "string",
@@ -101,6 +119,24 @@
             "null"
           ]
         },
+        "number": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "complement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "neighborhood": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "state": {
           "type": [
             "string",
@@ -114,6 +150,18 @@
           ]
         },
         "cnpj": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stateRegistration": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "municipalRegistration": {
           "type": [
             "string",
             "null"
@@ -145,6 +193,12 @@
           "default": false
         },
         "contract": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contractNumber": {
           "type": [
             "string",
             "null"

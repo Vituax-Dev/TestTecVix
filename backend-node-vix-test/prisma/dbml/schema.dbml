@@ -5,6 +5,7 @@
 Table brandMaster {
   idBrandMaster Int [pk, increment]
   brandName String
+  corporateName String
   isActive Boolean [default: true]
   createdAt DateTime [default: `now()`]
   updatedAt DateTime [default: `now()`]
@@ -13,20 +14,28 @@ Table brandMaster {
   domain String
   city String
   emailContact String
+  email String
+  phone String
   fieldName String
   location String
   setorName String
   smsContact String
   timezone String
   placeNumber String
+  number String
+  complement String
+  neighborhood String
   state String
   street String
   cnpj String
+  stateRegistration String
+  municipalRegistration String
   cep String
   cityCode Int
   district String
   isPoc Boolean [default: false]
   contract String
+  contractNumber String
   contractAt DateTime
   pocOpenedAt DateTime
   manual String

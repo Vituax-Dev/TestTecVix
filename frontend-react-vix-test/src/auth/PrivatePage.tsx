@@ -19,9 +19,10 @@ export const useAuth = () => useContext(AuthContext);
 
 interface IProps {
   children: React.ReactNode;
+  onlyManagerOrAdmin?: boolean;
 }
 
-export const PrivatePage = ({ children }: IProps) => {
+export const PrivatePage = ({ children, onlyManagerOrAdmin }: IProps) => {
   const [isChecking, setIsChecking] = useState(true);
   const { resetAllStates } = useZResetAllStates();
   const { idUser, role } = useZUserProfile();
@@ -36,10 +37,12 @@ export const PrivatePage = ({ children }: IProps) => {
     if (!idUser) {
       resetAllStates();
       navigate("/login");
+    } else if (onlyManagerOrAdmin && role !== ERole.ADMIN && role !== ERole.MANAGER) {
+      navigate("/");
     } else {
       setIsChecking(false);
     }
-  }, [idUser, navigate, resetAllStates]);
+  }, [idUser, navigate, resetAllStates, onlyManagerOrAdmin, role]);
 
   if (!idUser || isChecking) return <FullPage />;
 

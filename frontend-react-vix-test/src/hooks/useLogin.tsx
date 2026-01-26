@@ -5,6 +5,7 @@ import { useZGlobalVar } from "../stores/useZGlobalVar";
 import { useZUserProfile } from "../stores/useZUserProfile";
 import { useNavigate } from "react-router-dom";
 import { useZResetAllStates } from "../stores/useZResetAllStates";
+import { ERole } from "../types/userTypes";
 
 interface IUserLoginResponse {
   token: string | null;
@@ -73,7 +74,7 @@ export const useLogin = () => {
       userEmail: response.data.user.email,
       idBrand: response.data.user.idBrandMaster,
       token: response.data.token,
-      role: response.data.user.role,
+      role: response.data.user.role as ERole,
     });
     setLoginTime(new Date());
     navigate("/");

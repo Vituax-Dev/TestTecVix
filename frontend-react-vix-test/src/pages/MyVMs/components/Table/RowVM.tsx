@@ -23,6 +23,7 @@ import { StopCircleIcon } from "../../../../icons/StopCircleIcon";
 import { ModalStartVM } from "../ModalStartVM";
 import { ModalStopVM } from "../ModalStopVM";
 import { useStatusInfo } from "../../../../hooks/useStatusInfo";
+import { usePermissions } from "../../../../hooks/usePermissions";
 
 interface IProps {
   vm: IVMCreatedResponse;
@@ -31,12 +32,13 @@ interface IProps {
 
 export const RowVM = ({ vm, index }: IProps) => {
   const { mode, theme } = useZTheme();
+  const { canUpdate } = usePermissions();
   const [row, setRow] = React.useState<IVMCreatedResponse>(vm);
   const [vmIDToStop, setVmIDToStop] = React.useState<number>(0);
   const [vmIDToStart, setVmIDToStart] = React.useState<number>(0);
   const { currentVM, setCurrentVM } = useZMyVMsList();
   const { getStatus } = useStatusInfo();
-  const { getOS, getVMById, isLoading: isLoadingVm } = useVmResource();
+  const { getOS, getVMById, isLoading: isLoadingVm, startVM, stopVM } = useVmResource();
 
   const idVM: number = Number(row.idVM);
   const labelId = `enhanced-table-checkbox-${index}`;
@@ -49,10 +51,19 @@ export const RowVM = ({ vm, index }: IProps) => {
   };
 
   const handleConfirVMStatusChange = async () => {
+    // Executa a ação de start ou stop conforme necessário
+    if (vmIDToStart) {
+      await startVM(vmIDToStart, row.vmName);
+    } else if (vmIDToStop) {
+      await stopVM(vmIDToStop, row.vmName);
+    }
+    
+    // Busca a VM atualizada
     const updatedVM = await getVMById(vmIDToStop || vmIDToStart);
     if (updatedVM) {
       setRow(updatedVM);
     }
+    
     setVmIDToStop(0);
     setVmIDToStart(0);
   };
@@ -380,7 +391,7 @@ export const RowVM = ({ vm, index }: IProps) => {
               },
             }}
           >
-            {getStatus(row).isRunning && (
+            {canUpdate && getStatus(row).isRunning && (
               <IconButton
                 disabled={row.status === "STOPPED" || row.status === null}
                 onClick={() => setVmIDToStop(row.idVM)}
@@ -393,7 +404,7 @@ export const RowVM = ({ vm, index }: IProps) => {
                 <StopCircleIcon fill={theme[mode].lightRed} />
               </IconButton>
             )}
-            {getStatus(row).isStopped && (
+            {canUpdate && getStatus(row).isStopped && (
               <IconButton
                 disabled={row.status === "RUNNING" || row.status === null}
                 onClick={() => setVmIDToStart(row.idVM)}

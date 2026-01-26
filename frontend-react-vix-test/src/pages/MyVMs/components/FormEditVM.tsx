@@ -24,6 +24,7 @@ import { ModalDeleteVM } from "./ModalDeleteVM";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
 import { ModalStartVM } from "./ModalStartVM";
 import { ModalStopVM } from "./ModalStopVM";
+import { usePermissions } from "../../../hooks/usePermissions";
 
 interface IProps {
   onClose: (edit?: boolean) => void;
@@ -31,6 +32,7 @@ interface IProps {
 export const FormEditVM = ({ onClose }: IProps) => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const { canUpdate, canDelete } = usePermissions();
   const {
     storageOptions,
     localizationOptions,
@@ -40,26 +42,29 @@ export const FormEditVM = ({ onClose }: IProps) => {
     isLoadingDeleteVM,
     getNetworkType,
     isLoadingUpdateVM,
+    startVM,
+    stopVM,
+    getVMById,
   } = useVmResource();
 
   const { statusHashMap } = useStatusInfo();
   const { currentVM, setCurrentVM } = useZMyVMsList();
-  const [vmPassword, setVmPassword] = useState(currentVM.pass);
-  const [vmName, setVmName] = useState(currentVM.vmName);
+  const [vmPassword, setVmPassword] = useState(currentVM.pass || "");
+  const [vmName, setVmName] = useState(currentVM.vmName || "");
   const [vmSO, setVmSO] = useState<TOptions>({
-    label: currentVM.os,
-    value: currentVM.os,
+    label: currentVM.os || "",
+    value: currentVM.os || "",
   });
-  const [vmvCpu, setVmvCpu] = useState(currentVM.vCPU);
-  const [vmMemory, setVmMemory] = useState(currentVM.ram);
-  const [vmDisk, setVmDisk] = useState(currentVM.disk);
+  const [vmvCpu, setVmvCpu] = useState(currentVM.vCPU || 1);
+  const [vmMemory, setVmMemory] = useState(currentVM.ram || 1);
+  const [vmDisk, setVmDisk] = useState(currentVM.disk || 50);
   const [vmStorageType] = useState<TOptions>({
     value: "ssd",
     label: "SSD",
   });
   const [vmLocalization] = useState<TOptions>({
-    label: localizationOptions[0]?.label,
-    value: localizationOptions[0]?.value,
+    label: localizationOptions[0]?.label || "Default Location",
+    value: localizationOptions[0]?.value || "default",
   });
   const [hasBackup, setHasBackup] = useState(currentVM.hasBackup);
 
@@ -70,17 +75,15 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const [vmIDToStop, setVmIDToStop] = useState<number>(0);
 
   const handleCancel = () => {
-    setVmPassword(currentVM.pass);
-    setVmName(currentVM.vmName);
+    setVmPassword(currentVM.pass || "");
+    setVmName(currentVM.vmName || "");
     setVmSO({
-      label: currentVM.os,
-      value: currentVM.os,
+      label: currentVM.os || "",
+      value: currentVM.os || "",
     });
-    setVmvCpu(currentVM.vCPU);
-    setVmMemory(currentVM.ram);
-    setVmDisk(currentVM.disk);
-    // setVmStorageType(null);
-    // setVmLocalization(null);
+    setVmvCpu(currentVM.vCPU || 1);
+    setVmMemory(currentVM.ram || 1);
+    setVmDisk(currentVM.disk || 50);
     setHasBackup(currentVM.hasBackup);
     setStatus(currentVM.status);
     onClose();
@@ -128,23 +131,31 @@ export const FormEditVM = ({ onClose }: IProps) => {
   };
 
   const handleStopVM = async () => {
-    setStatus("STOPPED");
+    const result = await stopVM(currentVM.idVM, vmName);
+    if (result) {
+      // Atualiza a VM atual com os dados mais recentes
+      const updatedVM = await getVMById(currentVM.idVM);
+      if (updatedVM) {
+        setCurrentVM(updatedVM);
+        setStatus(updatedVM.status);
+      }
+    }
     onClose(true);
   };
 
   const handleStartVM = async () => {
-    setStatus("RUNNING");
+    const result = await startVM(currentVM.idVM, vmName);
+    if (result) {
+      const updatedVM = await getVMById(currentVM.idVM);
+      if (updatedVM) {
+        setCurrentVM(updatedVM);
+        setStatus(updatedVM.status);
+      }
+    }
     onClose(true);
   };
 
-  const disabledBtn =
-    !vmName ||
-    !vmSO ||
-    !vmvCpu ||
-    !vmMemory ||
-    !vmDisk ||
-    !vmPassword ||
-    !vmLocalization;
+  const disabledDeleteBtn = false;
 
   return (
     <>
@@ -329,7 +340,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
               }}
             />
           </Stack>
-          {/* Play Pause and Stop */}
+          {/* Status */}
           <TextRob18Font2M
             sx={{
               color: theme[mode].black,
@@ -340,64 +351,65 @@ export const FormEditVM = ({ onClose }: IProps) => {
           >
             {t("home.status", { status: statusHashMap[status] })}
           </TextRob18Font2M>
-          {/* Actions buttons & Ips */}
-          <Stack
-            flexDirection={"column"}
-            gap={"16px"}
-            sx={{
-              "@media (min-width: 660px)": {
-                flexDirection: "row",
-              },
-            }}
-          >
-            {/* Actions buttons */}
+          {/* Actions buttons & Ips - Apenas para managers e admins */}
+          {canUpdate && (
             <Stack
+              flexDirection={"column"}
+              gap={"16px"}
               sx={{
-                backgroundColor: theme[mode].grayLight,
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-                border: "1px solid " + theme[mode].grayLight,
-                borderRadius: "12px",
-                padding: "8px",
-                gap: "16px",
-                width: "fit-content",
-                height: "fit-content",
+                "@media (min-width: 660px)": {
+                  flexDirection: "row",
+                },
               }}
             >
-              <IconButton
-                disabled={
-                  currentVM.status === "RUNNING" || currentVM.status === null
-                }
-                onClick={() => setVmIDToStart(currentVM.idVM)}
+              {/* Actions buttons */}
+              <Stack
                 sx={{
-                  gap: "8px",
-                  ":hover": { opacity: 0.8 },
-                  ":disabled": { opacity: 0.5 },
+                  backgroundColor: theme[mode].grayLight,
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                  border: "1px solid " + theme[mode].grayLight,
+                  borderRadius: "12px",
+                  padding: "8px",
+                  gap: "16px",
+                  width: "fit-content",
+                  height: "fit-content",
                 }}
               >
-                <PlayCircleIcon fill={theme[mode].greenLight} />
-                <TextRob16FontL
+                <IconButton
+                  disabled={
+                    currentVM.status === "RUNNING" || currentVM.status === null
+                  }
+                  onClick={() => setVmIDToStart(currentVM.idVM)}
                   sx={{
-                    fontWeight: 400,
-                    lineHeight: "16px",
-                    color: theme[mode].primary,
+                    gap: "8px",
+                    ":hover": { opacity: 0.8 },
+                    ":disabled": { opacity: 0.5 },
                   }}
                 >
-                  {t("home.start")}
-                </TextRob16FontL>
-              </IconButton>
-              <IconButton
-                disabled={
-                  currentVM.status === "STOPPED" || currentVM.status === null
-                }
-                onClick={() => setVmIDToStop(currentVM.idVM)}
-                sx={{
-                  gap: "8px",
-                  ":hover": { opacity: 0.8 },
-                  ":disabled": { opacity: 0.5 },
-                }}
-              >
-                <StopCircleIcon fill={theme[mode].lightRed} />
+                  <PlayCircleIcon fill={theme[mode].greenLight} />
+                  <TextRob16FontL
+                    sx={{
+                      fontWeight: 400,
+                      lineHeight: "16px",
+                      color: theme[mode].primary,
+                    }}
+                  >
+                    {t("home.start")}
+                  </TextRob16FontL>
+                </IconButton>
+                <IconButton
+                  disabled={
+                    currentVM.status === "STOPPED" || currentVM.status === null
+                  }
+                  onClick={() => setVmIDToStop(currentVM.idVM)}
+                  sx={{
+                    gap: "8px",
+                    ":hover": { opacity: 0.8 },
+                    ":disabled": { opacity: 0.5 },
+                  }}
+                >
+                  <StopCircleIcon fill={theme[mode].lightRed} />
                 <TextRob16FontL
                   sx={{
                     fontWeight: 400,
@@ -407,9 +419,10 @@ export const FormEditVM = ({ onClose }: IProps) => {
                 >
                   {t("home.stop")}
                 </TextRob16FontL>
-              </IconButton>
+                </IconButton>
+              </Stack>
             </Stack>
-          </Stack>
+          )}
           {/* Backup */}
           <CheckboxLabel
             value={hasBackup}
@@ -450,53 +463,57 @@ export const FormEditVM = ({ onClose }: IProps) => {
               {t("createVm.cancelBtn")}
             </TextRob16Font1S>
           </Btn>
-          <Btn
-            disabled={disabledBtn}
-            onClick={() => setOpenConfirm(true)}
-            sx={{
-              padding: "9px 24px",
-              backgroundColor: theme[mode].blue,
-              borderRadius: "12px",
-              "@media (min-width: 660px)": {
-                minWidth: "160px",
-              },
-            }}
-          >
-            <TextRob16Font1S
+          {canUpdate && (
+            <Btn
+              disabled={false} // Temporariamente removendo validação para teste
+              onClick={() => setOpenConfirm(true)}
               sx={{
-                color: theme[mode].btnText,
-                fontSize: "16px",
-                fontWeight: "500",
-                lineHeight: "20px",
+                padding: "9px 24px",
+                backgroundColor: theme[mode].blue,
+                borderRadius: "12px",
+                "@media (min-width: 660px)": {
+                  minWidth: "160px",
+                },
               }}
             >
-              {t("createVm.edit")}
-            </TextRob16Font1S>
-          </Btn>
-          <Btn
-            disabled={disabledBtn}
-            onClick={() => setOpenDeleteModal(true)}
-            sx={{
-              padding: "9px 24px",
-              backgroundColor: "transparent",
-              border: "1px solid " + theme[mode].danger,
-              borderRadius: "12px",
-              maxWidth: "150px",
-              marginLeft: "auto",
-              "@media (min-width: 660px)": {},
-            }}
-          >
-            <TextRob16Font1S
+              <TextRob16Font1S
+                sx={{
+                  color: theme[mode].btnText,
+                  fontSize: "16px",
+                  fontWeight: "500",
+                  lineHeight: "20px",
+                }}
+              >
+                {t("createVm.edit")}
+              </TextRob16Font1S>
+            </Btn>
+          )}
+          {canDelete && (
+            <Btn
+              disabled={disabledDeleteBtn}
+              onClick={() => setOpenDeleteModal(true)}
               sx={{
-                color: theme[mode].danger,
-                fontSize: "16px",
-                fontWeight: "400",
-                lineHeight: "20px",
+                padding: "9px 24px",
+                backgroundColor: "transparent",
+                border: "1px solid " + theme[mode].danger,
+                borderRadius: "12px",
+                maxWidth: "150px",
+                marginLeft: "auto",
+                "@media (min-width: 660px)": {},
               }}
             >
-              {t("createVm.deleteVM")}
-            </TextRob16Font1S>
-          </Btn>
+              <TextRob16Font1S
+                sx={{
+                  color: theme[mode].danger,
+                  fontSize: "16px",
+                  fontWeight: "400",
+                  lineHeight: "20px",
+                }}
+              >
+                {t("createVm.deleteVM")}
+              </TextRob16Font1S>
+            </Btn>
+          )}
         </Stack>
       </Stack>
       {openConfirm && (

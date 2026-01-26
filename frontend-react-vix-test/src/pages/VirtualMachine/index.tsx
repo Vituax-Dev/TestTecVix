@@ -11,6 +11,7 @@ import { ScreenFullPage } from "../../components/ScreenFullPage";
 import { useEffect } from "react";
 import { useZVM } from "../../stores/useZVM";
 import { CardMarketPlace } from "./components/CardMarketPlace";
+import { PermissionGuard, AccessDenied } from "../../components/PermissionGuard";
 
 export const VirtualMachinePage = () => {
   const { theme, mode } = useZTheme();
@@ -22,7 +23,7 @@ export const VirtualMachinePage = () => {
       resetAll();
       newRandomPassword();
     };
-  }, []);
+  }, [resetAll, newRandomPassword]);
 
   return (
     <ScreenFullPage
@@ -58,87 +59,95 @@ export const VirtualMachinePage = () => {
       }}
     >
       <>
-        <Stack
-          width={"100%"}
-          className=""
-          flexDirection={"row"}
-          sx={{
-            backgroundColor: theme[mode].mainBackground,
-            width: "82%",
-            height: "100%",
-            borderRadius: "16px",
-            boxShadow: `0px 4px 4px 0px ${shadow(mode)}`,
-            marginBottom: "24px",
-            "@media (min-width: 1431px)": {
-              marginBottom: "0px",
-              maxWidth: "920px",
-            },
-          }}
+        <PermissionGuard
+          action="create"
+          fallback={
+            <AccessDenied message="Você não possui permissão para criar VMs. Apenas gerentes e administradores podem criar VMs." />
+          }
         >
-          <FormVM />
-        </Stack>
-
-        {/* IA modal card and sugestions */}
-        <Stack
-          sx={{
-            width: "82%",
-            marginBottom: "64px",
-            justifyContent: "center",
-            gap: "24px",
-            "@media (min-width: 955px)": {
-              maxWidth: "450px",
-            },
-            "@media (min-width: 1431px)": {
-              marginBottom: "0px",
-            },
-          }}
-        >
-          {/* Sugestions */}
-          <Stack
-            sx={{
-              display: "none",
-              backgroundColor: theme[mode].mainBackground,
-              boxShadow: `0px 4px 4px 0px ${shadow(mode)}`,
-              borderRadius: "16px",
-              maxHeight: "530px",
-              "@media (min-width: 1431px)": {
-                display: "block",
-              },
-            }}
-          >
-            <SugestionsCards />
-          </Stack>
-          {/* IA modal card */}
           <Stack
             width={"100%"}
             className=""
-            flexDirection={"column"}
+            flexDirection={"row"}
             sx={{
-              backgroundColor: theme[mode].black,
+              backgroundColor: theme[mode].mainBackground,
+              width: "82%",
+              height: "100%",
+              borderRadius: "16px",
               boxShadow: `0px 4px 4px 0px ${shadow(mode)}`,
-              borderRadius: "12px",
+              marginBottom: "24px",
+              "@media (min-width: 1431px)": {
+                marginBottom: "0px",
+                maxWidth: "920px",
+              },
             }}
           >
-            <CardCreateWithIA />
+            <FormVM />
           </Stack>
-          {/* Market place card */}
+        </PermissionGuard>
+
+        {/* IA modal card and sugestions */}
+        <PermissionGuard action="create">
           <Stack
-            width="100%"
-            height="100%"
-            flexDirection="column"
             sx={{
-              borderRadius: "12px",
-              boxShadow: `0px 4px 4px 0px ${shadow(mode)}`,
-              background: `
-      linear-gradient(90deg, ${theme[mode].black} 0%, ${theme[mode].blueMedium} 100%), /* fundo linear */
-      radial-gradient(ellipse at center, ${theme[mode].blue + "50"} 0%, ${theme[mode].blue} 100%) /* overlay tipo diamond */
-    `,
-              backgroundBlendMode: "normal, lighten",
+              width: "82%",
+              marginBottom: "64px",
+              justifyContent: "center",
+              gap: "24px",
+              "@media (min-width: 955px)": {
+                maxWidth: "450px",
+              },
+              "@media (min-width: 1431px)": {
+                marginBottom: "0px",
+              },
             }}
           >
-            <CardMarketPlace />
+            {/* Sugestions */}
+            <Stack
+              sx={{
+                backgroundColor: theme[mode].mainBackground,
+                boxShadow: `0px 4px 4px 0px ${shadow(mode)}`,
+                borderRadius: "16px",
+                maxHeight: "530px",
+                "@media (min-width: 1431px)": {
+                  display: "block",
+                },
+              }}
+            >
+              <SugestionsCards />
+            </Stack>
+            {/* IA modal card */}
+            <Stack
+              width={"100%"}
+              className=""
+              flexDirection={"column"}
+              sx={{
+                backgroundColor: theme[mode].black,
+                boxShadow: `0px 4px 4px 0px ${shadow(mode)}`,
+                borderRadius: "12px",
+              }}
+            >
+              <CardCreateWithIA />
+            </Stack>
+            {/* Market place card */}
+            <Stack
+              width="100%"
+              height="100%"
+              flexDirection="column"
+              sx={{
+                borderRadius: "12px",
+                boxShadow: `0px 4px 4px 0px ${shadow(mode)}`,
+                background: `
+                  linear-gradient(90deg, ${theme[mode].black} 0%, ${theme[mode].blueMedium} 100%), /* fundo linear */
+                  radial-gradient(ellipse at center, ${theme[mode].blue + "50"} 0%, ${theme[mode].blue} 100%) /* overlay tipo diamond */
+                `,
+                backgroundBlendMode: "normal, lighten",
+              }}
+            >
+              <CardMarketPlace />
+            </Stack>
           </Stack>
-        </Stack>
+        </PermissionGuard>
       </>
     </ScreenFullPage>
   );

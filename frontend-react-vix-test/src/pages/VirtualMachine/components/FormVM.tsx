@@ -19,10 +19,12 @@ import { useZVMSugestion, EOS } from "../../../stores/useZVMSugestion";
 import { ENetworkType } from "../../../types/VMTypes";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
 import { useZVM } from "../../../stores/useZVM";
+import { usePermissions } from "../../../hooks/usePermissions";
 
 export const FormVM = () => {
   const { t } = useTranslation(); // createVm
   const { mode, theme } = useZTheme();
+  const { canCreate } = usePermissions();
   const {
     vmSO,
     setVmSO,
@@ -116,6 +118,7 @@ export const FormVM = () => {
     .sort((a, b) => a.label.localeCompare(b.label));
 
   const disabledBtn =
+    !canCreate ||
     !vmName ||
     !vmSO ||
     !vmvCpu ||
@@ -134,7 +137,7 @@ export const FormVM = () => {
     if (sugestionVCPU) setVmvCpu(sugestionVCPU);
     if (sugestionRAM) setVmMemory(sugestionRAM);
     if (sugestionDisk) setVmDisk(sugestionDisk);
-  }, [sugestionOS, sugestionVCPU, sugestionRAM, sugestionDisk]);
+  }, [sugestionOS, sugestionVCPU, sugestionRAM, sugestionDisk, setVmSO, setVmvCpu, setVmMemory, setVmDisk]);
 
   useEffect(() => {
     if (!vmNetwork) {
@@ -143,7 +146,7 @@ export const FormVM = () => {
     return () => {
       resetAll();
     };
-  }, []);
+  }, [vmNetwork, setVmNetwork, networkTypeOptions, resetAll]);
 
   return (
     <>

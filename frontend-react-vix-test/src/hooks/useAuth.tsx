@@ -1,43 +1,12 @@
 import { useZUserProfile } from "../stores/useZUserProfile";
-import { useZGlobalVar } from "../stores/useZGlobalVar";
-import moment from "moment";
-import { api } from "../services/api";
-
-const REFRESH_TIME = 50;
 
 export const useAuth = () => {
-  const { token, setUser, idUser } = useZUserProfile();
-  const { loginTime, setLoginTime } = useZGlobalVar();
+  const { token } = useZUserProfile();
 
-  const fetchNewUserToken = async () => {
-    if (!idUser) return "";
-    const response = await api.get<{ token: string | null }>({
-      url: `/user/token/${idUser}`,
-      auth: { Authorization: `Bearer ${token}` },
-      tryRefetch: true,
-    });
-    if (response.error || !response.data.token) {
-      return "";
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getAuth = async (_force = false) => {
 
-    return response.data.token;
-  };
-
-  const getAuth = async (force = false) => {
-    if (
-      !force &&
-      token &&
-      loginTime &&
-      moment(loginTime).add(REFRESH_TIME, "minutes") > moment()
-    ) {
-      return { Authorization: `Bearer ${token}` };
-    }
-
-    setLoginTime(new Date());
-
-    const newToken = await fetchNewUserToken();
-    setUser({ token: newToken });
-    return { Authorization: `Bearer ${newToken || token}` };
+    return { Authorization: `Bearer ${token}` };
   };
 
   return {

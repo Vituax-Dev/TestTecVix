@@ -49,21 +49,18 @@ export class BrandMasterController {
   async updateBrandMaster(req: CustomRequest<unknown>, res: Response) {
     const user = req.user as user;
     const { idBrandMaster } = idBrandMasterParamsSchema.parse(req.params);
-    const result = await this.brandMasterService.updateBrandMaster(
+    await this.brandMasterService.updateBrandMaster(
       idBrandMaster,
       req.body,
       user,
     );
-    return res.status(STATUS_CODE.OK).json(result);
+    return res.status(STATUS_CODE.NO_CONTENT).send();
   }
 
   async deleteBrandMaster(req: CustomRequest<unknown>, res: Response) {
     const user = req.user as user;
     const { idBrandMaster } = idBrandMasterParamsSchema.parse(req.params);
-    const result = await this.brandMasterService.deleteBrandMaster(
-      idBrandMaster,
-      user,
-    );
-    return res.status(STATUS_CODE.OK).json(result);
+    await this.brandMasterService.deleteBrandMaster(idBrandMaster, user);
+    return res.status(STATUS_CODE.NO_CONTENT).send();
   }
 }

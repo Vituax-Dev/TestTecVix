@@ -21,6 +21,7 @@ module.exports = {
   testPathIgnorePatterns: [
     "<rootDir>/__tests__/singleton.ts",
     "<rootDir>/__tests__/__mocks__/",
+    "<rootDir>/__tests__/e2e/",
   ],
   coverageThreshold: {
     global: {

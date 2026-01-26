@@ -92,7 +92,7 @@ export const useUserResources = () => {
   const updateUserById = async (userId: string, data: IUpdateUser) => {
     if (role !== "admin" && role !== "manager") return null;
     setIsLoading(true);
-    const response = await api.put<IUserDB>({
+    const response = await api.put<void>({
       url: `/user/${userId}`,
       data,
     });
@@ -101,7 +101,7 @@ export const useUserResources = () => {
       toast.error(response.message);
       return null;
     }
-    return response.data;
+    return true; 
   };
 
   const listAllUsers = useCallback(async (filters?: IListUsersFilters) => {

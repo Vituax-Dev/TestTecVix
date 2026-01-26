@@ -178,7 +178,7 @@ export const useVmResource = () => {
       return null;
     }
 
-    return response.data;
+    return true;
   };
 
   const updateDiskSizeVm = async ({
@@ -251,7 +251,7 @@ export const useVmResource = () => {
       return setIsLoadingDeleteVM(false);
     }
 
-    return response.data;
+    return true;
   };
 
   const getOS = ({

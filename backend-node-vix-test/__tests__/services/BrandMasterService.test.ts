@@ -25,10 +25,11 @@ describe("BrandMasterService", () => {
       expect(brandMasterModel.updateBrandMaster).toHaveBeenCalled();
     });
 
-    it("updateBrandMaster should not be called", async () => {
+    it("updateBrandMaster should not be called when user has no access", async () => {
       const idbrandMaster = 1;
       brandMasterModel.updateBrandMaster.mockResolvedValue({} as any);
-      brandMasterModel.getById.mockResolvedValue({ idbrandMaster: 1 } as any);
+      // Quando o usuário não tem acesso, getById retorna null
+      brandMasterModel.getById.mockResolvedValue(null);
       await expect(
         brandMasterService.updateBrandMaster(idbrandMaster, {}, {
           idBrandMaster: 2,

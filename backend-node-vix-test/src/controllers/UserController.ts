@@ -58,8 +58,8 @@ export class UserController {
   async updateUser(req: CustomRequest<unknown>, res: Response) {
     const { idUser } = idUserParamsSchema.parse(req.params);
     const currentUser = req.user as user;
-    const result = await this.userService.updateUser(idUser, req.body, currentUser);
-    return res.status(STATUS_CODE.OK).json(result);
+    await this.userService.updateUser(idUser, req.body, currentUser);
+    return res.status(STATUS_CODE.NO_CONTENT).send();
   }
 
   async deleteUser(req: CustomRequest<unknown>, res: Response) {

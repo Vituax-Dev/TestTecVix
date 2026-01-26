@@ -32,10 +32,15 @@ export class BrandMasterModel {
   }
 
   async getById(idBrandMaster: number, userIdBrandMaster?: number | null) {
+    // Se o usuário pertence a um BrandMaster, só pode ver o seu próprio
+    if (userIdBrandMaster && userIdBrandMaster !== idBrandMaster) {
+      return null;
+    }
+    
     return prisma.brandMaster.findFirst({
       where: {
         idBrandMaster,
-        ...(userIdBrandMaster && { idBrandMaster: userIdBrandMaster }),
+        deletedAt: null,
       },
     });
   }

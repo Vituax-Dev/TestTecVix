@@ -79,5 +79,24 @@
     "role": "member",
     "idBrandMaster": 2,
     "isActive": true
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440009",
+    "username": "inactive_user",
+    "password": "$2a$10$0LrTvBc76RzoKV.u3N42/.igOBCA/sYyvftuyEdrU78daxXgWLk9S",
+    "email": "inactive@test.com",
+    "role": "member",
+    "idBrandMaster": 1,
+    "isActive": false
+  },
+  {
+    "idUser": "550e8400-e29b-41d4-a716-446655440010",
+    "username": "deleted_user",
+    "password": "$2a$10$0LrTvBc76RzoKV.u3N42/.igOBCA/sYyvftuyEdrU78daxXgWLk9S",
+    "email": "deleted@test.com",
+    "role": "member",
+    "idBrandMaster": 1,
+    "isActive": true,
+    "deletedAt": "2025-01-01T00:00:00.000Z"
   }
 ]

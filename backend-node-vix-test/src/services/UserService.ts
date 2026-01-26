@@ -52,6 +52,24 @@ export class UserService {
     return createdUser;
   }
 
+  async createUser(data: unknown, currentUser: user) {
+    const validateData = userCreatedSchema.parse(data);
+
+    const hashedPassword = await bcrypt.hash(validateData.password, 10);
+
+    // Determina o idBrandMaster: usa o do request ou herda do currentUser
+    const idBrandMaster = validateData.idBrandMaster ?? currentUser.idBrandMaster;
+
+    const createdUser = await this.userModel.createUser({
+      ...validateData,
+      password: hashedPassword,
+      idBrandMaster,
+      isActive: validateData.isActive ?? false,
+    });
+
+    return createdUser;
+  }
+
   async updateMe(idUser: string, data: unknown) {
     const dataToUpdate = updateMeSchema.parse(data);
 
@@ -72,7 +90,7 @@ export class UserService {
       dataToUpdate.password = await bcrypt.hash(dataToUpdate.password, 10);
     }
 
-    await this.userModel.updateUser(idUser, dataToUpdate);
+    return await this.userModel.updateUser(idUser, dataToUpdate);
   }
 
   async deleteUser(idUser: string, currentUser: user) {

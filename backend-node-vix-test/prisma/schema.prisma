@@ -82,6 +82,8 @@ model user {
   fullName      String?
   phone         String?
   profileImgUrl String?
+  position      String?
+  department    String?
   role          ERole     @default(member)
   idBrandMaster Int?
   isActive      Boolean?  @default(true)

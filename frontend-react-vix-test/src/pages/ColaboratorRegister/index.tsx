@@ -31,6 +31,7 @@ export const ColaboratorRegisterPage = () => {
     userToBeDeleted,
     setUserToBeDeleted,
     resetAll,
+    isEditing,
   } = useZColaboratorRegisterPage();
 
   const fetchUsers = useCallback(async () => {
@@ -77,14 +78,18 @@ export const ColaboratorRegisterPage = () => {
         <Stack sx={{ gap: "8px" }}>
           <Stack sx={{ flexDirection: "row", alignItems: "baseline", gap: "8px" }}>
             <TextRob20Font1MB sx={{ color: theme[mode].primary }}>
-              {t("colaboratorRegister.title")}
+              {isEditing
+                ? t("colaboratorRegister.editTitle")
+                : t("colaboratorRegister.title")}
             </TextRob20Font1MB>
             <TextRob16Font1S sx={{ color: theme[mode].tertiary }}>
               | {t("colaboratorRegister.sideTitle")}
             </TextRob16Font1S>
           </Stack>
           <TextRob16Font1S sx={{ color: theme[mode].tertiary }}>
-            {t("colaboratorRegister.subtitle")}
+            {isEditing
+              ? t("colaboratorRegister.editSubtitle")
+              : t("colaboratorRegister.subtitle")}
           </TextRob16Font1S>
         </Stack>
 

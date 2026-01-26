@@ -7,6 +7,8 @@ export interface IUserListItem {
   fullName: string | null;
   phone: string | null;
   profileImgUrl: string | null;
+  position: string | null;
+  department: string | null;
   role: "admin" | "manager" | "member";
   idBrandMaster: number | null;
   isActive: boolean;
@@ -18,9 +20,7 @@ export interface IUserListItem {
     brandName: string | null;
     brandLogo: string | null;
   } | null;
-  // Campos opcionais que não existem no banco
-  position?: string;
-  department?: string;
+  // Campo opcional que não existe no banco
   hiringDate?: string;
 }
 

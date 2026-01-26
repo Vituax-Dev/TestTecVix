@@ -23,8 +23,11 @@ export const userCreatedSchema = z.object({
   fullName: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
   profileImgUrl: z.string().nullable().optional(),
+  position: z.string().nullable().optional(),
+  department: z.string().nullable().optional(),
   role: z.enum(ROLES).optional(),
   idBrandMaster: z.number().nullable().optional(),
+  isActive: z.boolean().optional(),
 });
 
 export type TUserCreate = z.infer<typeof userCreatedSchema>;

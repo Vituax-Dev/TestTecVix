@@ -2,6 +2,7 @@ import { Router } from "express";
 import { BrandMasterController } from "../controllers/BrandMasterController";
 import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
 import { authUser } from "../auth/authUser";
+import { optionalAuth } from "../auth/optionalAuth";
 import { hasRole } from "../auth/hasRole";
 import { ERole } from "@prisma/client";
 
@@ -15,7 +16,7 @@ export const makeBrandMasterController = () => {
 
 const brandMasterController = makeBrandMasterController();
 
-brandMasterRoutes.get(`${BASE_PATH}/self`, authUser, async (req, res) => {
+brandMasterRoutes.get(`${BASE_PATH}/self`, optionalAuth, async (req, res) => {
   await brandMasterController.getSelf(req, res);
 });
 

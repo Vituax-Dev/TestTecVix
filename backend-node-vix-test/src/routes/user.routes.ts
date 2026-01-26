@@ -29,10 +29,21 @@ userRoutes.get(`${BASE_PATH}/:idUser`, authUser, async (req, res) => {
   await userController.getById(req, res);
 });
 
-// ========= POSTs (public) =========
-userRoutes.post(`${BASE_PATH}`, async (req, res) => {
+// ========= POSTs =========
+// Rota pública para auto-registro
+userRoutes.post(`${BASE_PATH}/register`, async (req, res) => {
   await userController.register(req, res);
 });
+
+// Rota para managers/admins criarem usuários
+userRoutes.post(
+  `${BASE_PATH}`,
+  authUser,
+  hasRole([ERole.manager, ERole.admin]),
+  async (req, res) => {
+    await userController.createUser(req, res);
+  },
+);
 
 // ======== PUTs =========
 // Rota para editar o próprio perfil (qualquer usuário autenticado)

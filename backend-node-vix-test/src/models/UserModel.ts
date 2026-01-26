@@ -9,6 +9,8 @@ const userSelectFields = {
   fullName: true,
   phone: true,
   profileImgUrl: true,
+  position: true,
+  department: true,
   role: true,
   idBrandMaster: true,
   isActive: true,

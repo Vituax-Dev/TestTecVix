@@ -1,7 +1,9 @@
 {
   "title": "Registro",
+  "editTitle": "Edición",
   "sideTitle": "Permisos de Usuarios",
   "subtitle": "Asignar y ajustar niveles de acceso de usuarios",
+  "editSubtitle": "Editar información del usuario",
   "completeName": "Nombre Completo",
   "completeNamePlaceholder": "Juan Pérez",
   "required": "(Obligatorio)",

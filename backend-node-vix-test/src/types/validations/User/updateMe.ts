@@ -19,6 +19,8 @@ export const updateMeSchema = z.object({
   fullName: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
   profileImgUrl: z.string().nullable().optional(),
+  position: z.string().nullable().optional(),
+  department: z.string().nullable().optional(),
 });
 
 export type TUpdateMe = z.infer<typeof updateMeSchema>;

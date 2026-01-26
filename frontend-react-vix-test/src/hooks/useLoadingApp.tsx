@@ -18,7 +18,10 @@ export const useLoadingApp = (notLoginPage: boolean = false) => {
     });
 
     if (theme.error) {
-      toast.error(theme.message);
+      const isAuthPage = path === "/login" || path === "/register" || path === "/";
+      if (!isAuthPage) {
+        toast.error(theme.message);
+      }
       return setLoading(false);
     }
 

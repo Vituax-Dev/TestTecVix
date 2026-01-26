@@ -1,7 +1,9 @@
 {
   "title": "Register",
+  "editTitle": "Edit",
   "sideTitle": "User Permissions",
   "subtitle": "Assign and adjust user access levels",
+  "editSubtitle": "Edit user information",
   "completeName": "Full Name",
   "completeNamePlaceholder": "John Doe",
   "required": "(Required)",

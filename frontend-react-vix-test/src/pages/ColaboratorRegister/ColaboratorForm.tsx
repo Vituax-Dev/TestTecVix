@@ -152,11 +152,16 @@ export const ColaboratorForm = ({ onSuccess }: ColaboratorFormProps) => {
   const handleSave = async () => {
     if (!validateForm()) return;
 
+    // Remove a máscara do telefone antes de enviar
+    const phoneDigits = phone ? phone.replace(/\D/g, "") : undefined;
+
     const userData = {
       username,
       email,
       fullName,
-      phone: phone || undefined,
+      phone: phoneDigits || undefined,
+      position: position || undefined,
+      department: department || undefined,
       role: role as ERole,
       isActive,
       idBrandMaster: idBrandMaster ?? idBrand ?? undefined,
@@ -217,7 +222,9 @@ export const ColaboratorForm = ({ onSuccess }: ColaboratorFormProps) => {
   return (
     <Stack sx={{ gap: "24px" }}>
       <TextRob18Font2M sx={{ color: theme[mode].primary }}>
-        {t("colaboratorRegister.subtitle")}
+        {isEditing
+          ? t("colaboratorRegister.editSubtitle")
+          : t("colaboratorRegister.subtitle")}
       </TextRob18Font2M>
 
       <Grid container spacing={2}>
@@ -427,6 +434,23 @@ export const ColaboratorForm = ({ onSuccess }: ColaboratorFormProps) => {
         >
           <TextRob16Font1S>{t("colaboratorRegister.clear")}</TextRob16Font1S>
         </Btn>
+        {isEditing && (
+          <Btn
+            onClick={handleClear}
+            sx={{
+              background: "transparent",
+              color: theme[mode].blue,
+              borderRadius: "24px",
+              padding: "12px 48px",
+              border: `1px solid ${theme[mode].blue}`,
+              "&:hover": {
+                background: theme[mode].grayLight,
+              },
+            }}
+          >
+            <TextRob16Font1S>{t("colaboratorRegister.back")}</TextRob16Font1S>
+          </Btn>
+        )}
       </Stack>
     </Stack>
   );

@@ -14,6 +14,8 @@ export interface IUserDB {
   fullName: string | null;
   phone: string | null;
   profileImgUrl: null | string;
+  position: string | null;
+  department: string | null;
   role: ERole;
   isActive: boolean;
   socketId: string | null;
@@ -34,6 +36,8 @@ interface ICreateNewUser {
   password?: string;
   fullName?: string;
   phone?: string;
+  position?: string;
+  department?: string;
   idBrandMaster?: number;
   isActive?: boolean;
 }
@@ -45,6 +49,8 @@ interface IUpdateUser {
   password?: string;
   fullName?: string;
   phone?: string;
+  position?: string;
+  department?: string;
   isActive?: boolean;
 }
 

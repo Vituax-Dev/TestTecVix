@@ -40,6 +40,12 @@ export class UserController {
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 
+  async createUser(req: CustomRequest<unknown>, res: Response) {
+    const currentUser = req.user as user;
+    const result = await this.userService.createUser(req.body, currentUser);
+    return res.status(STATUS_CODE.CREATED).json(result);
+  }
+
   async updateMe(req: CustomRequest<unknown>, res: Response) {
     const currentUser = req.user as user;
     const result = await this.userService.updateMe(
@@ -52,8 +58,8 @@ export class UserController {
   async updateUser(req: CustomRequest<unknown>, res: Response) {
     const { idUser } = idUserParamsSchema.parse(req.params);
     const currentUser = req.user as user;
-    await this.userService.updateUser(idUser, req.body, currentUser);
-    return res.status(STATUS_CODE.NO_CONTENT).send();
+    const result = await this.userService.updateUser(idUser, req.body, currentUser);
+    return res.status(STATUS_CODE.OK).json(result);
   }
 
   async deleteUser(req: CustomRequest<unknown>, res: Response) {

@@ -684,6 +684,26 @@ npm run format             # Formata código com Prettier
 
 ---
 
+## 🔑 Credenciais de Teste
+
+Os usuários de teste são criados automaticamente através da migration (admin) e dos seeds (demais usuários).
+
+### 👥 Usuários no Seed
+
+| Empresa | Email | Senha |
+|---------|-------|-------|
+| **Vituax (null)** | admin@vituax.com | Admin@123 |
+| **Vituax (null)** | manager@vituax.com | Manager@123 |
+| **Vituax (null)** | member@vituax.com | Member@123 |
+| **Alpha (1)** | admin@alpha.com | Admin@123 |
+| **Alpha (1)** | manager@alpha.com | Manager@123 |
+| **Alpha (1)** | member@alpha.com | Member@123 |
+| **Beta (2)** | admin@beta.com | Admin@123 |
+| **Beta (2)** | manager@beta.com | Manager@123 |
+| **Beta (2)** | member@beta.com | Member@123 |
+
+> **Nota**: Todos os usuários são criados com `isActive: true` e podem fazer login imediatamente após rodar as migrations e seeds.
+
 ## 🤝 Boas Práticas
 
 1. **Commits semânticos**: Use prefixos como `feat:`, `fix:`, `refactor:`, `docs:`, etc.

@@ -631,7 +631,35 @@ npx prisma studio          # Abre interface visual do banco
 npm run lint               # Verifica problemas no código
 npm run lint:fix           # Corrige problemas automaticamente
 npm run format             # Formata código com Prettier
+
+# Testes E2E (End-to-End)
+npm run test:e2e           # Executa os testes E2E
 ```
+
+#### 🧪 Como rodar os testes E2E
+
+Os testes E2E (End-to-End) testam a API de ponta a ponta, simulando requisições reais.
+
+**Pré-requisitos:**
+1. Docker instalado e rodando
+2. Banco de dados MySQL rodando (mesmo usado para desenvolvimento)
+
+**Passo a passo:**
+
+```bash
+# 1. Navegue até o diretório do backend
+cd backend-node-vix-test
+
+# 2. Suba o banco de dados (se ainda não estiver rodando)
+npm run db:up
+
+# 3. Execute os testes E2E
+npm run test:e2e
+```
+
+**Observações:**
+- Os testes E2E criam automaticamente o database `test-cloud-db-e2e` no mesmo MySQL (porta 3312)
+- Os testes resetam o banco antes de cada suíte de testes
 
 ### Frontend
 

@@ -224,6 +224,23 @@
           ],
           "default": false
         },
+        "pass": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "bre_barueri",
+          "enum": [
+            "bre_barueri",
+            "usa_miami"
+          ]
+        },
         "status": {
           "type": [
             "string",

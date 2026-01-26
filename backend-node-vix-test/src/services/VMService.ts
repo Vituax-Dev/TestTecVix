@@ -20,6 +20,7 @@ export class VMService {
     const validQuery = vmListAllSchema.parse(query);
     return this.vMModel.listAll({
       query: validQuery,
+      idBrandMaster: user.idBrandMaster,
     });
   }
 

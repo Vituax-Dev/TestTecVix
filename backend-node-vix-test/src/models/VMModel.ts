@@ -13,19 +13,19 @@ export class VMModel {
 
   async totalCount({ query, idBrandMaster }: IListAllVM) {
     const { status, idBrandMaster: idBrandMasterParams } = query;
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
+    const filterIdBrandMaster = idBrandMasterParams ? Number(idBrandMasterParams) : idBrandMaster;
 
-    return prisma.vM.count({
-      where: {
-        deletedAt: null,
-        idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
-        status,
-        vmName: {
-          contains: query.search,
-        },
+    const where: any = {
+      deletedAt: null,
+      status,
+      vmName: {
+        contains: query.search,
       },
-    });
+    };
+    if (filterIdBrandMaster !== undefined && filterIdBrandMaster !== null && !isNaN(filterIdBrandMaster)) {
+      where.idBrandMaster = filterIdBrandMaster;
+    }
+    return prisma.vM.count({ where });
   }
 
   async listAll({ query, idBrandMaster }: IListAllVM) {
@@ -36,19 +36,20 @@ export class VMModel {
       query.orderBy?.map(({ field, direction }) => ({
         [field]: direction,
       })) || [];
+    const filterIdBrandMaster = idBrandMasterParams ? Number(idBrandMasterParams) : idBrandMaster;
 
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
-
-    const vms = await prisma.vM.findMany({
-      where: {
-        deletedAt: null,
-        idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
-        status,
-        vmName: {
-          contains: query.search,
-        },
+    const where: any = {
+      deletedAt: null,
+      status,
+      vmName: {
+        contains: query.search,
       },
+    };
+    if (filterIdBrandMaster !== undefined && filterIdBrandMaster !== null && !isNaN(filterIdBrandMaster)) {
+      where.idBrandMaster = filterIdBrandMaster;
+    }
+    const vms = await prisma.vM.findMany({
+      where,
       skip,
       take: limit || undefined,
       orderBy: orderBy.length

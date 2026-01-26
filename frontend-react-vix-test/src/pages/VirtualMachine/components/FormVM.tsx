@@ -143,10 +143,14 @@ export const FormVM = () => {
     if (!vmNetwork) {
       setVmNetwork(networkTypeOptions[0]);
     }
+  }, [vmNetwork, setVmNetwork, networkTypeOptions]);
+
+  // UseEffect separado para limpeza no unmount
+  useEffect(() => {
     return () => {
       resetAll();
     };
-  }, [vmNetwork, setVmNetwork, networkTypeOptions, resetAll]);
+  }, []); // Dependências vazias para executar apenas no mount/unmount
 
   return (
     <>

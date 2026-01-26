@@ -78,6 +78,7 @@ export interface IVMCreatedResponse {
   status: string | null;
   idBrandMaster: number | null;
   pass: string | null;
+  location: "bre_barueri" | "usa_miami" | null;
   createdAt: Date | string;
   updatedAt: Date | string;
   deletedAt: Date | string | null;

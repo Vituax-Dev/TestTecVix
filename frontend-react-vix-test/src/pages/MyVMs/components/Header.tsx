@@ -67,9 +67,14 @@ export const Header = () => {
     });
   }, []);
 
+  // Debounce para busca
+  let debounceTimeout: NodeJS.Timeout | null = null;
   const handleSearch = (value: string) => {
     if (value === search) return;
-    setSearch(value.trim());
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+      setSearch(value.trim());
+    }, 400);
   };
 
   const getStatusTag = (status: string) => {

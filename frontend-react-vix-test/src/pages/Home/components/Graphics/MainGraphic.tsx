@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   XAxis,
   YAxis,
@@ -8,18 +8,55 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   Area,
-  AreaChart, // Para as linhas de threshold
+  AreaChart,
 } from "recharts";
 import { Stack, Typography } from "@mui/material";
 import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 import { IFormatData } from "../../../../types/socketType";
+import { EmptyFeedBack } from "./EmptyFeedBack";
 
 export const MainGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const { currentIdVM: vmId, currentVMName: vmName } = useZGlobalVar();
+  
+  const [chartData, setChartData] = useState<IFormatData[]>([]);
+
+  // Dados mocados de uso de CPU (conforme solicitado no README)
+  useEffect(() => {
+    const generateMockCPUData = (): IFormatData[] => {
+      const data: IFormatData[] = [];
+      const now = new Date();
+      
+      for (let i = 29; i >= 0; i--) {
+        const time = new Date(now.getTime() - i * 2 * 60 * 1000); // Intervalos de 2 minutos
+        const baseValue = 35 + (vmId || 1) * 8; // Valor base baseado no ID da VM
+        const variation = Math.cos(i / 4) * 20 + Math.random() * 15; // Variação cossenoidal + ruído
+        const value = Math.max(0, Math.min(100, baseValue + variation));
+        
+        data.push({
+          time: time.toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          }),
+          value: Number(value.toFixed(2))
+        });
+      }
+      
+      return data;
+    };
+
+    setChartData(generateMockCPUData());
+    
+    // Atualiza dados a cada 30 segundos
+    const interval = setInterval(() => {
+      setChartData(generateMockCPUData());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [vmId]);
 
   const lastCpuUsage = chartData[chartData.length - 1]?.value || 0;
 
@@ -30,9 +67,7 @@ export const MainGraphic = () => {
         ? theme[mode].warning
         : theme[mode].danger;
 
-  const { currentVMName: vmName } = useZGlobalVar();
-
-  // if (!chartData.length) return <EmptyFeedBack />;
+  if (!chartData.length) return <EmptyFeedBack />;
 
   return (
     <Stack

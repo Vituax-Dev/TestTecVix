@@ -1,16 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from "recharts";
 import { Stack, Typography } from "@mui/material";
 import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
-import { IFormatData } from "../../../../types/socketType";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 
 export const TopGraphic = () => {
   const [isLoading] = useState(false);
-  const [chartData] = useState<IFormatData[]>([]);
+  const [diskUsage, setDiskUsage] = useState(0);
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
+  const { currentIdVM: vmId, currentVMName: vmName } = useZGlobalVar();
+
+  // Dados mocados de uso de disco
+  useEffect(() => {
+    const generateMockDiskUsage = () => {
+      const baseValue = 0.3 + ((vmId || 1) * 0.1); // Valor base baseado no ID da VM
+      const variation = Math.sin(Date.now() / 60000) * 0.2; // Variação lenta
+      return Math.max(0.1, Math.min(0.95, baseValue + variation));
+    };
+
+    setDiskUsage(generateMockDiskUsage());
+    
+    // Atualiza dados a cada 30 segundos
+    const interval = setInterval(() => {
+      setDiskUsage(generateMockDiskUsage());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [vmId]);
 
   const COLORS = [
     theme[mode].ok,
@@ -54,17 +72,12 @@ export const TopGraphic = () => {
     ];
   };
 
-  const cpuUsage = (chartData[chartData.length - 1]?.value || 0) / 100;
   const valueColor =
-    cpuUsage < 0.6
+    diskUsage < 0.6
       ? theme[mode].ok
-      : cpuUsage < 0.85
+      : diskUsage < 0.85
         ? theme[mode].warning
         : theme[mode].danger;
-
-  const { currentVMName: vmName } = useZGlobalVar();
-
-  // if (!chartData.length) return <EmptyFeedBack />;
 
   return (
     <Stack
@@ -90,7 +103,7 @@ export const TopGraphic = () => {
         {!isLoading ? (
           <PieChart>
             <Pie
-              data={generateGaugeData(cpuUsage)}
+              data={generateGaugeData(diskUsage)}
               startAngle={180}
               endAngle={0}
               innerRadius="85%"
@@ -102,12 +115,11 @@ export const TopGraphic = () => {
               cx="50%"
               cy="75%"
             >
-              {/* Mapeia as cores do gráfico */}
-              {generateGaugeData(cpuUsage).map((_entry, index) => (
+              {generateGaugeData(diskUsage).map((_entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index] || "#ccc"} />
               ))}
               <Label
-                value={`${(cpuUsage * 100).toFixed(2)}%`}
+                value={`${(diskUsage * 100).toFixed(2)}%`}
                 position="center"
                 style={{
                   fill: valueColor,

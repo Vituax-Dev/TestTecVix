@@ -11,11 +11,14 @@ import {
 } from "../../../../../stores/useZFormProfileNotifications";
 import { useEffect } from "react";
 import { PerfilPhotoUpload } from "./PerfilPhotoUpload";
+import { useUserResources } from "../../../../../hooks/useUserResources";
+import { maskPhone } from "../../../../../utils/maskPhone";
 
 export const PersonalInformation = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
-  const { username, userEmail } = useZUserProfile();
+  const { setImage } = useZUserProfile();
+  const { getMe } = useUserResources();
   const {
     userEmail: userEmailForm,
     userName,
@@ -155,8 +158,8 @@ export const PersonalInformation = () => {
   };
 
   const validPhoneNumber = () => {
-    const phoneRegex = /^\d{10,11}$/; // Regex para validar telefone com 10 ou 11 dígitos
-
+    const digits = userPhone.value.replace(/\D/g, "");
+    
     if (!userPhone.value) {
       return setFormProfileNotifications({
         userPhone: {
@@ -166,7 +169,7 @@ export const PersonalInformation = () => {
       });
     }
 
-    if (!phoneRegex.test(userPhone.value) || userPhone.value.length > 20) {
+    if (digits.length < 10 || digits.length > 11) {
       return setFormProfileNotifications({
         userPhone: {
           ...userPhone,
@@ -197,28 +200,44 @@ export const PersonalInformation = () => {
   };
 
   useEffect(() => {
-    setFormProfileNotifications({
-      fullNameForm: {
-        ...fullNameForm,
-        value: "",
-        errorMessage: "",
-      },
-      userName: {
-        ...userName,
-        value: username || "",
-        errorMessage: "",
-      },
-      userEmail: {
-        ...userEmailForm,
-        value: userEmail || "",
-        errorMessage: "",
-      },
-      userPhone: {
-        ...userPhone,
-        value: "",
-        errorMessage: "",
-      },
-    });
+    const loadUserData = async () => {
+      const userData = await getMe();
+      if (userData) {
+        setFormProfileNotifications({
+          fullNameForm: {
+            value: userData.fullName || "",
+            errorMessage: "",
+          },
+          userName: {
+            value: userData.username || "",
+            errorMessage: "",
+          },
+          userEmail: {
+            value: userData.email || "",
+            errorMessage: "",
+          },
+          userPhone: {
+            value: userData.phone ? maskPhone(userData.phone) : "",
+            errorMessage: "",
+          },
+          password: {
+            value: "",
+            errorMessage: "",
+          },
+          confirmPassword: {
+            value: "",
+            errorMessage: "",
+          },
+        });
+        if (userData.profileImgUrl) {
+          setImage({
+            imageUrl: userData.profileImgUrl,
+            objectName: userData.profileImgUrl,
+          });
+        }
+      }
+    };
+    loadUserData();
   }, []);
 
   return (
@@ -315,11 +334,11 @@ export const PersonalInformation = () => {
         />
         <InputLabelAndFeedback
           label={t("profileAndNotifications.phone")}
-          placeholder="(00) 0000-0000"
+          placeholder="(00) 00000-0000"
           value={userPhone.value}
           errorMessage={userPhone.errorMessage}
           onBlur={validPhoneNumber}
-          onChange={(val) => handleChange("userPhone", val)}
+          onChange={(val) => handleChange("userPhone", maskPhone(val))}
           icon={
             <EditCirclePencilIcon
               fill={

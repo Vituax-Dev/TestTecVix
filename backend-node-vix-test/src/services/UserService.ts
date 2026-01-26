@@ -3,6 +3,7 @@ import { user } from "@prisma/client";
 import { UserModel } from "../models/UserModel";
 import { userCreatedSchema } from "../types/validations/User/createUser";
 import { userUpdatedSchema } from "../types/validations/User/updateUser";
+import { updateMeSchema } from "../types/validations/User/updateMe";
 import { userListAllSchema } from "../types/validations/User/userListAll";
 import { ERole } from "@prisma/client";
 import { AppError } from "../errors/AppError";
@@ -49,6 +50,16 @@ export class UserService {
     });
 
     return createdUser;
+  }
+
+  async updateMe(idUser: string, data: unknown) {
+    const dataToUpdate = updateMeSchema.parse(data);
+
+    if (dataToUpdate.password) {
+      dataToUpdate.password = await bcrypt.hash(dataToUpdate.password, 10);
+    }
+
+    return await this.userModel.updateUser(idUser, dataToUpdate);
   }
 
   async updateUser(idUser: string, data: unknown, currentUser: user) {

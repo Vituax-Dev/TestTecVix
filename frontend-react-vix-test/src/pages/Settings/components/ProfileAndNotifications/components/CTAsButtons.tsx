@@ -3,17 +3,79 @@ import { useTranslation } from "react-i18next";
 import { useZTheme } from "../../../../../stores/useZTheme";
 import { TextRob16FontL } from "../../../../../components/TextL";
 import { toast } from "react-toastify";
+import { useZFormProfileNotifications } from "../../../../../stores/useZFormProfileNotifications";
+import { useUserResources } from "../../../../../hooks/useUserResources";
+import { useZUserProfile } from "../../../../../stores/useZUserProfile";
 
 export const CTAsButtons = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
+  const { updateMe, isLoading } = useUserResources();
+  const { imageUrl } = useZUserProfile();
+  const {
+    fullNameForm,
+    userName,
+    userEmail,
+    userPhone,
+    password,
+    confirmPassword,
+    resetAll,
+  } = useZFormProfileNotifications();
+
+  const validateForm = (): boolean => {
+
+    if (!userName.value || userName.value.length < 2) {
+      toast.error(t("profileAndNotifications.invalidData"));
+      return false;
+    }
+    if (!userEmail.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail.value)) {
+      toast.error(t("profileAndNotifications.invalidData"));
+      return false;
+    }
+    if (password.value && password.value !== confirmPassword.value) {
+      toast.error(t("colaboratorRegister.dontMatch"));
+      return false;
+    }
+    return true;
+  };
 
   const handleSave = async () => {
-    const allValid = true;
-    if (!allValid) return toast.error(t("profileAndNotifications.errorForm"));
-    const r = true;
-    if (r) return toast.success(t("generic.dataSavesuccess"));
-    return;
+    if (!validateForm()) return;
+
+    const phoneDigits = userPhone.value ? userPhone.value.replace(/\D/g, "") : null;
+
+    const data: {
+      username?: string;
+      email?: string;
+      fullName?: string | null;
+      phone?: string | null;
+      password?: string;
+      profileImgUrl?: string | null;
+    } = {
+      username: userName.value,
+      email: userEmail.value,
+      fullName: fullNameForm.value || null,
+      phone: phoneDigits || null,
+    };
+
+    // Só envia a senha se foi preenchida
+    if (password.value) {
+      data.password = password.value;
+    }
+
+    // Envia a imagem de perfil se foi alterada
+    if (imageUrl) {
+      data.profileImgUrl = imageUrl;
+    }
+
+    const result = await updateMe(data);
+    if (result) {
+      toast.success(t("generic.dataSavesuccess"));
+    }
+  };
+
+  const handleReset = () => {
+    resetAll();
   };
 
   return (
@@ -42,6 +104,7 @@ export const CTAsButtons = () => {
           },
         }}
         onClick={handleSave}
+        disabled={isLoading}
       >
         <TextRob16FontL
           sx={{
@@ -51,7 +114,7 @@ export const CTAsButtons = () => {
             lineHeight: "16px",
           }}
         >
-          {t("profileAndNotifications.saveChanges")}
+          {isLoading ? t("whiteLabel.loading") : t("profileAndNotifications.saveChanges")}
         </TextRob16FontL>
       </Button>
       <Button
@@ -69,7 +132,7 @@ export const CTAsButtons = () => {
             maxWidth: "100%",
           },
         }}
-        onClick={() => {}}
+        onClick={handleReset}
       >
         <TextRob16FontL
           sx={{

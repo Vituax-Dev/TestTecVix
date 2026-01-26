@@ -15,7 +15,7 @@ export const makeBrandMasterController = () => {
 
 const brandMasterController = makeBrandMasterController();
 
-brandMasterRoutes.get(`${BASE_PATH}/self`, async (req, res) => {
+brandMasterRoutes.get(`${BASE_PATH}/self`, authUser, async (req, res) => {
   await brandMasterController.getSelf(req, res);
 });
 

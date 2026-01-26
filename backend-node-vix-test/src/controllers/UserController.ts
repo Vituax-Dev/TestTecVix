@@ -20,6 +20,15 @@ export class UserController {
     return res.status(STATUS_CODE.OK).json(result);
   }
 
+  async getMe(req: CustomRequest<unknown>, res: Response) {
+    const currentUser = req.user as user;
+    const result = await this.userService.getById(
+      currentUser.idUser,
+      currentUser.idBrandMaster,
+    );
+    return res.status(STATUS_CODE.OK).json(result);
+  }
+
   async listAll(req: CustomRequest<unknown>, res: Response) {
     const currentUser = req.user as user;
     const result = await this.userService.listAll(req.query, currentUser);
@@ -29,6 +38,15 @@ export class UserController {
   async register(req: CustomRequest<unknown>, res: Response) {
     const result = await this.userService.register(req.body);
     return res.status(STATUS_CODE.CREATED).json(result);
+  }
+
+  async updateMe(req: CustomRequest<unknown>, res: Response) {
+    const currentUser = req.user as user;
+    const result = await this.userService.updateMe(
+      currentUser.idUser,
+      req.body,
+    );
+    return res.status(STATUS_CODE.OK).json(result);
   }
 
   async updateUser(req: CustomRequest<unknown>, res: Response) {

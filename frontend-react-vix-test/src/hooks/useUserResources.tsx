@@ -164,10 +164,55 @@ export const useUserResources = () => {
     return true;
   };
 
+  const updateMe = async (data: {
+    username?: string;
+    email?: string;
+    fullName?: string | null;
+    phone?: string | null;
+    password?: string;
+    profileImgUrl?: string | null;
+  }) => {
+    setIsLoading(true);
+    const response = await api.put<IUserDB>({
+      url: `/user/me`,
+      data,
+    });
+    setIsLoading(false);
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    // Atualiza o estado do usuário logado
+    setUser({
+      profileImgUrl: response.data.profileImgUrl,
+      username: response.data.username,
+      userEmail: response.data.email,
+      idBrand: response.data.idBrandMaster,
+      role: response.data.role,
+    });
+
+    return response.data;
+  };
+
+  const getMe = async () => {
+    setIsLoading(true);
+    const response = await api.get<IUserDB>({
+      url: `/user/me`,
+    });
+    setIsLoading(false);
+    if (response.error) {
+      return null;
+    }
+    return response.data;
+  };
+
   return {
     isLoading,
     updateUser,
     updateUserById,
+    updateMe,
+    getMe,
     listAllUsers,
     createUserByManager,
     deleteUserById,

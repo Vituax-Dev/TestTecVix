@@ -20,6 +20,11 @@ userRoutes.get(BASE_PATH, authUser, async (req, res) => {
   await userController.listAll(req, res);
 });
 
+// Rota para buscar o próprio perfil (deve vir antes de /:idUser)
+userRoutes.get(`${BASE_PATH}/me`, authUser, async (req, res) => {
+  await userController.getMe(req, res);
+});
+
 userRoutes.get(`${BASE_PATH}/:idUser`, authUser, async (req, res) => {
   await userController.getById(req, res);
 });
@@ -30,6 +35,12 @@ userRoutes.post(`${BASE_PATH}`, async (req, res) => {
 });
 
 // ======== PUTs =========
+// Rota para editar o próprio perfil (qualquer usuário autenticado)
+userRoutes.put(`${BASE_PATH}/me`, authUser, async (req, res) => {
+  await userController.updateMe(req, res);
+});
+
+// Rota para editar outros usuários (apenas manager/admin)
 userRoutes.put(
   `${BASE_PATH}/:idUser`,
   authUser,

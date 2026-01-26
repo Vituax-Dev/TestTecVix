@@ -7,6 +7,7 @@ import { TextRob14Font1Xs } from "../../../../components/Text1Xs";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
 import { useBrandMasterResources } from "../../../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../../../components/AbsoluteBackDrop";
+import { toast } from "react-toastify";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -23,6 +24,7 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
     brandObjectName,
     setBrandInfo,
     domain: domainName,
+    idBrand,
   } = useZBrandInfo();
   // const [domain, setDomain] = useState<string>(domainName);
   // const { updateDomain } = useBrandMasterResources();
@@ -47,6 +49,12 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   // };
 
   const handleSave = async () => {
+    // Verifica se o usuário tem um BrandMaster associado
+    if (!idBrand) {
+      toast.error(t("whiteLabel.noBrandMaster"));
+      return;
+    }
+    
     const response = await updateBrandMaster({
       brandLogo: brandObjectName || undefined,
     });

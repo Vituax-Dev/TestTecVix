@@ -798,6 +798,34 @@ Verifique se:
 
 ---
 
+### Melhorias Futuras
+
+Pontos que eu implementaria com mais tempo disponível:
+
+### Testes
+- **Ampliar cobertura de testes E2E** — Testes E2E cobrem múltiplas camadas em um único teste, proporcionando maior cobertura com menos código
+- **Tela de edição de funcionário** — Complementar o fluxo de CRUD de funcionários
+
+### Arquitetura
+- **Separar entidade Funcionário da entidade User** — Atualmente ambas compartilham a mesma tabela, gerando campos opcionais desnecessários. O ideal seria uma tabela `funcionario` com foreign key para `user`
+- **Unificar o tipo dos IDs** — Usuário usa UUID enquanto outras entidades usam inteiro, gerando inconsistência
+- **Monorepo ou projeto unificado** — Backend e frontend em TypeScript poderiam compartilhar tipos e validações, evitando duplicação e problemas de CORS
+
+### Validação e Segurança
+- **Validação de variáveis de ambiente na inicialização** — Garantir que todas as variáveis obrigatórias estejam presentes antes de iniciar a aplicação
+- **Middleware de validação com Zod** — Mover validações dos services para middlewares, evitando que a camada de negócio conheça detalhes HTTP como status codes
+
+### Funcionalidades
+- **"Esqueci minha senha"** — Fluxo de recuperação de senha por e-mail
+- **E-mail para admin do MSP** — Na criação de MSP, o administrador associado deveria receber um e-mail de boas-vindas
+- **Documentação Swagger completa** — Documentar todas as rotas da API com exemplos
+
+### Qualidade de Código
+- **Corrigir typos no projeto** — Exemplos: "Dow" ao invés de "Down", "ErroMessage" ao invés de "ErrorMessage"
+- **Revisar menu lateral** — Estrutura de navegação poderia ser mais intuitiva
+
+---
+
 **Boa sorte! 🚀**
 
 **Esperamos receber o link do seu repositório em breve!** 📬

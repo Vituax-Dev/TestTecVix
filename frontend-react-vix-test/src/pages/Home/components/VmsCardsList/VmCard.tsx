@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { shadow } from "../../../../utils/shadow";
 import { makeEllipsis } from "../../../../utils/makeEllipsis";
 import { TextRob20Font1MC } from "../../../../components/Text1MC";
@@ -26,6 +26,9 @@ import { TextRob14Font1Xs } from "../../../../components/Text1Xs";
 import { TerminalIcon } from "../../../../icons/TerminalIcon";
 import { MonitorIcon } from "../../../../icons/MonitorIcon";
 import { IVMTask, taskMock } from "../../../../types/VMTypes";
+import { ModalChart } from "../Graphics/ModalChart";
+import { MainGraphic } from "../Graphics/MainGraphic";
+import { BottomGraphic } from "../Graphics/BottomGraphic";
 
 export interface IVmCardProps {
   vmId: number;
@@ -65,6 +68,7 @@ export const VmCard = ({
   const [openModalWarning, setOpenModalWarning] = useState(false);
   const [preDisk, setPreDisk] = useState<number | string>(0);
   const [taskState, setTaskState] = useState(task);
+  const [openChartModal, setOpenChartModal] = useState(false);
   const { ref, position } = useSelfPosition(openModalSlider);
   const {
     updateThisVm,
@@ -84,9 +88,12 @@ export const VmCard = ({
     stopVM,
   } = useVmResource();
 
-  const getVMById = async () => {
+  const getVMById = useCallback(async () => {
     const vm = await getVMByIdResource(vmId);
-    if (!vm) return setUpdateThisVm(null);
+    if (!vm) {
+      setUpdateThisVm(null);
+      return;
+    }
     setVmNameState(vm.vmName);
     setCpuState(vm.vCPU);
     setMemoryState(vm.ram);
@@ -94,14 +101,13 @@ export const VmCard = ({
     setStatusState(vm.status);
     setPreStatusState(vm.status);
     setTaskState(taskMock);
-
     setPreDisk(0);
     setShowConfirmation(false);
     setOpenModalWarning(false);
     setOpenModalSlider(false);
     setOpenModal(false);
     setUpdateThisVm(null);
-  };
+  }, [getVMByIdResource, vmId, setUpdateThisVm]);
 
   const handleCancel = () => {
     setShowConfirmation(false);
@@ -503,6 +509,7 @@ export const VmCard = ({
               setCurrentVMName(vmNameState as string);
               setCurrentIdVM(vmId as number);
               setCurrentVMOS(os);
+              setOpenChartModal(true);
             }}
             sx={{
               width: "100%",
@@ -613,6 +620,15 @@ export const VmCard = ({
           onCancel={closeModalWarning}
           onConfirm={confirmWarning}
         />
+      )}
+      {/* Modal de gráficos mocados */}
+      {openChartModal && (
+        <ModalChart open={openChartModal} onClose={() => setOpenChartModal(false)}>
+          <Stack sx={{ width: '100%', height: '100%', gap: 4 }}>
+            <MainGraphic />
+            <BottomGraphic />
+          </Stack>
+        </ModalChart>
       )}
     </>
   );

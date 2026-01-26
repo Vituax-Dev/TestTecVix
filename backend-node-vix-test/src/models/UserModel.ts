@@ -46,7 +46,7 @@ export class UserModel {
     return prisma.user.count({
       where: {
         deletedAt: null,
-        idBrandMaster,
+        idBrandMaster: idBrandMaster ?? undefined,
         isActive: query.isActive,
         OR: query.search
           ? [
@@ -68,7 +68,7 @@ export class UserModel {
 
     const whereClause = {
       deletedAt: null,
-      idBrandMaster,
+      idBrandMaster: idBrandMaster ?? undefined,
       isActive: query.isActive,
       OR: query.search
         ? [
@@ -92,16 +92,9 @@ export class UserModel {
     return { totalCount, result: users };
   }
 
-  async createUser(data: TUserCreate) {
+  async createUser(data: TUserCreate & { isActive?: boolean }) {
     return await prisma.user.create({
-      data: { ...data, isActive: false },
-      select: userSelectFields,
-    });
-  }
-
-  async createActiveUser(data: TUserCreate) {
-    return await prisma.user.create({
-      data: { ...data, isActive: true },
+      data: { ...data, isActive: data.isActive ?? false },
       select: userSelectFields,
     });
   }

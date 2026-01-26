@@ -68,7 +68,7 @@ export class BrandMasterService {
     if (admEmail && admPassword && admUsername) {
       try {
         const hashedPassword = await bcrypt.hash(admPassword, 10);
-        adminUser = await this.userModel.createActiveUser({
+        adminUser = await this.userModel.createUser({
           username: admUsername,
           email: admEmail,
           password: hashedPassword,
@@ -77,6 +77,7 @@ export class BrandMasterService {
           profileImgUrl: null,
           fullName: admName || null,
           phone: admPhone || null,
+          isActive: true,
         });
       } catch (error) {
         console.error("Failed to create admin user:", error);
